@@ -16,7 +16,7 @@ Follow these steps to get the app up and running on your local machine:
 
 ### 2. 📥 Clone the Repository
 ```bash
-git clone https://github.com/<your-org>/krs-app.git
+git clone https://github.com/AgnivaMaiti/KRS-App.git
 cd krs-app 
 ```
 ### 3. 📦 Install Dependencies
