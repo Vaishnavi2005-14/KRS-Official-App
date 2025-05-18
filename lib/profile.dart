@@ -2,17 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProfileModel()),
-      ],
-      child: const MyApp(),
-    ),
-  );
-}
-
 class ProfileModel extends ChangeNotifier {
   String name = 'Saswat Ranjan Behera';
   String role = 'App Dev';
@@ -59,39 +48,45 @@ class ProfileScreen extends StatelessWidget {
     final screenHeight = mediaQuery.size.height;
     final screenWidth = mediaQuery.size.width;
 
-    return Consumer<ProfileModel>(builder: (context, profileData, _) {
-      return Scaffold(
-        body: Container(
-          width: screenWidth,
-          height: screenHeight,
-          decoration: const BoxDecoration(color: Color(0xFF040E1E)),
-          child: Stack(
-            children: [
-              Positioned(
-                top: screenHeight * 0.15,
-                right: 0,
-                child: _buildCurvedLines(screenWidth, screenHeight),
-              ),
-              SafeArea(
-                child: Column(
-                  children: [
-                    _buildTopBar(),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: _buildProfileContent(
-                            context, profileData, screenWidth, screenHeight),
-                      ),
-                    ),
-                    _buildBottomNavBar(profileData),
-                  ],
+    return Consumer<ProfileModel>(
+      builder: (context, profileData, _) {
+        return Scaffold(
+          body: Container(
+            width: screenWidth,
+            height: screenHeight,
+            decoration: const BoxDecoration(color: Color(0xFF040E1E)),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: screenHeight * 0.15,
+                  right: 0,
+                  child: _buildCurvedLines(screenWidth, screenHeight),
                 ),
-              ),
-            ],
+                SafeArea(
+                  child: Column(
+                    children: [
+                      _buildTopBar(),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: _buildProfileContent(
+                            context,
+                            profileData,
+                            screenWidth,
+                            screenHeight,
+                          ),
+                        ),
+                      ),
+                      _buildBottomNavBar(profileData),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   Widget _buildTopBar() {
@@ -120,8 +115,12 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileContent(BuildContext context, ProfileModel profileData,
-      double width, double height) {
+  Widget _buildProfileContent(
+    BuildContext context,
+    ProfileModel profileData,
+    double width,
+    double height,
+  ) {
     return SizedBox(
       width: width,
       child: Column(
@@ -207,21 +206,14 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(height: 5),
         Text(
           label,
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: Colors.grey[400],
-          ),
+          style: GoogleFonts.inter(fontSize: 14, color: Colors.grey[400]),
         ),
       ],
     );
   }
 
   Widget _verticalDivider() {
-    return Container(
-      height: 40,
-      width: 1,
-      color: Colors.grey.withOpacity(0.3),
-    );
+    return Container(height: 40, width: 1, color: Colors.grey.withOpacity(0.3));
   }
 
   Widget _buildActionButtons(double width) {
@@ -281,10 +273,7 @@ class ProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF040E1E),
         border: Border(
-          top: BorderSide(
-            color: Colors.grey.withOpacity(0.2),
-            width: 0.5,
-          ),
+          top: BorderSide(color: Colors.grey.withOpacity(0.2), width: 0.5),
         ),
       ),
       child: Row(
@@ -323,10 +312,11 @@ class ProfileScreen extends StatelessWidget {
 class CurvedLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFFFA000).withOpacity(0.3)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
+    final paint =
+        Paint()
+          ..color = const Color(0xFFFFA000).withOpacity(0.3)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
 
     for (int i = 0; i < 5; i++) {
       final path = Path();

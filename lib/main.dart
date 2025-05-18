@@ -23,13 +23,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(fontFamily: 'Poppins'),
       debugShowCheckedModeBanner: false,
-      //home: const ProfileScreen(),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoadingScreen(),       // Splash Screen
-        '/login': (context) => const LoginScreen(),    // Login Screen
-        '/profile':(context)=> const ProfileScreen(),  // Profile Page
-      },
+      home: const ProfileScreen(),
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => const LoadingScreen(),       // Splash Screen
+      //   '/login': (context) => const LoginScreen(),    // Login Screen
+      //   '/profile':(context)=> const ProfileScreen(),  // Profile Page
+      // },
     );
   }
 }
