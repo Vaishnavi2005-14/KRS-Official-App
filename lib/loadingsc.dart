@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'dart:ui';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
