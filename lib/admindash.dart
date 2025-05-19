@@ -10,6 +10,10 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: Center(
+        child: Text("Welcome Admin", style: TextStyle(fontSize: 30)),
+      ),
+    );
   }
 }
