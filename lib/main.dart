@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
-import 'loadingsc.dart'; // The splash screen
-import 'loginsc.dart'; // The login screen
+import 'package:krs_app/loadingsc.dart';
+import 'package:krs_app/loginsc.dart' show LoginScreen;
+import 'package:provider/provider.dart';
+import 'profile.dart'; // Ensure this imports ProfileScreen and ProfileModel
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProfileModel()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,17 +21,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-  theme: ThemeData(
-    fontFamily: 'Poppins',
-  ),
-
+      theme: ThemeData(fontFamily: 'Poppins'),
       debugShowCheckedModeBanner: false,
-      // Set initial route to Splash
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoadingScreen(),       // Splash Screen
-        '/login': (context) => const LoginScreen(),    // Login Screen
-      },
+      home: const ProfileScreen(),
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => const LoadingScreen(),       // Splash Screen
+      //   '/login': (context) => const LoginScreen(),    // Login Screen
+      //   '/profile':(context)=> const ProfileScreen(),  // Profile Page
+      // },
     );
   }
 }
+
