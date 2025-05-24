@@ -52,6 +52,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(
         fontFamily: 'Poppins',
+        textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
         scaffoldBackgroundColor: const Color(0xff040E1E),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF040E1E),
