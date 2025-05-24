@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:krs_app/admindash.dart';
-import 'package:krs_app/dashboard.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:krs_app/providers/loader.dart';
+import 'package:krs_app/providers/textdecorator.dart';
 import 'package:krs_app/services/auth.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,92 +18,48 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController(),
       passwordController = TextEditingController();
   final AuthService _authService = AuthService();
-  bool _isLoading = false;
   bool _obscurePassword = true;
 
   void _login() async {
-    setState(() {
-      _isLoading = true;
-    });
+    Provider.of<LoaderProvider>(context, listen: false).showLoader(context);
 
     bool success = await _authService.login(
       emailController.text,
       passwordController.text,
     );
     bool isAdmin = await _authService.isAdmin();
+    if (!mounted) return;
+    Provider.of<LoaderProvider>(context, listen: false).hideLoader();
 
-    setState(() {
-      _isLoading = false;
-    });
+    if (!mounted) return;
 
     if (success) {
+      await Fluttertoast.showToast(
+        msg: "Login Successful",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      if (!mounted) return;
+
       if (isAdmin) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => AdminDashboardScreen()),
-        );
+        Navigator.pushReplacementNamed(context, '/main');
       } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => DashboardScreen()),
-        );
+        Navigator.pushReplacementNamed(context, '/main');
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Invalid credentials!"),
-          backgroundColor: Colors.red,
-        ),
+      await Fluttertoast.showToast(
+        msg: "Invalid Credentials",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
-  }
-
-  Widget outlinedText(String text, double fontSize) {
-    return Stack(
-      children: [
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.w300,
-            letterSpacing: 2,
-            height: 1.2,
-            foreground:
-                Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = 2.5
-                  ..color = const Color.fromARGB(255, 250, 216, 63),
-            shadows: [
-              Shadow(
-                color: const Color.fromARGB(221, 190, 156, 6).withAlpha(230),
-                blurRadius: 15,
-              ),
-              Shadow(
-                color: Colors.yellow.shade600.withAlpha(180),
-                blurRadius: 25,
-              ),
-            ],
-          ),
-        ),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.w300,
-            letterSpacing: 2,
-            height: 1.2,
-            color: const Color.fromARGB(107, 224, 224, 224),
-            shadows: [
-              Shadow(
-                color: Colors.black.withAlpha(155),
-                blurRadius: 5,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
   }
 
   @override
@@ -115,19 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         body: Stack(
           children: [
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 0, 14, 38),
-                    Color.fromARGB(255, 5, 39, 97),
-                    Color.fromARGB(255, 1, 48, 122),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-            ),
+            Container(decoration: const BoxDecoration()),
             Positioned(
               left: -40,
               bottom: -30,
@@ -159,8 +105,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     Center(
                       child: Column(
                         children: [
-                          outlinedText("KIIT ROBOTICS", width * 0.08),
-                          outlinedText("SOCIETY", width * 0.08),
+                          Consumer<OutlinedTextProvider>(
+                            builder: (context, provider, child) {
+                              return outlinedText(
+                                text: "KIIT ROBOTICS",
+                                fontSize: width * 0.11,
+                                textColor: Color(0xff353535),
+                                outlineColor: Color(0xffE5A122),
+                              );
+                            },
+                          ),
+                          Consumer<OutlinedTextProvider>(
+                            builder: (context, provider, child) {
+                              return outlinedText(
+                                text: "SOCIETY",
+                                fontSize: width * 0.11,
+                                textColor: Color(0xff353535),
+                                outlineColor: Color(0xffE5A122),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -179,18 +143,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: 'Welcome ',
+                                    text: 'Welcome!',
                                     style: TextStyle(
-                                      color: Colors.amber,
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: 'Back!',
-                                    style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: 26,
+                                      color: Color(0xffE5A122),
+                                      fontSize: 30,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -242,14 +198,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               gradient: const LinearGradient(
-                                colors: [Colors.blueAccent, Colors.amber],
+                                colors: [Color(0xff194DA6), Color(0xffE5A122)],
                               ),
                             ),
                             child: TextButton(
-                              onPressed: _login,
+                              onPressed: () {
+                                FocusScope.of(context).unfocus;
+                                _login();
+                              },
                               child: const Text(
                                 "Log In",
                                 style: TextStyle(
+                                  fontSize: 20,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -260,9 +220,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           Center(
                             child: OutlinedButton.icon(
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.amber),
+                                side: const BorderSide(
+                                  color: Color(0xffE5A122),
+                                  width: 2,
+                                ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
                               ),
                               onPressed: () {},
@@ -306,13 +269,15 @@ class _LoginScreenState extends State<LoginScreen> {
         fillColor: Colors.transparent,
         hintText: hintText,
         hintStyle: const TextStyle(color: Colors.white54),
-        prefixIcon: Icon(icon, color: Colors.white70),
+        prefixIcon: Icon(icon, color: Colors.white),
         suffixIcon:
             obscureText
                 ? IconButton(
                   icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.white70,
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: Colors.white,
                   ),
                   onPressed: () {
                     setState(() {
@@ -323,11 +288,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 : null,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.white24),
+          borderSide: const BorderSide(color: Colors.white, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.amber),
+          borderSide: BorderSide(color: Color(0xffE5A122), width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red),
         ),
       ),
     );

@@ -7,7 +7,6 @@ import 'package:krs_app/widgets/attendance_search_field.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-
 class AttendancePage extends StatefulWidget {
   final String authToken;
 
@@ -45,20 +44,13 @@ class _AttendancePageState extends State<AttendancePage> {
   void _onSearch() {
     final query = _searchController.text.toLowerCase().trim();
     setState(() {
-      _filteredMembers = _allMembers.where((member) {
-        return member.name.toLowerCase().contains(query) ||
-            member.rollNo.toLowerCase().contains(query);
-      }).toList();
+      _filteredMembers =
+          _allMembers.where((member) {
+            return member.name.toLowerCase().contains(query) ||
+                member.rollNo.toLowerCase().contains(query);
+          }).toList();
       _hasSearched = true;
     });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    final provider = Provider.of<AttendanceProvider>(context, listen: false);
-    provider.disposeControllers();
-    super.dispose();
   }
 
   @override

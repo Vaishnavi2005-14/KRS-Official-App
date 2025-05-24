@@ -5,12 +5,9 @@ import '../models/member.dart';
 class ApiService {
   static const String baseUrl = "https://krs-app-server.vercel.app";
 
-  // GET /api/attendance
   static Future<List<Member>> fetchMembers() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/api/attendance'));
-
-      print('Response body: ${response.body}');  // Log the response body
 
       if (response.statusCode == 200) {
         final List data = json.decode(response.body);
@@ -23,7 +20,6 @@ class ApiService {
     }
   }
 
-  // POST /mark to submit attendance
   static Future<void> submitAttendance(
     String token,
     List<Map<String, dynamic>> attendanceData,
