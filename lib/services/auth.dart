@@ -17,8 +17,10 @@ class AuthService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("token", data["token"]);
       prefs.setString("name", data["user"]["name"]);
-      prefs.setInt("roll", data["user"]["roll"]);
+      prefs.setString("email", data["user"]["email"]);
       prefs.setString("designation", data["user"]["designation"]);
+      prefs.setString("domain", data["user"]["domain"]);
+      // prefs.setString("image", data["user"]["image"]);
       return true;
     }
     return false;

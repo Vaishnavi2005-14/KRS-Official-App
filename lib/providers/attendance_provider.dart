@@ -5,8 +5,8 @@ import 'package:krs_app/services/api_service.dart';
 class AttendanceProvider with ChangeNotifier {
   List<Member> _members = [];
   Map<String, String> _selectedStatus = {};
-  Map<String, String> _remarks = {};
-  Map<String, bool> _isEditingRemarks = {};
+  final Map<String, String> _remarks = {};
+  final Map<String, bool> _isEditingRemarks = {};
   String? _expandedMemberId;
 
   final Map<String, TextEditingController> _remarkControllers = {};
