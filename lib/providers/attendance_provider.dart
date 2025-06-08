@@ -24,7 +24,7 @@ class AttendanceProvider with ChangeNotifier {
 
   Future<void> fetchMembers(String token) async {
     try {
-      _members = await ApiService.fetchMembers();
+      _members = await ApiService.fetchMembers(token);
       _selectedStatus = {for (var m in _members) m.id: 'Present'};
       _remarks.clear();
       _isEditingRemarks.clear();

@@ -9,8 +9,7 @@ class AttendanceHeader extends StatelessWidget {
       child: Text(
         'ATTENDANCE',
         style: TextStyle(
-          color: Colors.orange,
-          fontFamily: 'Poppins',
+          color: Color(0xffE5A122),
           fontWeight: FontWeight.w600,
           fontSize: 30,
         ),

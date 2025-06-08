@@ -20,7 +20,7 @@ class AuthService {
       prefs.setString("email", data["user"]["email"]);
       prefs.setString("designation", data["user"]["designation"]);
       prefs.setString("domain", data["user"]["domain"]);
-      // prefs.setString("image", data["user"]["image"]);
+      prefs.setString("image", data["user"]["image"]);
       return true;
     }
     return false;

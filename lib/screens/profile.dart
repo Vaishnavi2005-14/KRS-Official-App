@@ -38,6 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF040E1E),
+      appBar: AppBar(toolbarHeight: 0),
       body: SafeArea(
         child: Stack(
           children: [
@@ -130,10 +131,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: CircleAvatar(
               radius: size.height * 0.12,
               backgroundColor: Colors.black,
-              child: Image(
-                image: NetworkImage(
-                  profileImage ??
-                      'https://krs.kiit.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FKRS.31bc350a.png&w=384&q=75',
+              child: ClipOval(
+                child: Image(
+                  image: NetworkImage(
+                    profileImage ??
+                        'https://krs.kiit.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FKRS.31bc350a.png&w=384&q=75',
+                  ),
                 ),
               ),
             ),
