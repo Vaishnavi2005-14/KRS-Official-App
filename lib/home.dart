@@ -10,6 +10,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Image(image: AssetImage('assets/construction.png')));
+    return Scaffold(
+      appBar: AppBar(toolbarHeight: 0),
+      body: SafeArea(
+        child: Center(
+          child: Image(image: AssetImage('assets/construction.png')),
+        ),
+      ),
+    );
   }
 }

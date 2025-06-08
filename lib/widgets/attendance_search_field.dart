@@ -25,7 +25,7 @@ class AttendanceSearchField extends StatelessWidget {
         suffixIcon: IconButton(
           icon: Icon(
             hasSearched ? Icons.clear : Icons.search,
-            color: Colors.orange,
+            color: Color(0xffE5A122),
           ),
           onPressed: hasSearched ? onClear : onSearch,
         ),
@@ -33,17 +33,11 @@ class AttendanceSearchField extends StatelessWidget {
         fillColor: const Color(0xFF040E1E),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: Colors.amberAccent,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: Color(0xffE5A122), width: 2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: Colors.amberAccent,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: Color(0xffE5A122), width: 2),
         ),
       ),
       onSubmitted: (_) => onSearch(),

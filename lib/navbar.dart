@@ -68,8 +68,8 @@ class Navbar extends StatelessWidget {
         ),
         child: SvgPicture.asset(
           image,
-          height: h * 0.06,
-          width: h * 0.06,
+          height: h * 0.03,
+          width: h * 0.03,
           colorFilter: ColorFilter.mode(
             isSelected ? Colors.black : Color(0xffE5A122),
             BlendMode.srcIn,

@@ -10,7 +10,6 @@ import 'package:krs_app/screens/attendance_page.dart';
 import 'package:krs_app/screens/splash.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/screens/loginsc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(
@@ -34,19 +33,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String? authToken = '';
-  Future<void> getAuthtoken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      authToken = prefs.getString('token');
-    });
-  }
-
-  void intiState() {
-    super.initState();
-    getAuthtoken();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -54,8 +40,8 @@ class _MyAppState extends State<MyApp> {
         fontFamily: 'Poppins',
         textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.black),
         scaffoldBackgroundColor: const Color(0xff040E1E),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF040E1E),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFFE5A122),
           elevation: 0,
         ),
       ),
@@ -66,7 +52,7 @@ class _MyAppState extends State<MyApp> {
         '/home': (context) => Home(),
         '/login': (context) => LoginScreen(),
         '/profile': (context) => const ProfileScreen(),
-        '/attendance': (context) => AttendancePage(authToken: authToken ?? ''),
+        '/attendance': (context) => AttendancePage(),
         '/main': (context) => Navbar(),
       },
     );
