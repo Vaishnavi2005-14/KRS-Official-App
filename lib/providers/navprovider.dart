@@ -8,9 +8,9 @@ class NavigationProvider extends ChangeNotifier {
   int get selectedIndex => _selectedIndex;
 
   final List<Widget> _screens = [
-    const Home(),
-    const AttendanceHome(),
-    const ProfileScreen(),
+    Home(),
+    AttendanceHome(),
+    ProfileScreen()
   ];
 
   Widget get currentScreen => _screens[_selectedIndex];
