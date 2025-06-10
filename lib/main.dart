@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:krs_app/home.dart';
 import 'package:krs_app/navbar.dart';
-import 'package:krs_app/screens/attendance_home.dart';
 import 'package:krs_app/screens/profile.dart';
 import 'package:krs_app/providers/attendance_provider.dart';
 import 'package:krs_app/providers/loader.dart';
