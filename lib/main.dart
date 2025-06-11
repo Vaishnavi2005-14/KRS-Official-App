@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:krs_app/home.dart';
 import 'package:krs_app/navbar.dart';
+import 'package:krs_app/providers/mom_provider.dart';
 import 'package:krs_app/screens/profile.dart';
 import 'package:krs_app/providers/attendance_provider.dart';
 import 'package:krs_app/providers/loader.dart';
@@ -11,7 +12,6 @@ import 'package:krs_app/screens/splash.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/screens/loginsc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 void main() {
   runApp(
     MultiProvider(
@@ -20,6 +20,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => OutlinedTextProvider()),
         ChangeNotifierProvider(create: (_) => LoaderProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
+        ChangeNotifierProvider(create: (_) => MoMProvider()),      
       ],
       child: const MyApp(),
     ),
