@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:krs_app/screens/animated_text.dart';
 import 'package:krs_app/screens/attendance_home.dart';
+import 'package:krs_app/screens/mom/mom_view_page.dart';
 import 'package:krs_app/services/auth.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -245,12 +246,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 _buildDashboardCard(
                   title: "Minutes of Meeting",
                   subtitle: "View and edit MoM",
-                  icon: Icons.person_outline,
+                  icon: Icons.library_books_outlined,
                   screenWidth: screenWidth,
                   screenHeight: screenHeight,
                   isTablet: isTablet,
                   onTap: () {
-                    // saalo idhar likhna
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MoMViewPage()),
+                    );
                   },
                 ),
               ],
