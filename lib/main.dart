@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:krs_app/screens/attendance_record.dart';
 import 'package:krs_app/screens/dashboard.dart';
 import 'package:krs_app/navbar.dart';
 import 'package:krs_app/screens/profile.dart';
@@ -12,6 +13,11 @@ import 'package:krs_app/screens/attendance_marking.dart';
 import 'package:krs_app/screens/splash.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/screens/loginsc.dart';
+import 'package:krs_app/providers/attendance_view_provider.dart';
+import 'package:krs_app/providers/attendance_gateway_provider.dart';
+import 'package:krs_app/providers/user_selection_provider.dart';
+import 'package:krs_app/providers/user_attendance_provider.dart';
+import 'package:krs_app/screens/attendance_gateway.dart';
 
 void main() {
   runApp(
@@ -21,6 +27,10 @@ void main() {
         ChangeNotifierProvider(create: (_) => OutlinedTextProvider()),
         ChangeNotifierProvider(create: (_) => LoaderProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
+        ChangeNotifierProvider(create: (_) => AttendanceViewProvider()),
+        ChangeNotifierProvider(create: (_) => AttendanceGatewayProvider()),
+        ChangeNotifierProvider(create: (_) => UserSelectionProvider()),
+        ChangeNotifierProvider(create: (_) => UserAttendanceProvider()),
       ],
       child: const MyApp(),
     ),
@@ -57,6 +67,8 @@ class _MyAppState extends State<MyApp> {
         '/notices': (context) => const NoticesPage(),
         '/attendance-home': (context) => AttendanceHomePage(),
         '/attendance-marking': (context) => AttendanceMarkingPage(),
+        '/attendance-record': (context) => AttendanceRecordsPage(),
+        '/attendance-gateway': (context) => AttendanceGatewayPage(),
         '/dashboard': (context) => const DashboardScreen(),
       },
     );

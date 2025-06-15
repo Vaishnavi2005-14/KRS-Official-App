@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:krs_app/screens/attendance_gateway.dart';
 import 'package:krs_app/widgets/attendance_setup_dialog.dart';
 
 class AttendanceHomePage extends StatelessWidget {
@@ -11,27 +12,6 @@ class AttendanceHomePage extends StatelessWidget {
     final isTablet = screenWidth > 600;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(
-      //     'ATTENDANCE',
-      //     style: TextStyle(
-      //       color: Colors.black,
-      //       fontSize: isTablet ? 28 : 24,
-      //       fontWeight: FontWeight.bold,
-      //     ),
-      //   ),
-      //   backgroundColor: Color(0xFFE5A122),
-      //   elevation: 0,
-      //   toolbarHeight: isTablet ? 70 : 56,
-      //   leading: IconButton(
-      //     icon: Icon(
-      //       Icons.arrow_back,
-      //       color: Colors.black,
-      //       size: isTablet ? 28 : 24,
-      //     ),
-      //     onPressed: () => Navigator.pop(context),
-      //   ),
-      // ),
       appBar: AppBar(
         backgroundColor: Color(0xff040E1E),
         elevation: 0,
@@ -86,24 +66,16 @@ class AttendanceHomePage extends StatelessWidget {
                 _buildAttendanceCard(
                   context,
                   title: "View Attendance",
-                  subtitle: "View previously marked attendance",
-                  icon: Icons.visibility_outlined,
+                  subtitle: "Access attendance records and analytics",
+                  icon: Icons.analytics_outlined,
                   screenWidth: screenWidth,
                   screenHeight: screenHeight,
                   isTablet: isTablet,
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'View Attendance - Coming Soon!',
-                          style: TextStyle(fontSize: isTablet ? 16 : 14),
-                        ),
-                        backgroundColor: Color(0xFFE5A122),
-                      ),
-                    );
+                    _navigateToAttendanceGateway(context);
                   },
                 ),
-                // Add some bottom padding to prevent overflow when keyboard appears
+
                 SizedBox(height: screenHeight * 0.1),
               ],
             ),
@@ -118,6 +90,13 @@ class AttendanceHomePage extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (context) => AttendanceSetupDialog(),
+    );
+  }
+
+  void _navigateToAttendanceGateway(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AttendanceGatewayPage()),
     );
   }
 

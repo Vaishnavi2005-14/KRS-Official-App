@@ -130,7 +130,7 @@ class AttendanceProvider with ChangeNotifier {
           bool matchesSearch =
               _searchQuery.isEmpty ||
               member.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-              member.rollNo.toLowerCase().contains(_searchQuery.toLowerCase());
+              member.roll.toLowerCase().contains(_searchQuery.toLowerCase());
 
           return matchesDomain && matchesSearch;
         }).toList();
@@ -191,6 +191,7 @@ class AttendanceProvider with ChangeNotifier {
       }
 
       final attendanceData = {
+        'date': _selectedDate.toIso8601String(),
         'topic': _topic,
         'categoryType': _categoryType,
         'team': _team,
@@ -203,7 +204,7 @@ class AttendanceProvider with ChangeNotifier {
               };
             }).toList(),
       };
-
+      print("Saving attendance data: $attendanceData");
       await ApiService.submitAttendanceSession(token, attendanceData);
 
       _isSaving = false;
@@ -282,26 +283,27 @@ class AttendanceProvider with ChangeNotifier {
     return _remarkControllers[memberId]!;
   }
 
-  Future<void> submitAttendance(String token) async {
-    try {
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      final data =
-          _selectedStatus.entries
-              .map(
-                (e) => {
-                  '_id': e.key,
-                  'status': e.value,
-                  'remark': _remarks[e.key] ?? '',
-                  'date': today,
-                },
-              )
-              .toList();
-      await ApiService.submitAttendance(token, data);
-      print("Attendance submitted successfully");
-    } catch (error) {
-      print("Error submitting attendance: $error");
-    }
-  }
+  // Future<void> submitAttendance(String token) async {
+  //   try {
+  //     final today = DateTime.now().toIso8601String().split('T')[0];
+  //     final data =
+  //         _selectedStatus.entries
+  //             .map(
+  //               (e) => {
+  //                 '_id': e.key,
+  //                 'status': e.value,
+  //                 'remark': _remarks[e.key] ?? '',
+  //                 'date': today,
+  //               },
+  //             )
+  //             .toList();
+  //     print("Submitting attendance data: $data");
+  //     await ApiService.submitAttendance(token, data);
+  //     print("Attendance submitted successfully");
+  //   } catch (error) {
+  //     print("Error submitting attendance: $error");
+  //   }
+  // }
 
   void disposeControllers() {
     for (var controller in _remarkControllers.values) {

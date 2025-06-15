@@ -79,7 +79,7 @@ class MemberAttendanceCard extends StatelessWidget {
                           ),
 
                           Text(
-                            'Roll #${member.rollNo} • ${member.domain}',
+                            'Roll #${member.roll} • ${member.domain}',
                             style: TextStyle(
                               color: Colors.grey[400],
                               fontSize: isTablet ? 16 : 13,

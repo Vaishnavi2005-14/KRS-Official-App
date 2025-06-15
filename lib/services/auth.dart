@@ -55,20 +55,24 @@ class AuthService {
   }
 
   Future<bool> isAdmin() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? designation = prefs.getString("designation");
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? designation = prefs.getString("designation");
 
-    if (designation == null) return false;
+      if (designation == null) return false;
 
-    if (designation == 'Admin') {
-      return true;
-    } else {
+      if (designation == 'Admin') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }
 
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+    await prefs.clear();
   }
 }

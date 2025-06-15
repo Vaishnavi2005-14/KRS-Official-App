@@ -109,14 +109,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Image.asset('assets/ksac.png', fit: BoxFit.contain),
                 ),
                 SizedBox(width: 4),
-                // SizedBox(width: 4),
               ],
             ),
             backgroundColor: Color(0xFFE5A122),
             elevation: 0,
             toolbarHeight: isTablet ? 70 : 56,
             actions: [
-              // Right side icon
               Container(
                 margin: EdgeInsets.only(right: 16),
                 padding: EdgeInsets.all(isTablet ? 10 : 8),
