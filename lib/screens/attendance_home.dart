@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:krs_app/screens/attendance_record.dart';
+import 'attendance_page.dart';
 
 class AttendanceHome extends StatefulWidget {
   const AttendanceHome({super.key});
@@ -9,240 +11,209 @@ class AttendanceHome extends StatefulWidget {
 }
 
 class _AttendanceHomeState extends State<AttendanceHome> {
-  final List<Map<String, String>> attendanceList = [];
-
-  String? selectedDate;
-  final TextEditingController titleController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  String? _selectedDate;
 
   Future<void> _showAddAttendanceDialog() async {
-    titleController.clear();
-    selectedDate = null;
+    _titleController.clear();
+    _selectedDate = null;
 
     await showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xff06132A),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text(
-            "Add Attendance",
-            style: TextStyle(color: Colors.white),
-          ),
-          content: StatefulBuilder(
-            builder: (context, setInnerState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: titleController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      hintText: "Enter title",
-                      hintStyle: TextStyle(color: Colors.grey),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xffE5A122)),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xffE5A122)),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextButton.icon(
-                    onPressed: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                        builder: (context, child) {
-                          return Theme(
-                            data: ThemeData.dark().copyWith(
-                              colorScheme: ColorScheme.dark(
-                                primary: const Color(0xffE5A122),
-                                onPrimary: Colors.black,
-                                surface: const Color(0xff06132A),
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked != null) {
-                        setInnerState(() {
-                          selectedDate = DateFormat(
-                            'dd/MM/yyyy',
-                          ).format(picked);
-                        });
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.calendar_today,
-                      color: Color(0xffE5A122),
-                    ),
-                    label: Text(
-                      selectedDate ?? "Pick a date",
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (titleController.text.isNotEmpty && selectedDate != null) {
-                  setState(() {
-                    attendanceList.add({
-                      "title": titleController.text,
-                      "date": selectedDate!,
-                    });
-                  });
-                  Navigator.pop(context); // Close dialog first
-                  Navigator.pushNamed(
-                    context,
-                    '/attendance',
-                  ); // Navigate to attendance page
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xffE5A122),
-              ),
-              child: const Text("Save", style: TextStyle(color: Colors.black)),
-            ),
-          ],
-        );
-      },
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xff06132A),
+        title: const Text("New Attendance Session", 
+            style: TextStyle(color: Colors.white)),
+        content: _buildDialogContent(),
+        actions: _buildDialogActions(),
+      ),
     );
+  }
+
+  Widget _buildDialogContent() {
+    return StatefulBuilder(
+      builder: (context, setState) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _titleController,
+            decoration: const InputDecoration(
+              hintText: "Session Title",
+              hintStyle: TextStyle(color: Colors.grey),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xffE5A122))),
+            ),
+            style: const TextStyle(color: Colors.white),
+          ),
+          const SizedBox(height: 20),
+          TextButton.icon(
+            icon: const Icon(Icons.calendar_today, color: Color(0xffE5A122)),
+            label: Text(
+              _selectedDate ?? "Select Date",
+              style: const TextStyle(color: Colors.white),
+            ),
+            onPressed: () async => await _selectDate(setState),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _selectDate(void Function(void Function()) setState) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (context, child) => Theme(
+        data: ThemeData.dark().copyWith(
+          colorScheme: const ColorScheme.dark(
+            primary: Color(0xffE5A122),
+            onPrimary: Colors.black,
+          ),
+        ),
+        child: child!,
+      ),
+    );
+    if (picked != null) {
+      setState(() => _selectedDate = DateFormat('dd/MM/yyyy').format(picked));
+    }
+  }
+
+  List<Widget> _buildDialogActions() {
+    return [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+      ),
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xffE5A122)),
+        onPressed: _saveAttendanceSession,
+        child: const Text("Save", style: TextStyle(color: Colors.black)),
+      ),
+    ];
+  }
+
+  void _saveAttendanceSession() {
+    final title = _titleController.text.trim();
+    final date = _selectedDate;
+    if (title.isNotEmpty && date != null) {
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => AttendancePage(
+            title: title,
+            date: date,
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var s = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: const Color(0xff040E1E),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(s.height * 0.12),
-        child: SafeArea(
-          child: Center(
-            child: Text(
-              "ATTENDANCE",
-              style: TextStyle(
-                color: const Color(0xffE5A122),
-                fontSize: s.width * 0.1,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
-              ),
-            ),
-          ),
+      appBar: _buildAppBar(),
+      body: _buildCardLayout(),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      toolbarHeight: MediaQuery.of(context).size.height * 0.12,
+      backgroundColor: Colors.transparent,
+      title: const Text(
+        "ATTENDANCE",
+        style: TextStyle(
+          color: Color(0xffE5A122),
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.5,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          children: [
-            // Search bar
-            Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xffE5A122)),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                children: const [
-                  Expanded(
-                    child: TextField(
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: "Search...",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: InputBorder.none,
-                      ),
-                    ),
+      centerTitle: true,
+    );
+  }
+
+  Widget _buildCardLayout() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(
+              minWidth: double.infinity,
+              maxWidth: double.infinity,
+            ),
+            child: _buildActionCard(
+              title: "Mark Attendance",
+              icon: Icons.edit_calendar,
+              onTap: _showAddAttendanceDialog,
+            ),
+          ),
+          const SizedBox(height: 30),
+          ConstrainedBox(
+            constraints: const BoxConstraints(
+              minWidth: double.infinity,
+              maxWidth: double.infinity,
+            ),
+            child: _buildActionCard(
+              title: "View Attendance",
+              icon: Icons.list_alt,
+              onTap: () => Navigator.push(
+  context,
+  MaterialPageRoute(builder: (_) =>  AttendanceRecordsPage()),
+),
+
+          ),
+      )],
+      ),
+    );
+  }
+
+  Widget _buildActionCard({
+    required String title,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      color: const Color(0xff06132A),
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+        side: const BorderSide(color: Color(0xffE5A122), width: 1),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onTap: onTap,
+        child: Container(
+          constraints: const BoxConstraints(
+            minWidth: double.infinity,
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(icon, color: const Color(0xffE5A122), size: 40),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Icon(Icons.search, color: Color(0xffE5A122)),
-                ],
+                ),
               ),
-            ),
-
-            // Attendance list or empty state
-            Expanded(
-              child:
-                  attendanceList.isEmpty
-                      ? const Center(
-                        child: Text(
-                          "No Attendance yet !",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xffE5A122),
-                            fontSize: 18,
-                          ),
-                        ),
-                      )
-                      : ListView.builder(
-                        itemCount: attendanceList.length,
-                        itemBuilder: (context, index) {
-                          final item = attendanceList[index];
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 15),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 15,
-                            ),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color(0xffE5A122),
-                              ),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  item['title']!,
-                                  style: const TextStyle(
-                                    color: Color(0xffE5A122),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  item['date']!,
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-            ),
-          ],
-        ),
-      ),
-
-      // Mark new attendance button
-      floatingActionButton: SizedBox(
-        width: s.width * 0.8,
-        height: 50,
-        child: FloatingActionButton.extended(
-          backgroundColor: const Color(0xffE5A122),
-          onPressed: _showAddAttendanceDialog,
-          label: const Text(
-            "Mark new Attendance",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ],
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

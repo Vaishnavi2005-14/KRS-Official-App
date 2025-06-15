@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:krs_app/home.dart';
 import 'package:krs_app/navbar.dart';
+import 'package:krs_app/providers/attendance_view_provider.dart';
 import 'package:krs_app/providers/mom_provider.dart';
 import 'package:krs_app/screens/profile.dart';
 import 'package:krs_app/providers/attendance_provider.dart';
@@ -21,7 +22,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => OutlinedTextProvider()),
         ChangeNotifierProvider(create: (_) => LoaderProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
-        ChangeNotifierProvider(create: (_) => MoMProvider()),      
+        ChangeNotifierProvider(create: (_) => MoMProvider()),
+        ChangeNotifierProvider(create: (_) => AttendanceViewProvider()),      
       ],
       child: const MyApp(),
     ),
@@ -55,7 +57,7 @@ class _MyAppState extends State<MyApp> {
         '/home': (context) => Home(),
         '/login': (context) => LoginScreen(),
         '/profile': (context) => const ProfileScreen(),
-        '/attendance': (context) => AttendancePage(),
+        '/attendance': (context) => AttendancePage(title: '', date: '',),
         '/main': (context) => Navbar(),
       },
     );

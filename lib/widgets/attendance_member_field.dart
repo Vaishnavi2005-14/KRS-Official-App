@@ -28,7 +28,6 @@ class AttendanceMemberList extends StatelessWidget {
       itemCount: filteredMembers.length,
       itemBuilder: (context, index) {
         final member = filteredMembers[index];
-        // Pass a unique key for each card (required for Slidable)
         return AttendanceMemberCard(
           key: ValueKey(member.id),
           member: member,
