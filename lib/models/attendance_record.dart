@@ -1,4 +1,3 @@
-// attendance_record.dart
 class AttendanceRecord {
   final String userId;
   final String name;
@@ -6,6 +5,7 @@ class AttendanceRecord {
   final String status;
   final String rollNo;
   final String? remarks;
+  final String? image;
 
   AttendanceRecord({
     required this.userId,
@@ -13,7 +13,8 @@ class AttendanceRecord {
     required this.domain,
     required this.status,
     required this.rollNo,
-    this.remarks,
+    required this.image,
+    required this.remarks,
   });
 
   AttendanceRecord copyWith({
@@ -31,6 +32,7 @@ class AttendanceRecord {
       status: status ?? this.status,
       rollNo: rollNo ?? this.rollNo,
       remarks: remarks ?? this.remarks,
+      image: image ?? this.image,
     );
   }
 
@@ -43,6 +45,7 @@ class AttendanceRecord {
       status: json['status'] ?? '',
       rollNo: user['roll']?.toString() ?? '',
       remarks: json['remarks']?.toString(),
+      image: json['image']?.toString() ?? '',
     );
   }
 

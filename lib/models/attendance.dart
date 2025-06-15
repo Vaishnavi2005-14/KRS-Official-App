@@ -19,7 +19,7 @@ class Attendance {
 
   factory Attendance.fromJson(Map<String, dynamic> json) {
     return Attendance(
-      id: json['_id']?.toString() ?? '', // MongoDB returns _id
+      id: json['_id']?.toString() ?? '',
       date: json['date'] ?? '',
       topic: json['topic'] ?? '',
       categoryType: json['categoryType'],

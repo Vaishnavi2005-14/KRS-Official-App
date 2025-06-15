@@ -4,78 +4,83 @@ import '../models/member.dart';
 import '../models/attendance.dart';
 
 class ApiService {
-  static const String baseUrl = "krs-app-server.vercel.app";
+  static const String baseUrl = "https://krs-app-server.vercel.app";
 
-  // Helper for error handling
   static Exception _createApiException(http.Response response, String message) {
     final status = response.statusCode;
     final body = response.body.replaceAll('\n', ' ');
     return Exception('$message. Status: $status, Response: $body');
   }
 
-  /// Fetch all members for a team (default: General)
-  static Future<List<Member>> fetchMembers(String token, {String team = 'General'}) async {
-    final uri = Uri.https(baseUrl, '/api/attendance', {'team': team});
+  static Future<List<Member>> fetchMembers(String token, String team) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/attendance?team=$team'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List data = json.decode(response.body);
+        return data.map((e) => Member.fromJson(e)).toList();
+      } else {
+        throw Exception(
+          'Failed to load members. Status: ${response.statusCode}, Response: ${response.body}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error fetching members: $e');
+    }
+  }
+
+  // static Future<void> submitAttendance(
+  //   String token,
+  //   List<Map<String, dynamic>> attendanceData,
+  // ) async {
+  //   try {
+  //     // print("Hello" + baseUrl);
+  //     // print(attendanceData);
+  //     for (var entry in attendanceData) {
+  //       final response = await http.post(
+  //         Uri.parse('$baseUrl/attendance/mark'),
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': 'Bearer $token',
+  //         },
+  //         body: json.encode(entry),
+  //       );
+
+  //       if (response.statusCode != 200) {
+  //         throw Exception(
+  //           'Failed to submit attendance. Status: ${response.statusCode}, Response: ${response.body}',
+  //         );
+  //       }
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Error submitting attendance: $e');
+  //   }
+  // }
+
+  static Future<List<Attendance>> fetchAllAttendance(String token) async {
+    // final uri = Uri.https(baseUrl, '/api/attendance/all');
     final response = await http.get(
-      uri,
+      Uri.parse('$baseUrl/api/attendance/all'),
       headers: {
+        'Content-Type': 'application/json',
         "Authorization": "Bearer $token",
       },
     );
+
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
-      return data.map((e) => Member.fromJson(e)).toList();
+      return data.map((json) => Attendance.fromJson(json)).toList();
     } else {
-      throw _createApiException(response, 'Failed to load members');
+      throw _createApiException(response, 'Failed to load attendance records');
     }
   }
 
-  /// Fetch attendance for a specific meeting (by date and topic)
-  /// Fetch all attendance records
-static Future<List<Attendance>> fetchAllAttendance(String token) async {
-  final uri = Uri.https(baseUrl, '/api/attendance/all');
-  final response = await http.get(
-    uri,
-    headers: {
-      "Authorization": "Bearer $token",
-    },
-  );
-  
-  if (response.statusCode == 200) {
-    final List data = json.decode(response.body);
-    return data.map((json) => Attendance.fromJson(json)).toList();
-  } else {
-    throw _createApiException(response, 'Failed to load attendance records');
-  }
-}
-
-
-  /// Submit attendance for a meeting
-  static Future<void> submitAttendance(
-    String token,
-    Attendance attendanceData,
-  ) async {
-    final uri = Uri.https(baseUrl, '/api/attendance/mark');
-    final response = await http.post(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode(attendanceData.toJson()),
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return;
-    } else if (response.statusCode == 409) {
-      throw Exception('Duplicate meeting (same date and topic)');
-    } else if (response.statusCode == 400) {
-      throw Exception('Validation error: ${response.body}');
-    } else {
-      throw _createApiException(response, 'Failed to submit attendance');
-    }
-  }
-
-  /// Update a user's attendance status in a meeting
   static Future<void> updateUserAttendance({
     required String token,
     required String attendanceId,
@@ -83,7 +88,7 @@ static Future<List<Attendance>> fetchAllAttendance(String token) async {
     required String status,
     String? remarks,
   }) async {
-    final uri = Uri.https(baseUrl, '/api/attendance/updateattendancebyid');
+    final uri = Uri.parse('$baseUrl/api/attendance/updateattendancebyid');
     final body = {
       "attendance_id": attendanceId,
       "user_id": userId,
@@ -103,17 +108,13 @@ static Future<List<Attendance>> fetchAllAttendance(String token) async {
     }
   }
 
-  /// Delete a user's attendance from a meeting
   static Future<void> deleteUserAttendance({
     required String token,
     required String attendanceId,
     required String userId,
   }) async {
-    final uri = Uri.https(baseUrl, '/api/attendance/deleteuserattendance');
-    final body = {
-      "attendance_id": attendanceId,
-      "user_id": userId,
-    };
+    final uri = Uri.parse('$baseUrl/api/attendance/deleteuserattendance');
+    final body = {"attendance_id": attendanceId, "user_id": userId};
     final response = await http.delete(
       uri,
       headers: {
@@ -127,7 +128,6 @@ static Future<List<Attendance>> fetchAllAttendance(String token) async {
     }
   }
 
-  /// Update meeting details (date, topic, etc.)
   static Future<void> updateMeetingAttendance({
     required String token,
     required String attendanceId,
@@ -136,7 +136,7 @@ static Future<List<Attendance>> fetchAllAttendance(String token) async {
     String? categoryType,
     String? team,
   }) async {
-    final uri = Uri.https(baseUrl, '/api/attendance/updateattendancedetails');
+    final uri = Uri.parse('$baseUrl/api/attendance/updateattendancedetails');
     final body = {
       "attendance_id": attendanceId,
       if (date != null) "date": date,
@@ -153,19 +153,19 @@ static Future<List<Attendance>> fetchAllAttendance(String token) async {
       body: json.encode(body),
     );
     if (response.statusCode != 200) {
-      throw _createApiException(response, 'Failed to update meeting attendance');
+      throw _createApiException(
+        response,
+        'Failed to update meeting attendance',
+      );
     }
   }
 
-  /// Delete an entire attendance record (meeting)
   static Future<void> deleteAttendanceRecord({
     required String token,
     required String attendanceId,
   }) async {
-    final uri = Uri.https(baseUrl, '/api/attendance/deleteattendancerecord');
-    final body = {
-      "attendance_id": attendanceId,
-    };
+    final uri = Uri.parse('$baseUrl/api/attendance/deleteattendancerecord');
+    final body = {"attendance_id": attendanceId};
     final response = await http.delete(
       uri,
       headers: {
@@ -179,5 +179,100 @@ static Future<List<Attendance>> fetchAllAttendance(String token) async {
     }
   }
 
-  
+  static Future<void> submitAttendanceSession(
+    String token,
+    Map<String, dynamic> attendanceSessionData,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/attendance/mark'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(attendanceSessionData),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception(
+          'Failed to submit attendance session. Status: ${response.statusCode}, Response: ${response.body}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error submitting attendance session: $e');
+    }
+  }
+
+  static Future<List<Member>> fetchMembersForSelection(
+    String token,
+    String team,
+  ) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/attendance?team=$team'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List data = json.decode(response.body);
+        return data.map((e) => Member.fromJson(e)).toList();
+      } else {
+        throw Exception(
+          'Failed to load members. Status: ${response.statusCode}, Response: ${response.body}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error fetching members: $e');
+    }
+  }
+
+  static Future<List<Attendance>> fetchAttendanceByDateRange({
+    required String token,
+    String? from,
+    String? to,
+  }) async {
+    String url = '$baseUrl/api/attendance/all';
+    if (from != null && to != null) {
+      url += '?from=$from&to=$to';
+    }
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List data = json.decode(response.body);
+      return data.map((json) => Attendance.fromJson(json)).toList();
+    } else {
+      throw _createApiException(response, 'Failed to load attendance records');
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getUserAttendanceById({
+    required String token,
+    required String userId,
+  }) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/attendance/getusrattendancebyid?user_id=$userId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      final List data = responseData['data'] ?? [];
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw _createApiException(response, 'Failed to get user attendance');
+    }
+  }
 }

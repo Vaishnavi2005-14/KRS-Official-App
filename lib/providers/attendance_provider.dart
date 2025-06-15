@@ -1,51 +1,219 @@
-import 'package:flutter/widgets.dart';
-import 'package:krs_app/models/attendance.dart';
-import 'package:krs_app/models/attendance_record.dart';
+import 'package:flutter/material.dart';
 import 'package:krs_app/models/member.dart';
 import 'package:krs_app/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum AttendanceStatus {
+  present('Present'),
+  absent('Absent'),
+  absentWithReason('Absent with reason'),
+  presentOnline('Present Online');
+
+  const AttendanceStatus(this.value);
+  final String value;
+}
+
 class AttendanceProvider with ChangeNotifier {
   List<Member> _members = [];
-  List<Member> _filteredMembers = [];
   Map<String, String> _selectedStatus = {};
   final Map<String, String> _remarks = {};
   final Map<String, bool> _isEditingRemarks = {};
   String? _expandedMemberId;
-
-  // Meeting details state
-  String? _meetingTopic;
-  String? _meetingCategory;
-  String? _meetingTeam;
-
   final Map<String, TextEditingController> _remarkControllers = {};
 
+  String _topic = '';
+  DateTime _selectedDate = DateTime.now();
+  String _categoryType = 'General';
+  String _team = 'General';
+
+  List<String> _availableDomains = [];
+  String _selectedDomain = 'All Teams';
+  String _searchQuery = '';
+  List<Member> _filteredMembers = [];
+
+  bool _isLoading = false;
+  bool _isSaving = false;
+  Set<String> _highlightedMembers = {};
+
   List<Member> get members => _members;
-  List<Member> get filteredMembers => _filteredMembers;
   Map<String, String> get selectedStatus => _selectedStatus;
   Map<String, String> get remarks => _remarks;
   Map<String, bool> get isEditingRemarks => _isEditingRemarks;
   String? get expandedMemberId => _expandedMemberId;
-  String? get meetingTopic => _meetingTopic;
-  String? get meetingCategory => _meetingCategory;
-  String? get meetingTeam => _meetingTeam;
 
-  /// Helper: Get token from SharedPreferences
-  Future<String> _getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-    if (token == null || token.isEmpty) {
-      throw Exception('User not authenticated');
-    }
-    return token;
+  String get topic => _topic;
+  DateTime get selectedDate => _selectedDate;
+  String get categoryType => _categoryType;
+  String get team => _team;
+
+  List<String> get availableDomains => _availableDomains;
+  String get selectedDomain => _selectedDomain;
+  String get searchQuery => _searchQuery;
+  List<Member> get filteredMembers => _filteredMembers;
+
+  bool get isLoading => _isLoading;
+  bool get isSaving => _isSaving;
+  Set<String> get highlightedMembers => _highlightedMembers;
+
+  void setAttendanceSession({
+    required String topic,
+    required DateTime date,
+    required String categoryType,
+    required String team,
+  }) {
+    _topic = topic;
+    _selectedDate = date;
+    _categoryType = categoryType;
+    _team = team;
   }
 
-  /// Set meeting details (call before submitAttendance)
-  void setMeetingDetails({String? topic, String? category, String? team}) {
-    _meetingTopic = topic;
-    _meetingCategory = category;
-    _meetingTeam = team;
+  Future<void> fetchMembersForAttendance() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("token");
+
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+
+      _members = await ApiService.fetchMembers(token, _team);
+
+      if (_categoryType == 'Domain' && _team != 'General') {
+        _members = _members.where((member) => member.domain == _team).toList();
+      }
+
+      _selectedStatus = {for (var m in _members) m.id: ''};
+      _remarks.clear();
+      _isEditingRemarks.clear();
+      _highlightedMembers.clear();
+
+      _remarkControllers.forEach((_, controller) => controller.dispose());
+      _remarkControllers.clear();
+
+      for (var m in _members) {
+        _remarkControllers[m.id] = TextEditingController();
+      }
+
+      _availableDomains = ['All Teams'];
+      _availableDomains.addAll(
+        _members.map((m) => m.domain).toSet().toList()..sort(),
+      );
+
+      _updateFilteredMembers();
+
+      notifyListeners();
+    } catch (error) {
+      notifyListeners();
+      throw error;
+    }
+  }
+
+  void updateSearchQuery(String query) {
+    _searchQuery = query;
+    _updateFilteredMembers();
     notifyListeners();
+  }
+
+  void updateSelectedDomain(String domain) {
+    _selectedDomain = domain;
+    _updateFilteredMembers();
+    notifyListeners();
+  }
+
+  void _updateFilteredMembers() {
+    _filteredMembers =
+        _members.where((member) {
+          bool matchesDomain =
+              _selectedDomain == 'All Teams' ||
+              member.domain == _selectedDomain;
+
+          bool matchesSearch =
+              _searchQuery.isEmpty ||
+              member.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+              member.roll.toLowerCase().contains(_searchQuery.toLowerCase());
+
+          return matchesDomain && matchesSearch;
+        }).toList();
+  }
+
+  void updateMemberStatus(String memberId, String status) {
+    _selectedStatus[memberId] = status;
+    _highlightedMembers.remove(memberId);
+
+    if (status != 'Absent with reason') {
+      clearRemarkForMember(memberId);
+    }
+
+    notifyListeners();
+  }
+
+  void updateMemberStatusWithReason(
+    String memberId,
+    String status,
+    String reason,
+  ) {
+    _selectedStatus[memberId] = status;
+    _remarks[memberId] = reason;
+    _remarkControllers[memberId]?.text = reason;
+    _highlightedMembers.remove(memberId);
+    notifyListeners();
+  }
+
+  void resetMemberStatus(String memberId) {
+    _selectedStatus[memberId] = '';
+    clearRemarkForMember(memberId);
+    notifyListeners();
+  }
+
+  List<Member> getUnmarkedMembers() {
+    return _members.where((member) {
+      final status = _selectedStatus[member.id];
+      return status == null || status.isEmpty;
+    }).toList();
+  }
+
+  void highlightUnmarkedMembers() {
+    _highlightedMembers.clear();
+    _highlightedMembers.addAll(getUnmarkedMembers().map((member) => member.id));
+    notifyListeners();
+  }
+
+  Future<void> saveAttendance() async {
+    try {
+      _isSaving = true;
+      notifyListeners();
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("token");
+
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+
+      final attendanceData = {
+        'date': _selectedDate.toIso8601String(),
+        'topic': _topic,
+        'categoryType': _categoryType,
+        'team': _team,
+        'attendanceRecords':
+            _selectedStatus.entries.map((entry) {
+              return {
+                'user': entry.key,
+                'status': entry.value,
+                'remarks': _remarks[entry.key] ?? '',
+              };
+            }).toList(),
+      };
+      print("Saving attendance data: $attendanceData");
+      await ApiService.submitAttendanceSession(token, attendanceData);
+
+      _isSaving = false;
+      notifyListeners();
+    } catch (error) {
+      _isSaving = false;
+      notifyListeners();
+      throw error;
+    }
   }
 
   void toggleExpanded(String memberId) {
@@ -53,79 +221,52 @@ class AttendanceProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Fetch all members from backend
-  Future<void> fetchMembers(String s) async {
+  Future<void> fetchMembers(String token) async {
     try {
-      final token = await _getToken();
-      _members = await ApiService.fetchMembers(token);
-      _filteredMembers = List.from(_members);
-      _initializeMemberStates();
+      _members = await ApiService.fetchMembers(token, _team);
+      _selectedStatus = {for (var m in _members) m.id: 'Present'};
+      _remarks.clear();
+      _isEditingRemarks.clear();
+
+      _remarkControllers.forEach((_, controller) => controller.dispose());
+      _remarkControllers.clear();
+
+      for (var m in _members) {
+        _remarkControllers[m.id] = TextEditingController();
+      }
+
       notifyListeners();
     } catch (error) {
       print("Error fetching members: $error");
-      rethrow;
     }
   }
 
-  void _initializeMemberStates() {
-    _selectedStatus = {for (var m in _members) m.id: 'Present'};
-    _remarks.clear();
-    _isEditingRemarks.clear();
-
-    _remarkControllers.forEach((_, controller) => controller.dispose());
-    _remarkControllers.clear();
-
-    for (var m in _members) {
-      _remarkControllers[m.id] = TextEditingController();
-    }
-  }
-
-  /// Filter members by name or roll
-  void filterMembers(String query) {
-    final q = query.toLowerCase().trim();
-    _filteredMembers = _members.where((member) {
-      return member.name.toLowerCase().contains(q) ||
-          member.roll.toLowerCase().contains(q);
-    }).toList();
-    notifyListeners();
-  }
-
-  /// Reset all filters
-  void clearFilters() {
-    _filteredMembers = List.from(_members);
-    notifyListeners();
-  }
-
-  /// Update attendance status for a member
   void updateStatus(String memberId, String status) {
     _selectedStatus[memberId] = status;
 
-    if (!['Absent', 'With Reason', 'Absent with reason'].contains(status)) {
+    if (!status.contains('Absent')) {
       clearRemarkForMember(memberId);
     }
+
     notifyListeners();
   }
 
-  /// Update remark for a member
   void updateRemark(String memberId, String remark) {
     _remarks[memberId] = remark;
     _remarkControllers[memberId]?.text = remark;
     notifyListeners();
   }
 
-  /// Toggle editing state for remarks for a member
   void toggleEditingRemarks(String memberId) {
     _isEditingRemarks[memberId] = !(_isEditingRemarks[memberId] ?? false);
     notifyListeners();
   }
 
-  /// Set editing state for remarks for a member
   void setEditingRemarks(String memberId, bool isEditing) {
     _isEditingRemarks[memberId] = isEditing;
     notifyListeners();
   }
 
-  /// Clear remark for a member
   void clearRemarkForMember(String memberId) {
     _remarks.remove(memberId);
     _remarkControllers[memberId]?.text = '';
@@ -133,67 +274,47 @@ class AttendanceProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Get TextEditingController for a member's remark
   TextEditingController getRemarkController(String memberId) {
     if (!_remarkControllers.containsKey(memberId)) {
-      _remarkControllers[memberId] =
-          TextEditingController(text: _remarks[memberId] ?? '');
+      _remarkControllers[memberId] = TextEditingController(
+        text: _remarks[memberId] ?? '',
+      );
     }
     return _remarkControllers[memberId]!;
   }
 
-  /// Submit attendance to backend
-  Future<void> submitAttendance() async {
-    try {
-      final token = await _getToken();
+  // Future<void> submitAttendance(String token) async {
+  //   try {
+  //     final today = DateTime.now().toIso8601String().split('T')[0];
+  //     final data =
+  //         _selectedStatus.entries
+  //             .map(
+  //               (e) => {
+  //                 '_id': e.key,
+  //                 'status': e.value,
+  //                 'remark': _remarks[e.key] ?? '',
+  //                 'date': today,
+  //               },
+  //             )
+  //             .toList();
+  //     print("Submitting attendance data: $data");
+  //     await ApiService.submitAttendance(token, data);
+  //     print("Attendance submitted successfully");
+  //   } catch (error) {
+  //     print("Error submitting attendance: $error");
+  //   }
+  // }
 
-      // Validate required fields
-      if (_meetingTopic == null || _meetingTopic!.isEmpty) {
-        throw Exception('Meeting topic is required');
-      }
-      if (_meetingCategory == null ||
-          !['General', 'Domain'].contains(_meetingCategory)) {
-        throw Exception('Invalid meeting category');
-      }
-
-      // Format date to dd/MM/yyyy
-      final now = DateTime.now();
-      final formattedDate =
-          "${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}";
-
-      final attendance = Attendance(
-        date: formattedDate,
-        topic: _meetingTopic!,
-        categoryType: _meetingCategory!,
-        team: _meetingTeam ?? 'General',
-        attendanceRecords: _members
-            .map((m) => AttendanceRecord(
-                  
-                  status: _selectedStatus[m.id] ?? 'Present',
-                  remarks: _remarks[m.id], name: '', domain: '', rollNo: '', userId: '',
-                ))
-            .toList(), id: '',
-      );
-
-      await ApiService.submitAttendance(token, attendance);
-
-      // Clear form after successful submission
-      _meetingTopic = null;
-      _meetingCategory = null;
-      _meetingTeam = null;
-      _initializeMemberStates();
-      notifyListeners();
-    } catch (error) {
-      print("Error submitting attendance: $error");
-      rethrow;
-    }
-  }
-
-  /// Dispose all remark controllers
   void disposeControllers() {
     for (var controller in _remarkControllers.values) {
       controller.dispose();
     }
     _remarkControllers.clear();
+  }
+
+  @override
+  void dispose() {
+    disposeControllers();
+    super.dispose();
   }
 }

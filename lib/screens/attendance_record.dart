@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:krs_app/widgets/attendance_search_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../models/attendance.dart';
 import '../services/api_service.dart';
 import 'attendance_view.dart';
@@ -16,6 +18,7 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
   final TextEditingController _searchController = TextEditingController();
   List<Attendance> _allRecords = [];
   List<Attendance> _filteredRecords = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -23,8 +26,17 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
     _attendanceFuture = _loadAttendance().then((records) {
       _allRecords = records;
       _filteredRecords = _allRecords;
+      setState(() {
+        _isLoading = false;
+      });
       return records;
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<List<Attendance>> _loadAttendance() async {
@@ -48,144 +60,292 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xff040E1E),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff040E1E),
-        centerTitle: true,
-        elevation: 0,
-        title: const Text(
-          'Records',
-          style: TextStyle(
-            color: Color(0xffE5A122),
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: FutureBuilder<List<Attendance>>(
-        future: _attendanceFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Error: ${snapshot.error}',
-                style: const TextStyle(color: Colors.red),
-              ),
-            );
-          }
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isTablet = screenWidth > 600;
 
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: _filterRecords,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Search by topic or date...',
-                    hintStyle: const TextStyle(color: Colors.white70),
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: Color(0xffE5A122),
-                    ),
-                    filled: true,
-                    fillColor: const Color(0xff06132A),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: const BorderSide(
-                        color: Color(0xffE5A122),
-                        width: 1.5,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: const BorderSide(
-                        color: Color(0xffE5A122),
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text(
+              'RECORDS',
+              style: TextStyle(
+                color: Color(0xFFE5A122),
+                fontSize: isTablet ? 28 : 24,
+                fontWeight: FontWeight.bold,
               ),
-              Expanded(
-                child:
-                    _filteredRecords.isEmpty
-                        ? const Center(
-                          child: Text(
-                            'No matching records found',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 18,
-                            ),
-                          ),
-                        )
-                        : ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: _filteredRecords.length,
-                          itemBuilder: (context, index) {
-                            final attendance = _filteredRecords[index];
-                            return Card(
-                              color: const Color(0xff06132A),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                side: const BorderSide(
-                                  color: Color(0xffE5A122),
-                                  width: 1,
-                                ),
-                              ),
-                              margin: const EdgeInsets.only(bottom: 18),
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 18,
-                                ),
-                                title: Text(
-                                  attendance.topic,
-                                  style: const TextStyle(
-                                    color: Color(0xffE5A122),
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+            ),
+            Spacer(),
+            Container(
+              padding: EdgeInsets.all(isTablet ? 10 : 8),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
+              ),
+              child: Icon(
+                Icons.history,
+                color: Colors.white,
+                size: isTablet ? 28 : 24,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Color(0xff040E1E),
+        elevation: 0,
+        toolbarHeight: isTablet ? 70 : 56,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+            size: isTablet ? 28 : 24,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              top: screenWidth * 0.01,
+              left: screenWidth * 0.04,
+              right: screenWidth * 0.04,
+              bottom: screenWidth * 0.02,
+            ),
+            child: AttendanceSearchBar(
+              controller: _searchController,
+              onChanged: _filterRecords,
+            ),
+          ),
+          Expanded(
+            child: Skeletonizer(
+              enabled: _isLoading,
+              child:
+                  _isLoading
+                      ? _buildSkeletonList(screenWidth, screenHeight, isTablet)
+                      : FutureBuilder<List<Attendance>>(
+                        future: _attendanceFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return _buildSkeletonList(
+                              screenWidth,
+                              screenHeight,
+                              isTablet,
+                            );
+                          }
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
+                                    size: isTablet ? 120 : 80,
+                                    color: Colors.red,
                                   ),
-                                ),
-                                subtitle: Text(
-                                  attendance.date,
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                trailing: const Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Color(0xffE5A122),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (_) => AttendanceViewPage(
-                                            title: attendance.topic,
-                                            date: attendance.date,
-                                          ),
+                                  SizedBox(height: screenHeight * 0.02),
+                                  Text(
+                                    'Error: ${snapshot.error}',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: isTablet ? 20 : 16,
                                     ),
-                                  );
-                                },
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
                             );
-                          },
-                        ),
+                          }
+
+                          return _filteredRecords.isEmpty
+                              ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.search_off,
+                                      size: isTablet ? 120 : 80,
+                                      color: Colors.grey[400],
+                                    ),
+                                    SizedBox(height: screenHeight * 0.02),
+                                    Text(
+                                      'No matching records found',
+                                      style: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontSize: isTablet ? 20 : 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              : Padding(
+                                padding: EdgeInsets.only(
+                                  top: screenWidth * 0.02,
+                                ),
+                                child: ListView.builder(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: screenWidth * 0.04,
+                                  ),
+                                  itemCount: _filteredRecords.length,
+                                  itemBuilder: (context, index) {
+                                    final attendance = _filteredRecords[index];
+                                    return Container(
+                                      margin: EdgeInsets.only(
+                                        bottom: screenHeight * 0.02,
+                                      ),
+                                      padding: EdgeInsets.all(
+                                        screenWidth * 0.04,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xff06132A),
+                                        borderRadius: BorderRadius.circular(
+                                          isTablet ? 16 : 12,
+                                        ),
+                                        border: Border.all(
+                                          color: Colors.grey.withOpacity(0.3),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => AttendanceViewPage(
+                                                    title: attendance.topic,
+                                                    date: attendance.date,
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                        borderRadius: BorderRadius.circular(
+                                          isTablet ? 16 : 12,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: isTablet ? 60 : 50,
+                                              height: isTablet ? 60 : 50,
+                                              decoration: BoxDecoration(
+                                                color: Color(
+                                                  0xFFE5A122,
+                                                ).withOpacity(0.2),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(
+                                                Icons.event_note,
+                                                color: Color(0xFFE5A122),
+                                                size: isTablet ? 32 : 28,
+                                              ),
+                                            ),
+                                            SizedBox(width: screenWidth * 0.04),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    attendance.topic,
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize:
+                                                          isTablet ? 20 : 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4),
+                                                  Text(
+                                                    attendance.date,
+                                                    style: TextStyle(
+                                                      color: Color(
+                                                        0xFFE5A122,
+                                                      ).withOpacity(0.8),
+                                                      fontSize:
+                                                          isTablet ? 16 : 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: Color(0xFFE5A122),
+                                              size: isTablet ? 24 : 20,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                        },
+                      ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonList(
+    double screenWidth,
+    double screenHeight,
+    bool isTablet,
+  ) {
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+      itemCount: 6,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: EdgeInsets.only(bottom: screenHeight * 0.02),
+          padding: EdgeInsets.all(screenWidth * 0.04),
+          decoration: BoxDecoration(
+            color: Color(0xff06132A),
+            borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
+            border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: isTablet ? 60 : 50,
+                height: isTablet ? 60 : 50,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(width: screenWidth * 0.04),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: isTablet ? 20 : 16,
+                      color: Colors.grey[300],
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      width: screenWidth * 0.5,
+                      height: isTablet ? 16 : 12,
+                      color: Colors.grey[300],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: isTablet ? 24 : 20,
+                height: isTablet ? 24 : 20,
+                color: Colors.grey[300],
               ),
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

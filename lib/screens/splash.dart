@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:krs_app/services/auth.dart';
+import 'package:krs_app/providers/textdecorator.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -110,14 +112,15 @@ class _SplashScreenState extends State<SplashScreen>
                 position: _titleSlideAnimation,
                 child: FadeTransition(
                   opacity: _fadeAnimation,
-                  child: Text(
-                    'KIIT ROBOTICS',
-                    style: TextStyle(
-                      color: Color(0xFFFFD700),
-                      fontSize: h * 0.05,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: w * 0.01,
-                    ),
+                  child: Consumer<OutlinedTextProvider>(
+                    builder: (context, provider, child) {
+                      return outlinedText(
+                        text: "KIIT ROBOTICS",
+                        fontSize: w * 0.11,
+                        textColor: Color(0xFFEEBE65),
+                        outlineColor: Color(0xffE5A122),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -125,14 +128,15 @@ class _SplashScreenState extends State<SplashScreen>
                 position: _titleSlideAnimation,
                 child: FadeTransition(
                   opacity: _fadeAnimation,
-                  child: Text(
-                    'SOCIETY',
-                    style: TextStyle(
-                      color: Color(0xFFFFD700),
-                      fontSize: h * 0.05,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: w * 0.01,
-                    ),
+                  child: Consumer<OutlinedTextProvider>(
+                    builder: (context, provider, child) {
+                      return outlinedText(
+                        text: "SOCIETY",
+                        fontSize: w * 0.11,
+                        textColor: Color(0xFFEEBE65),
+                        outlineColor: Color(0xffE5A122),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -222,6 +226,7 @@ class _SplashScreenState extends State<SplashScreen>
                 color: Color(0xFFFFD700),
                 fontSize: 18,
                 letterSpacing: 1.5,
+                fontFamily: "Poppins",
               ),
             ),
           ],
