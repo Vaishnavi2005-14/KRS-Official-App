@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:krs_app/screens/attendance_record.dart';
 import 'package:krs_app/screens/dashboard.dart';
 import 'package:krs_app/navbar.dart';
+import 'package:krs_app/providers/attendance_view_provider.dart';
+import 'package:krs_app/providers/mom_provider.dart';
 import 'package:krs_app/screens/profile.dart';
 import 'package:krs_app/screens/notices.dart';
 import 'package:krs_app/providers/attendance_provider.dart';
@@ -13,7 +15,6 @@ import 'package:krs_app/screens/attendance_marking.dart';
 import 'package:krs_app/screens/splash.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/screens/loginsc.dart';
-import 'package:krs_app/providers/attendance_view_provider.dart';
 import 'package:krs_app/providers/attendance_gateway_provider.dart';
 import 'package:krs_app/providers/user_selection_provider.dart';
 import 'package:krs_app/providers/user_attendance_provider.dart';
@@ -31,6 +32,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => AttendanceGatewayProvider()),
         ChangeNotifierProvider(create: (_) => UserSelectionProvider()),
         ChangeNotifierProvider(create: (_) => UserAttendanceProvider()),
+        ChangeNotifierProvider(create: (_) => MoMProvider()),
       ],
       child: const MyApp(),
     ),

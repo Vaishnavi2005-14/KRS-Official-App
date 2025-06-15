@@ -16,8 +16,7 @@ class Member {
   factory Member.fromJson(Map<String, dynamic> json) {
     return Member(
       id: json['_id']?.toString() ?? '',
-      name:
-          json['name'] ?? '',
+      name: json['name'] ?? '',
       domain: json['domain'] ?? '',
       roll: json['roll']?.toString() ?? '',
       image: json['image']?.toString() ?? '',
