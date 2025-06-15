@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:krs_app/home.dart';
-import 'package:krs_app/screens/attendance_home.dart';
+import 'package:krs_app/screens/dashboard.dart';
+import 'package:krs_app/screens/notices.dart';
 import 'package:krs_app/screens/profile.dart';
 
 class NavigationProvider extends ChangeNotifier {
@@ -8,8 +8,8 @@ class NavigationProvider extends ChangeNotifier {
   int get selectedIndex => _selectedIndex;
 
   final List<Widget> _screens = [
-    Home(),
-    AttendanceHome(),
+    DashboardScreen(),
+    NoticesPage(),
     ProfileScreen()
   ];
 

@@ -5,10 +5,11 @@ import '../models/member.dart';
 class ApiService {
   static const String baseUrl = "https://krs-app-server.vercel.app";
 
-  static Future<List<Member>> fetchMembers(String token) async {
+  static Future<List<Member>> fetchMembers(String token, String team) async {
+    
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/api/attendance'),
+        Uri.parse('$baseUrl/api/attendance?team=$team'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -17,6 +18,8 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final List data = json.decode(response.body);
+        print(data);
+        // print(data.map((e) => Member.fromJson(e)).toList());
         return data.map((e) => Member.fromJson(e)).toList();
       } else {
         throw Exception(
@@ -51,6 +54,30 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Error submitting attendance: $e');
+    }
+  }
+
+  static Future<void> submitAttendanceSession(
+    String token,
+    Map<String, dynamic> attendanceSessionData,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/attendance/mark'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(attendanceSessionData),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception(
+          'Failed to submit attendance session. Status: ${response.statusCode}, Response: ${response.body}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Error submitting attendance session: $e');
     }
   }
 }

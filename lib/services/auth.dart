@@ -26,6 +26,12 @@ class AuthService {
     return false;
   }
 
+  Future<String> getUserName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String fullName = prefs.getString("name") ?? "Guest";
+    return fullName.trim().split(' ').first;
+  }
+
   Future<bool> isAuthenticated() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("token");

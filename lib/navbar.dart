@@ -8,13 +8,15 @@ class Navbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double h = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isTablet = screenWidth > 600;
     final navProvider = Provider.of<NavigationProvider>(context);
 
     return Scaffold(
       body: navProvider.currentScreen,
       bottomNavigationBar: Container(
-        height: h * 0.1,
+        height: isTablet ? screenHeight * 0.1 : screenHeight * 0.11,
         decoration: const BoxDecoration(
           color: Color(0xff06132A),
           borderRadius: BorderRadius.only(
@@ -22,7 +24,10 @@ class Navbar extends StatelessWidget {
             topRight: Radius.circular(20),
           ),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.symmetric(
+          vertical: isTablet ? 15 : 10,
+          horizontal: screenWidth * 0.05,
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -31,18 +36,27 @@ class Navbar extends StatelessWidget {
               navProvider,
               index: 0,
               image: 'assets/home.svg',
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+              isTablet: isTablet,
             ),
             _buildNavItem(
               context,
               navProvider,
               index: 1,
-              image: 'assets/attendance.svg',
+              image: 'assets/mail-notification.svg',
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+              isTablet: isTablet,
             ),
             _buildNavItem(
               context,
               navProvider,
               index: 2,
               image: 'assets/profile.svg',
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+              isTablet: isTablet,
             ),
           ],
         ),
@@ -55,21 +69,23 @@ class Navbar extends StatelessWidget {
     NavigationProvider navProvider, {
     required int index,
     required String image,
+    required double screenWidth,
+    required double screenHeight,
+    required bool isTablet,
   }) {
-    final double h = MediaQuery.of(context).size.height;
     final bool isSelected = navProvider.selectedIndex == index;
     return InkWell(
       onTap: () => navProvider.setIndex(index),
       child: Container(
-        padding: const EdgeInsets.all(15),
+        padding: EdgeInsets.all(isTablet ? 18 : 13),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xffE5A122) : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(isTablet ? 12 : 10),
         ),
         child: SvgPicture.asset(
           image,
-          height: h * 0.03,
-          width: h * 0.03,
+          height: isTablet ? screenHeight * 0.05 : screenHeight * 0.04,
+          width: isTablet ? screenHeight * 0.05 : screenHeight * 0.04,
           colorFilter: ColorFilter.mode(
             isSelected ? Colors.black : Color(0xffE5A122),
             BlendMode.srcIn,
