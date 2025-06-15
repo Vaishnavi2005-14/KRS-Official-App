@@ -25,7 +25,7 @@ class AttendanceSearchField extends StatelessWidget {
         suffixIcon: IconButton(
           icon: Icon(
             hasSearched ? Icons.clear : Icons.search,
-            color: Color(0xffE5A122),
+            color: const Color(0xffE5A122),
           ),
           onPressed: hasSearched ? onClear : onSearch,
         ),

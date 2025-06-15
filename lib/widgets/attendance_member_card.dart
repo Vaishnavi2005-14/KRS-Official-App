@@ -20,13 +20,13 @@ class AttendanceMemberCard extends StatelessWidget {
     final remarkController = provider.getRemarkController(member.id);
 
     return Slidable(
-      key: ValueKey(member.id), // Ensure a unique key for each member
+      key: ValueKey(member.id),
       startActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
             onPressed: (context) {
-              provider.updateStatus(member.id, 'With Reason');
+              provider.updateStatus(member.id, 'Absent with reason');
               provider.setEditingRemarks(member.id, true);
             },
             label: "With Reason",
@@ -54,6 +54,7 @@ class AttendanceMemberCard extends StatelessWidget {
             onPressed: (context) {
               provider.updateStatus(member.id, 'Absent');
               provider.setEditingRemarks(member.id, false);
+              provider.clearRemarkForMember(member.id);
             },
             label: "Absent",
             icon: Icons.cancel,
@@ -100,7 +101,7 @@ class AttendanceMemberCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Roll ${member.rollNo}',
+                      'Roll ${member.roll}',
                       style: const TextStyle(color: Color(0xffE5A122)),
                     ),
                     Text(
@@ -111,7 +112,7 @@ class AttendanceMemberCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (selectedStatus == 'Absent')
+            if (selectedStatus == 'Absent with reason')
               ...[
                 const SizedBox(height: 12),
                 Align(
