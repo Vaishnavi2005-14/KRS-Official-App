@@ -8,10 +8,10 @@ class AttendanceMemberCard extends StatelessWidget {
   final List<String> statuses;
 
   const AttendanceMemberCard({
-    Key? key,
+    super.key,
     required this.member,
     required this.statuses,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

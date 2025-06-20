@@ -62,15 +62,37 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _googleSignIn() async {
+    Provider.of<LoaderProvider>(context, listen: false).showLoader(context);
+
+    bool success = await _authService.googleSign();
+
+    if (!mounted) return;
+    Provider.of<LoaderProvider>(context, listen: false).hideLoader();
+
+    if (success) {
+      bool isAdmin = await _authService.isAdmin();
+
+      if (!mounted) return;
+
+      if (isAdmin) {
+        Navigator.pushReplacementNamed(context, '/main');
+      } else {
+        Navigator.pushReplacementNamed(context, '/main');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final height = size.height;
-    final width = size.width;
+    final s = MediaQuery.sizeOf(context);
+    // final height = size.height;
+    // final width = size.width;
 
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
+        appBar: AppBar(toolbarHeight: 0, backgroundColor: Color(0xffE5A122)),
         body: Stack(
           children: [
             Container(decoration: const BoxDecoration()),
@@ -81,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Positioned(
               right: -60,
-              bottom: height * 0.4,
+              bottom: s.height * 0.4,
               child: _glowCircle(160, const Color(0xFFF1B500), 70, 25, 40),
             ),
             Positioned(
@@ -98,10 +120,10 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SafeArea(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                // padding: EdgeInsets.symmetric(horizontal: s.width * 0.05),
                 child: Column(
                   children: [
-                    SizedBox(height: height * 0.12),
+                    SizedBox(height: s.height * 0.12),
                     Center(
                       child: Column(
                         children: [
@@ -109,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             builder: (context, provider, child) {
                               return outlinedText(
                                 text: "KIIT ROBOTICS",
-                                fontSize: width * 0.11,
+                                fontSize: s.width * 0.11,
                                 textColor: Color(0xff353535),
                                 outlineColor: Color(0xffE5A122),
                               );
@@ -119,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             builder: (context, provider, child) {
                               return outlinedText(
                                 text: "SOCIETY",
-                                fontSize: width * 0.11,
+                                fontSize: s.width * 0.11,
                                 textColor: Color(0xff353535),
                                 outlineColor: Color(0xffE5A122),
                               );
@@ -128,73 +150,85 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: height * 0.08),
+                    SizedBox(height: s.height * 0.08),
                     Container(
-                      padding: EdgeInsets.all(width * 0.05),
+                      width: double.infinity,
+                      padding: EdgeInsets.all(s.width * 0.05),
                       decoration: BoxDecoration(
-                        color: Colors.black.withAlpha(53),
-                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.black.withAlpha(204),
+                        gradient: RadialGradient(
+                          colors: [
+                            Color(0xff194DA6),
+                            Color(0xff2164D7).withAlpha(20),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(50),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Center(
-                            child: Text.rich(
-                              TextSpan(
-                                children: [
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text.rich(
                                   TextSpan(
-                                    text: 'Welcome!',
-                                    style: TextStyle(
-                                      color: Color(0xffE5A122),
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: 'Welcome ',
+                                        style: TextStyle(
+                                          color: Color(0xffE5A122),
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Back!',
+                                        style: TextStyle(
+                                          color: Color(0xff194DA6),
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(height: height * 0.03),
+                          SizedBox(height: s.height * 0.03),
                           const Text(
                             'Email',
                             style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
-                          SizedBox(height: height * 0.01),
+                          SizedBox(height: s.height * 0.01),
                           _buildTextField(
                             Icons.person,
                             'Email',
                             emailController,
                           ),
-                          SizedBox(height: height * 0.025),
+                          SizedBox(height: s.height * 0.025),
                           const Text(
                             'Password',
                             style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
-                          SizedBox(height: height * 0.01),
+                          SizedBox(height: s.height * 0.01),
                           _buildTextField(
                             Icons.key,
                             'Password',
                             passwordController,
                             obscureText: true,
                           ),
-                          // const SizedBox(height: 10),
-                          // Align(
-                          //   alignment: Alignment.centerRight,
-                          //   child: TextButton(
-                          //     onPressed: () {},
-                          //     child: const Text(
-                          //       "Forgot Password?",
-                          //       style: TextStyle(
-                          //         color: Colors.white54,
-                          //         fontSize: 12,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          SizedBox(height: height * 0.015),
+                          SizedBox(height: s.height * 0.015),
                           Container(
                             width: double.infinity,
-                            height: height * 0.06,
+                            height: s.height * 0.06,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               gradient: const LinearGradient(
@@ -203,7 +237,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: TextButton(
                               onPressed: () {
-                                FocusScope.of(context).unfocus;
                                 _login();
                               },
                               child: const Text(
@@ -216,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: height * 0.03),
+                          SizedBox(height: s.height * 0.03),
                           Center(
                             child: OutlinedButton.icon(
                               style: OutlinedButton.styleFrom(
@@ -228,17 +261,40 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed:
+                                  _googleSignIn, // Added functionality here
                               icon: SvgPicture.asset(
                                 'assets/ggl.svg',
-                                width: width * 0.06,
-                                height: width * 0.06,
+                                width: s.width * 0.06,
+                                height: s.width * 0.06,
                               ),
                               label: const Text(
-                                'Sign in with Google',
+                                'Continue with Google',
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
+                          ),
+                          SizedBox(height: s.height * 0.02),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "New to KRS Workspace?",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/signup');
+                                },
+                                child: Text(
+                                  "SignUp",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

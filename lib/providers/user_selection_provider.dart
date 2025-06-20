@@ -59,8 +59,4 @@ class UserSelectionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

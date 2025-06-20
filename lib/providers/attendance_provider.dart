@@ -31,9 +31,9 @@ class AttendanceProvider with ChangeNotifier {
   String _searchQuery = '';
   List<Member> _filteredMembers = [];
 
-  bool _isLoading = false;
+  final bool _isLoading = false;
   bool _isSaving = false;
-  Set<String> _highlightedMembers = {};
+  final Set<String> _highlightedMembers = {};
 
   List<Member> get members => _members;
   Map<String, String> get selectedStatus => _selectedStatus;
@@ -104,7 +104,7 @@ class AttendanceProvider with ChangeNotifier {
       notifyListeners();
     } catch (error) {
       notifyListeners();
-      throw error;
+      rethrow;
     }
   }
 
@@ -212,7 +212,7 @@ class AttendanceProvider with ChangeNotifier {
     } catch (error) {
       _isSaving = false;
       notifyListeners();
-      throw error;
+      rethrow;
     }
   }
 

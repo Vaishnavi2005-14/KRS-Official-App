@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:krs_app/screens/attendance_record.dart';
 import 'package:krs_app/screens/dashboard.dart';
 import 'package:krs_app/navbar.dart';
@@ -12,6 +13,8 @@ import 'package:krs_app/providers/navprovider.dart';
 import 'package:krs_app/providers/textdecorator.dart';
 import 'package:krs_app/screens/attendance_home.dart';
 import 'package:krs_app/screens/attendance_marking.dart';
+import 'package:krs_app/screens/signup.dart';
+import 'package:krs_app/screens/signupdetails.dart';
 import 'package:krs_app/screens/splash.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/screens/loginsc.dart';
@@ -20,7 +23,8 @@ import 'package:krs_app/providers/user_selection_provider.dart';
 import 'package:krs_app/providers/user_attendance_provider.dart';
 import 'package:krs_app/screens/attendance_gateway.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load();
   runApp(
     MultiProvider(
       providers: [
@@ -65,6 +69,7 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => const SplashScreen(),
         '/main': (context) => Navbar(),
         '/login': (context) => LoginScreen(),
+        '/signup': (context) => SignUp(),
         '/profile': (context) => const ProfileScreen(),
         '/notices': (context) => const NoticesPage(),
         '/attendance-home': (context) => AttendanceHomePage(),
