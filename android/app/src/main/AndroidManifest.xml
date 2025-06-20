@@ -30,7 +30,20 @@
             android:value="2" />
     </application>
 
+    <!-- Required for url_launcher to open http/https links on Android 11+ -->
     <queries>
+        <!-- Allow launching web URLs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="http" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https" />
+        </intent>
+        <!-- Your existing PROCESS_TEXT query can stay if needed -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT" />
             <data android:mimeType="text/plain" />
