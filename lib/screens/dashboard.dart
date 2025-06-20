@@ -4,6 +4,7 @@ import 'package:krs_app/screens/attendance_home.dart';
 import 'package:krs_app/screens/mom/mom_view_page.dart';
 import 'package:krs_app/services/auth.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:krs_app/screens/info.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -116,19 +117,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
             elevation: 0,
             toolbarHeight: isTablet ? 70 : 56,
             actions: [
-              Container(
-                margin: EdgeInsets.only(right: 16),
-                padding: EdgeInsets.all(isTablet ? 10 : 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
-                ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const InfoPage()),
+                  );
+                },
+                child: Container(
+                  margin: EdgeInsets.only(right: 16),
+                  padding: EdgeInsets.all(isTablet ? 10 : 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
+                  ),
                 child: Icon(
                   Icons.info_outline,
                   color: Colors.white,
                   size: isTablet ? 28 : 24,
                 ),
               ),
+              )
             ],
           ),
         ),
