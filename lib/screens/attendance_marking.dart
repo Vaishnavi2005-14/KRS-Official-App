@@ -125,7 +125,7 @@ class _AttendanceMarkingPageState extends State<AttendanceMarkingPage> {
             ),
           ),
 
-          Container(
+          SizedBox(
             height: isTablet ? 80 : 60,
             child: Skeletonizer(
               enabled: _isLoading,

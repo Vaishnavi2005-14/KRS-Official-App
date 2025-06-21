@@ -60,8 +60,4 @@ class UserAttendanceProvider with ChangeNotifier {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

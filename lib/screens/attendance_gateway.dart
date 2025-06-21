@@ -209,7 +209,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                     ),
                   ),
 
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
