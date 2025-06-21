@@ -50,6 +50,7 @@ dependencies:
   google_sign_in: ^6.3.0
   flutter_dotenv: ^5.2.1
   lottie: ^3.3.1
+  flutter_launcher_icons: ^0.14.4
 
 
 dev_dependencies:
@@ -65,6 +66,11 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios : true
+  image_path : "assets/krs_big.png"
+  background_color: "#000000"
 
 # The following section is specific to Flutter packages.
 flutter:

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:krs_app/providers/loader.dart';
+import 'package:krs_app/services/auth.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -20,6 +24,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     loadData();
+  }
+
+  void logout() async {
+    final AuthService authService = AuthService();
+    Provider.of<LoaderProvider>(context, listen: false).showLoader(context);
+
+    await authService.logout();
+    if (!mounted) return;
+    Provider.of<LoaderProvider>(context, listen: false).hideLoader();
+    setState(() {
+      Navigator.pushReplacementNamed(context, '/login');
+    });
+
+    Fluttertoast.showToast(
+      msg: "You have been logged out successfully!",
+      backgroundColor: Colors.green,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
   }
 
   Future<void> loadData() async {
@@ -77,11 +100,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           InkWell(
             onTap: () {},
             child: Container(
+              padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: Colors.transparent,
-                boxShadow: [
-                  BoxShadow(color: Color(0xffE5A122), blurRadius: 80),
-                ],
+                color: Colors.white.withAlpha(78),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: SvgPicture.asset(
                 height: h * 0.04,
@@ -95,15 +117,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           Spacer(),
           InkWell(
-            onTap: () {},
+            onTap: logout,
             child: Container(
+              padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: Colors.transparent,
-                boxShadow: [
-                  BoxShadow(color: Color(0xffE5A122), blurRadius: 80),
-                ],
+                color: Colors.white.withAlpha(78),
+                borderRadius: BorderRadius.circular(5),
               ),
-              child: Icon(Icons.settings_rounded, color: Color(0xffE5A122)),
+              child: Icon(
+                Icons.logout_rounded,
+                color: Color(0xffE5A122),
+                size: 30,
+              ),
             ),
           ),
         ],
