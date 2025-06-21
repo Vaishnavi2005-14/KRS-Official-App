@@ -21,6 +21,9 @@ class AuthService {
       prefs.setString("designation", data["user"]["designation"]);
       prefs.setString("domain", data["user"]["domain"]);
       prefs.setString("image", data["user"]["image"]);
+      prefs.setInt("roll", data["user"]["roll"]);
+      prefs.setString("year", data["user"]["year"]);
+      prefs.setString("branch", data["user"]["branch"]);
       return true;
     }
     return false;

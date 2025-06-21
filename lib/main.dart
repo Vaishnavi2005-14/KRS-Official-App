@@ -13,6 +13,7 @@ import 'package:krs_app/providers/textdecorator.dart';
 import 'package:krs_app/screens/attendance_home.dart';
 import 'package:krs_app/screens/attendance_marking.dart';
 import 'package:krs_app/screens/splash.dart';
+import 'package:krs_app/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/screens/loginsc.dart';
 import 'package:krs_app/providers/attendance_gateway_provider.dart';
@@ -24,6 +25,7 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        Provider<AuthService>(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => OutlinedTextProvider()),
         ChangeNotifierProvider(create: (_) => LoaderProvider()),
