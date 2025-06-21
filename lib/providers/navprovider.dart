@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:krs_app/screens/dashboard.dart';
-import 'package:krs_app/screens/notices.dart';
+import 'package:krs_app/screens/notice/notices.dart';
 import 'package:krs_app/screens/profile.dart';
 
 class NavigationProvider extends ChangeNotifier {
@@ -9,7 +9,7 @@ class NavigationProvider extends ChangeNotifier {
 
   final List<Widget> _screens = [
     DashboardScreen(),
-    NoticesPage(),
+    NoticeBoardPage(),
     ProfileScreen()
   ];
 
