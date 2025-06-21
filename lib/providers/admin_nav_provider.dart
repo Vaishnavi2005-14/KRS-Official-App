@@ -9,8 +9,8 @@ class AdminNavigationProvider extends ChangeNotifier {
 
   final List<Widget> _screens = [
     AdminDashboardScreen(),
-    NoticesPage(),
-    ProfileScreen()
+    NoticeBoardPage(),
+    ProfileScreen(),
   ];
 
   Widget get currentScreen => _screens[_selectedIndex];

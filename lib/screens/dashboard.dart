@@ -279,6 +279,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     },
                   ),
 
+                  SizedBox(height: screenHeight * 0.025),
+
                   // SizedBox(height: screenHeight * 0.025),
                   // _buildDashboardCard(
                   //   title: "Member Management",
