@@ -95,16 +95,7 @@ class _DetailsState extends State<Details> {
         );
 
         if (!mounted) return;
-        Navigator.pushReplacementNamed(context, '/main');
-      } else {
-        await Fluttertoast.showToast(
-          msg: "Some Error Occurred",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+        Navigator.pushReplacementNamed(context, '/wait');
       }
     }
   }

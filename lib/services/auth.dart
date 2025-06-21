@@ -20,6 +20,7 @@ class AuthService {
     return _googleSignIn!;
   }
 
+  //JWT login
   Future<bool> login(String email, String password) async {
     final response = await http.post(
       Uri.parse("$baseUrl/login"),
@@ -35,12 +36,12 @@ class AuthService {
       prefs.setString("email", data["user"]["email"]);
       prefs.setString("designation", data["user"]["designation"]);
       prefs.setString("domain", data["user"]["domain"]);
-      prefs.setString("image", data["user"]["image"]);
       return true;
     }
     return false;
   }
 
+  //JWT Signup
   Future<bool> signup(
     String name,
     String email,
@@ -51,26 +52,44 @@ class AuthService {
     String year,
     String pass,
   ) async {
-    final res = await http.post(
-      Uri.parse("$baseUrl/signup"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "name": name,
-        "email": email,
-        "domain": domain,
-        "roll": roll,
-        "phone": phone,
-        "branch": branch,
-        "year": year,
-        "password": pass,
-        "designation": "Member",
-      }),
-    );
-
-    if (res.statusCode == 201) {
-      return true;
+    try {
+      final res = await http.post(
+        Uri.parse("$baseUrl/signup"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "name": name,
+          "email": email,
+          "domain": domain,
+          "roll": roll,
+          "phone": phone,
+          "branch": branch,
+          "year": year,
+          "password": pass,
+          "designation": "Member",
+        }),
+      );
+      if (res.statusCode == 201) {
+        Fluttertoast.showToast(
+          msg: "Your Account has been successfully created.",
+          backgroundColor: Colors.green,
+          toastLength: Toast.LENGTH_LONG,
+        );
+        return true;
+      }
+      Fluttertoast.showToast(
+        msg: jsonDecode(res.body),
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
+      );
+      return false;
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Error : $e",
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
+      );
+      return false;
     }
-    return false;
   }
 
   Future<bool> googleSign() async {

@@ -14,8 +14,8 @@ import 'package:krs_app/providers/textdecorator.dart';
 import 'package:krs_app/screens/attendance_home.dart';
 import 'package:krs_app/screens/attendance_marking.dart';
 import 'package:krs_app/screens/signup.dart';
-import 'package:krs_app/screens/signupdetails.dart';
 import 'package:krs_app/screens/splash.dart';
+import 'package:krs_app/screens/waiting.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/screens/loginsc.dart';
 import 'package:krs_app/providers/attendance_gateway_provider.dart';
@@ -77,6 +77,7 @@ class _MyAppState extends State<MyApp> {
         '/attendance-record': (context) => AttendanceRecordsPage(),
         '/attendance-gateway': (context) => AttendanceGatewayPage(),
         '/dashboard': (context) => const DashboardScreen(),
+        '/wait': (context) => Waiting(),
       },
     );
   }

@@ -236,16 +236,6 @@ class _SignUpState extends State<SignUp> {
                               obscureText: true,
                               isPassword: true,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(
-                                'Password must contain:\n• At least 8 characters\n• One uppercase letter (A-Z)\n• One lowercase letter (a-z)\n• One digit (0-9)\n• One special character (!@#\$%^&*)',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ),
                             SizedBox(height: s.height * 0.025),
                             const Text(
                               'Confirm Password',
@@ -261,6 +251,16 @@ class _SignUpState extends State<SignUp> {
                               confpasswordController,
                               obscureText: true,
                               isConfirmPassword: true,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                'Password must contain:\n• At least 8 characters\n• One uppercase letter (A-Z)\n• One lowercase letter (a-z)\n• One digit (0-9)\n• One special character (!@#\$%^&*)',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 11,
+                                ),
+                              ),
                             ),
                             SizedBox(height: s.height * 0.035),
                             Container(
