@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class AttendanceSearchBar extends StatelessWidget {
   final TextEditingController controller;
   final Function(String) onChanged;
+  final String placeholder;
 
   const AttendanceSearchBar({
     super.key,
     required this.controller,
     required this.onChanged,
+    required this.placeholder,
   });
 
   @override
@@ -26,10 +28,11 @@ class AttendanceSearchBar extends StatelessWidget {
         onChanged: onChanged,
         style: TextStyle(color: Colors.white, fontSize: isTablet ? 18 : 16),
         decoration: InputDecoration(
-          hintText: 'Search members...',
+          hintText: placeholder,
           hintStyle: TextStyle(
             color: Colors.grey[400],
             fontSize: isTablet ? 18 : 16,
+            overflow: TextOverflow.ellipsis
           ),
           prefixIcon: Icon(
             Icons.search,
@@ -41,20 +44,19 @@ class AttendanceSearchBar extends StatelessWidget {
             horizontal: screenWidth * 0.04,
             vertical: isTablet ? 20 : 14,
           ),
-          suffixIcon:
-              controller.text.isNotEmpty
-                  ? IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      color: Colors.grey[400],
-                      size: isTablet ? 28 : 24,
-                    ),
-                    onPressed: () {
-                      controller.clear();
-                      onChanged('');
-                    },
-                  )
-                  : null,
+          suffixIcon: controller.text.isNotEmpty
+              ? IconButton(
+                  icon: Icon(
+                    Icons.clear,
+                    color: Colors.grey[400],
+                    size: isTablet ? 28 : 24,
+                  ),
+                  onPressed: () {
+                    controller.clear();
+                    onChanged('');
+                  },
+                )
+              : null,
         ),
       ),
     );

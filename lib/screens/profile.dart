@@ -134,8 +134,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ClipOval(
                 child: Image(
                   image: NetworkImage(
-                    profileImage ??
-                        'https://krs.kiit.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FKRS.31bc350a.png&w=384&q=75',
+                    (profileImage != null && profileImage!.isNotEmpty)
+                        ? profileImage!
+                        : 'https://krs.kiit.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FKRS.31bc350a.png&w=384&q=75',
                   ),
                 ),
               ),

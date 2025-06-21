@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import '../providers/user_attendance_provider.dart';
+import '../../providers/user_attendance_provider.dart';
 
 class UserAttendanceDetailPage extends StatefulWidget {
   final String userId;

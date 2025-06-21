@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/providers/attendance_provider.dart';
-import 'package:krs_app/widgets/member_attendance_card.dart';
-import 'package:krs_app/widgets/domain_filter_chips.dart';
-import 'package:krs_app/widgets/attendance_search_bar.dart';
-import 'package:krs_app/widgets/absence_reason_dialog.dart';
+import 'package:krs_app/widgets/attendance/member_attendance_card.dart';
+import 'package:krs_app/widgets/attendance/domain_filter_chips.dart';
+import 'package:krs_app/widgets/attendance/attendance_search_bar.dart';
+import 'package:krs_app/widgets/attendance/absence_reason_dialog.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:krs_app/models/member.dart';
 
@@ -38,7 +38,7 @@ class _AttendanceMarkingPageState extends State<AttendanceMarkingPage> {
       final provider = Provider.of<AttendanceProvider>(context, listen: false);
       await provider.fetchMembersForAttendance();
 
-      await Future.delayed(Duration(milliseconds: 500)); 
+      await Future.delayed(Duration(milliseconds: 500));
 
       if (mounted) {
         setState(() {
@@ -52,7 +52,7 @@ class _AttendanceMarkingPageState extends State<AttendanceMarkingPage> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading members: $e'),
+            content: Text('Something went wrong while loading members'),
             backgroundColor: Colors.red,
           ),
         );
@@ -116,6 +116,7 @@ class _AttendanceMarkingPageState extends State<AttendanceMarkingPage> {
             ),
             child: AttendanceSearchBar(
               controller: _searchController,
+              placeholder: 'Search members by name or roll',
               onChanged: (value) {
                 Provider.of<AttendanceProvider>(
                   context,
@@ -125,7 +126,7 @@ class _AttendanceMarkingPageState extends State<AttendanceMarkingPage> {
             ),
           ),
 
-          Container(
+          SizedBox(
             height: isTablet ? 80 : 60,
             child: Skeletonizer(
               enabled: _isLoading,

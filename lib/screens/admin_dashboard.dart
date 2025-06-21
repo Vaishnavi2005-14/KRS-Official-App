@@ -1,34 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:krs_app/screens/animated_text.dart';
-// import 'package:krs_app/screens/attendance/attendance_home.dart';
-// import 'package:krs_app/screens/member_management/member_management_hub.dart';
+import 'package:krs_app/screens/attendance/attendance_home.dart';
+import 'package:krs_app/screens/info.dart';
+import 'package:krs_app/screens/member_management/member_management_hub.dart';
 import 'package:krs_app/screens/mom/mom_view_page.dart';
 import 'package:krs_app/services/auth.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:krs_app/screens/info.dart';
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class AdminDashboardScreen extends StatefulWidget {
+  const AdminDashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  bool _isAdmin = false;
+class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   String _name = '';
+  String _userDesignation = '';
+  bool _isSuperUser = false;
+  bool _isPrivilegedAdminOperationsUser = false;
 
   @override
   void initState() {
     super.initState();
-    _checkAdminStatus();
+    _checkSuperUser();
+    _checkPrivilegedAdminOperationsUser();
     _loadUserName();
+    _loadUserDesignation();
   }
 
-  Future<void> _checkAdminStatus() async {
-    final isAdmin = await AuthService().isAdmin();
+  Future<void> _checkSuperUser() async {
+    final isSuperUser = await AuthService().isSuperUser();
     setState(() {
-      _isAdmin = isAdmin;
+      _isSuperUser = isSuperUser;
+    });
+  }
+
+  Future<void> _checkPrivilegedAdminOperationsUser() async {
+    final isPrivilegedAdminOperationsUser =
+        await AuthService().isPrivilegedAdminOperationsUser();
+    setState(() {
+      _isPrivilegedAdminOperationsUser = isPrivilegedAdminOperationsUser;
     });
   }
 
@@ -40,6 +52,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  Future<void> _loadUserDesignation() async {
+    AuthService().getUserDesignation().then((value) {
+      setState(() {
+        _userDesignation = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -47,20 +67,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final isTablet = screenWidth > 600;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(
-      //     'DASHBOARD',
-      //     style: TextStyle(
-      //       color: Colors.black,
-      //       fontSize: isTablet ? 28 : 24,
-      //       fontWeight: FontWeight.bold,
-      //     ),
-      //   ),
-      //   backgroundColor: Color(0xFFE5A122),
-      //   elevation: 0,
-      //   automaticallyImplyLeading: false,
-      //   toolbarHeight: isTablet ? 70 : 56,
-      // ),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight + 5),
         child: ClipRRect(
@@ -75,15 +81,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   width: isTablet ? 110 : 55,
                   height: isTablet ? 130 : 65,
                   padding: EdgeInsets.all(4),
-
                   child: Image.asset('assets/logo.png', fit: BoxFit.contain),
                 ),
-
                 Container(
                   width: isTablet ? 140 : 75,
                   height: isTablet ? 200 : 100,
                   padding: EdgeInsets.all(3),
-
                   child: SvgPicture.asset(
                     'assets/kiitlogo.svg',
                     colorFilter: ColorFilter.mode(
@@ -103,12 +106,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
                 SizedBox(width: 2),
-
                 Container(
                   width: isTablet ? 40 : 55,
                   height: isTablet ? 30 : 65,
                   padding: EdgeInsets.all(4),
-
                   child: Image.asset('assets/ksac.png', fit: BoxFit.contain),
                 ),
                 SizedBox(width: 4),
@@ -146,17 +147,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Container(
-            //   height: screenWidth * 0.03,
-            //   width: double.infinity,
-            //   decoration: BoxDecoration(
-            //     color: Color(0xFFE5A122),
-            //     borderRadius: BorderRadius.only(
-            //       bottomLeft: Radius.circular(isTablet ? 20 : 20),
-            //       bottomRight: Radius.circular(isTablet ? 20 : 20),
-            //     ),
-            //   ),
-            // ),
             Padding(
               padding: EdgeInsets.only(
                 top: screenWidth * 0.10,
@@ -172,98 +162,109 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         width: isTablet ? 40 : 80,
                         height: isTablet ? 30 : 80,
                         padding: EdgeInsets.all(4),
-
                         child: Image.asset(
                           'assets/robot1.png',
                           fit: BoxFit.contain,
                         ),
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Welcome, $_name!",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: isTablet ? 32 : screenWidth * 0.065,
-                                fontWeight: FontWeight.bold,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "Welcome, $_name!",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: isTablet ? 32 : screenWidth * 0.065,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                            SizedBox(height: screenHeight * 0.008),
-                            // Text(
-                            //   "What would you like to do today?",
-                            //   style: TextStyle(
-                            //     color: Colors.grey[400],
-                            //     fontSize: isTablet ? 17 : screenWidth * 0.038,
-                            //   ),
-                            // ),
-                            AnimatedLanguageText(
-                              texts: [
-                                "What would you like to do today?",
-                                "आज आप क्या करना पसंद करेंगे?",
-                                "अद्य भवान् किमर्थं कर्तुम् इच्छति?",
-                                "আপনি আজ কি করতে চান?",
-                                "మీరు ఈ రోజు ఏమి చేయాలనుకుంటున్నారు?",
-                                "ଆପଣ ଆଜି କଣ କରିବାକୁ ଚାହାଁଛନ୍ତି?",
-                                "तपाईं आज के गर्न चाहनुहुन्छ?",
-                                "ਤੁਸੀਂ ਅੱਜ ਕੀ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
-                                "तुम्हाला आज काय करायचं आहे?",
-                                "Aji apuni ki koribole mon ase?",
-                                "আপুনি আজি কি কৰিব বিচাৰে?",
-                              ],
-                              typingSpeed: Duration(milliseconds: 50),
-                              pauseDuration: Duration(seconds: 2),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                          SizedBox(height: screenHeight * 0.008),
+                          AnimatedLanguageText(
+                            texts: [
+                              "What would you like to do today?",
+                              "आज आप क्या करना पसंद करेंगे?",
+                              "अद्य भवान् किमर्थं कर्तुम् इच्छति?",
+                              "আপনি আজ কি করতে চান?",
+                              "మీరు ఈ రోజు ఏమి చేయాలనుకుంటున్నారు?",
+                              "ଆପଣ ଆଜି କଣ କରିବାକୁ ଚାହାଁଛନ୍ତି?",
+                              "तपाईं आज के गर्न चाहनुहुन्छ?",
+                              "ਤੁਸੀਂ ਅੱਜ ਕੀ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+                              "तुम्हाला आज काय करायचं आहे?",
+                              "Aji apuni ki koribole mon ase?",
+                              "আপুনি আজি কি কৰিব বিচাৰে?",
+                            ],
+                            typingSpeed: Duration(milliseconds: 50),
+                            pauseDuration: Duration(seconds: 2),
+                          ),
+                        ],
                       ),
                     ],
                   ),
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFE5A122),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _userDesignation.isNotEmpty
+                            ? _userDesignation
+                            : "Loading...",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: isTablet ? 12 : 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.03),
+                  if (_isSuperUser) ...[
+                    _buildDashboardCard(
+                      title: "Member Management",
+                      subtitle: "Manage member approvals and roles",
+                      icon: Icons.admin_panel_settings,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight,
+                      isTablet: isTablet,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MemberManagementHub(),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: screenHeight * 0.025),
+                  ],
+                  if (_isPrivilegedAdminOperationsUser) ...[
+                    _buildDashboardCard(
+                      title: "Attendance",
+                      subtitle: "Mark and manage student attendance",
+                      icon: Icons.people_outline,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight,
+                      isTablet: isTablet,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AttendanceHomePage(),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: screenHeight * 0.025),
+                  ],
 
-                  SizedBox(height: screenHeight * 0.04),
-                  // Container(
-                  //   width: double.infinity,
-                  //   child: Image.asset('assets/robot.png', fit: BoxFit.cover),
-                  // ),
-                  // if (_isAdmin) ...[
-                  //   _buildDashboardCard(
-                  //     title: "Attendance",
-                  //     subtitle: "Mark and manage student attendance",
-                  //     icon: Icons.people_outline,
-                  //     screenWidth: screenWidth,
-                  //     screenHeight: screenHeight,
-                  //     isTablet: isTablet,
-                  //     onTap: () {
-                  //       Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //           builder: (context) => AttendanceHomePage(),
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  //   SizedBox(height: screenHeight * 0.025),
-                  // ],
-                  // _buildDashboardCard(
-                  //   title: "Attendance",
-                  //   subtitle: "Mark and manage student attendance",
-                  //   icon: Icons.people_outline,
-                  //   screenWidth: screenWidth,
-                  //   screenHeight: screenHeight,
-                  //   isTablet: isTablet,
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => AttendanceHomePage(),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  // SizedBox(height: screenHeight * 0.025),
                   _buildDashboardCard(
                     title: "Minutes of Meeting",
                     subtitle: "View and edit MoM",
@@ -278,24 +279,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       );
                     },
                   ),
-
-                  // SizedBox(height: screenHeight * 0.025),
-                  // _buildDashboardCard(
-                  //   title: "Member Management",
-                  //   subtitle: "Manage member approvals and roles",
-                  //   icon: Icons.admin_panel_settings,
-                  //   screenWidth: screenWidth,
-                  //   screenHeight: screenHeight,
-                  //   isTablet: isTablet,
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => MemberManagementHub(),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
                 ],
               ),
             ),

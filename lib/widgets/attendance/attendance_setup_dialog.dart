@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:krs_app/screens/attendance_marking.dart';
+import 'package:krs_app/screens/attendance/attendance_marking.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/providers/attendance_provider.dart';
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:krs_app/screens/filtered_attendance_record.dart';
+import 'package:krs_app/screens/attendance/filtered_attendance_record.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../providers/attendance_gateway_provider.dart';
+import '../../providers/attendance_gateway_provider.dart';
 import 'attendance_record.dart';
 import 'user_selection.dart';
 
@@ -106,7 +106,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'View Attendance Between',
+                                  'View & Edit Attendance Between',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: isTablet ? 22 : 18,
@@ -115,7 +115,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                                 ),
                                 SizedBox(height: screenHeight * 0.005),
                                 Text(
-                                  'Select date range to view attendance records',
+                                  'Select date range to view & edit attendance records',
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: isTablet ? 16 : 14,
@@ -209,7 +209,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                     ),
                   ),
 
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
@@ -264,7 +264,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                                 ),
                                 SizedBox(height: screenHeight * 0.005),
                                 Text(
-                                  'View all attendance records and sessions',
+                                  'View and edit all attendance records and sessions',
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: isTablet ? 16 : 14,
@@ -580,7 +580,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: ${e.toString()}'),
+          content: Text('Something went wrong'),
           backgroundColor: Colors.red,
         ),
       );

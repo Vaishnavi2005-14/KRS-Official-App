@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:krs_app/widgets/attendance_search_bar.dart';
-import '../models/attendance.dart';
+import 'package:krs_app/widgets/attendance/attendance_search_bar.dart';
+import '../../models/attendance.dart';
 import 'attendance_view.dart';
 
 class FilteredAttendanceRecordsPage extends StatefulWidget {
@@ -159,6 +159,7 @@ class _FilteredAttendanceRecordsPageState
             child: AttendanceSearchBar(
               controller: _searchController,
               onChanged: _filterRecords,
+              placeholder: 'Search by topic',
             ),
           ),
 

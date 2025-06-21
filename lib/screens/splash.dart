@@ -72,14 +72,47 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _startSplashSequence() async {
-    AuthService auth = AuthService();
-    bool isAuthenticated = await auth.isAuthenticated();
-    bool isAdmin = await auth.isAdmin();
-    setState(() {
-      next = (isAuthenticated || isAdmin) ? '/main' : '/login';
-    });
+    try {
+      AuthService auth = AuthService();
 
+      bool isAuthenticated = await auth.isAuthenticated();
+
+      if (isAuthenticated) {
+        String status = await auth.getUserStatus();
+
+        if (status == 'pending') {
+          setState(() {
+            next = '/wait';
+          });
+        } else if (status == 'active') {
+          bool isAdmin = await auth.isAdmin();
+          setState(() {
+            next = isAdmin ? '/admin-main' : '/main';
+          });
+        } else if (status == 'inactive') {
+          await auth.logout();
+          setState(() {
+            next = '/login';
+          });
+        } else {
+          await auth.logout();
+          setState(() {
+            next = '/login';
+          });
+        }
+      } else {
+        setState(() {
+          next = '/login';
+        });
+      }
+    } catch (e) {
+      print('Splash screen error: $e');
+      setState(() {
+        next = '/login';
+      });
+    }
     await _controller.forward();
+
     if (mounted) {
       Navigator.of(context).pushReplacementNamed(next);
     }

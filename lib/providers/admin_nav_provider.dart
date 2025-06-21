@@ -1,0 +1,22 @@
+import 'package:flutter/material.dart';
+import 'package:krs_app/screens/admin_dashboard.dart';
+import 'package:krs_app/screens/notices.dart';
+import 'package:krs_app/screens/profile.dart';
+
+class AdminNavigationProvider extends ChangeNotifier {
+  int _selectedIndex = 0;
+  int get selectedIndex => _selectedIndex;
+
+  final List<Widget> _screens = [
+    AdminDashboardScreen(),
+    NoticesPage(),
+    ProfileScreen()
+  ];
+
+  Widget get currentScreen => _screens[_selectedIndex];
+
+  void setIndex(int index) {
+    _selectedIndex = index;
+    notifyListeners();
+  }
+}
