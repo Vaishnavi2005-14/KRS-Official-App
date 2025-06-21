@@ -29,7 +29,7 @@ class _WaitingState extends State<Waiting> with TickerProviderStateMixin {
   }
 
   void _simulateAdminApproval() async {
-    await Future.delayed(const Duration(seconds: 8000));
+    await Future.delayed(const Duration(seconds: 8));
     if (mounted) {
       setState(() {
         isApproved = true;
