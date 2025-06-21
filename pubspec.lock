@@ -126,8 +126,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.2.1"
-<<<<<<< HEAD
-=======
   flutter_launcher_icons:
     dependency: "direct main"
     description:
@@ -136,7 +134,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.14.4"
->>>>>>> 1f840a1634a8a75251e2e347a900dd907de26e3a
   flutter_lints:
     dependency: "direct dev"
     description:
