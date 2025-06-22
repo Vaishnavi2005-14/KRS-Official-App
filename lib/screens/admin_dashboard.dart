@@ -665,6 +665,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 ],
               ),
             ),
+            SizedBox(height: screenHeight * 0.10),
           ],
         ),
       ),
