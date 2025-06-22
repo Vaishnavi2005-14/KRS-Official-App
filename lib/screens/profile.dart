@@ -216,7 +216,7 @@ class ProfileContent extends StatelessWidget {
         ),
         SizedBox(height: size.height * 0.02),
         Text(
-          name ?? 'Saswat Ranjan Behera',
+          name ?? 'Name',
           style: GoogleFonts.inter(
             fontSize: size.width * 0.06,
             fontWeight: FontWeight.bold,
@@ -225,7 +225,7 @@ class ProfileContent extends StatelessWidget {
         ),
         SizedBox(height: size.height * 0.01),
         Text(
-          "${domain ?? 'App Dev'} Team",
+          "${domain ?? 'Domain'} Team",
           style: TextStyle(
             color: const Color(0xffA4A4A4),
             fontSize: size.width * 0.04,

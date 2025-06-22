@@ -26,7 +26,7 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider<AuthService>(create: (_) => AuthService()),
+        //Provider<AuthService>(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => OutlinedTextProvider()),
         ChangeNotifierProvider(create: (_) => LoaderProvider()),
@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
         '/main': (context) => Navbar(),
         '/login': (context) => LoginScreen(),
         '/profile': (context) => const ProfileScreen(),
-        '/notices': (context) =>  NoticeBoardPage(),
+        '/notices': (context) => NoticeBoardPage(),
         '/attendance-home': (context) => AttendanceHomePage(),
         '/attendance-marking': (context) => AttendanceMarkingPage(),
         '/attendance-record': (context) => AttendanceRecordsPage(),
