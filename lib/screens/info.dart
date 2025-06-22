@@ -3,29 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Poppins',
-        scaffoldBackgroundColor: const Color(0xff040E1E),
-        textSelectionTheme:
-            const TextSelectionThemeData(cursorColor: Colors.white),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFE5A122),
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.black),
-        ),
-      ),
-      home: const InfoPage(),
-    );
-  }
-}
-
 class InfoPage extends StatefulWidget {
   const InfoPage({super.key});
 
@@ -35,7 +12,8 @@ class InfoPage extends StatefulWidget {
 
 class _InfoPageState extends State<InfoPage> {
   static const textColor = Color(0xFFE5A122);
-  static const bugReportURL = 'https://docs.google.com/forms/d/e/1FAIpQLScbqnmkvkbJbjwgATx8eEiKumtITa9wQbzYZuG0PsGKkfbEUQ/viewform?usp=dialog';
+  static const bugReportURL =
+      'https://docs.google.com/forms/d/e/1FAIpQLScbqnmkvkbJbjwgATx8eEiKumtITa9wQbzYZuG0PsGKkfbEUQ/viewform?usp=dialog';
 
   void _launchURL(BuildContext context, String url) async {
     final uri = Uri.parse(url);
@@ -70,11 +48,15 @@ class _InfoPageState extends State<InfoPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
-              Text('Made with ',
-                  style: TextStyle(color: Colors.white70, fontSize: 13)),
+              Text(
+                'Made with ',
+                style: TextStyle(color: Colors.white70, fontSize: 13),
+              ),
               Icon(Icons.favorite, color: Colors.redAccent, size: 16),
-              Text(' by KRS App Dev Team',
-                  style: TextStyle(color: Colors.white70, fontSize: 13)),
+              Text(
+                ' by KRS App Dev Team',
+                style: TextStyle(color: Colors.white70, fontSize: 13),
+              ),
             ],
           ),
           const SizedBox(height: 4),
@@ -85,22 +67,24 @@ class _InfoPageState extends State<InfoPage> {
               ' © Copyright@2025 | KRS',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Color(0xFFE5A122),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500),
+                color: Color(0xFFE5A122),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Card(
           color: Colors.white10,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           elevation: 10,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(15),
             child: Column(
               children: [
                 CircleAvatar(
@@ -112,9 +96,10 @@ class _InfoPageState extends State<InfoPage> {
                 const Text(
                   'KIIT Robotics Society',
                   style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: textColor),
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 15),
@@ -128,86 +113,117 @@ KRS paves innovations' road.''',
                 _buildInfoCard(
                   icon: Icons.email,
                   label: 'robotics.society@kiit.ac.in',
-                  onTap: () => _launchURL(
-                      context, 'mailto:robotics.society@kiit.ac.in'),
+                  onTap:
+                      () => _launchURL(
+                        context,
+                        'mailto:robotics.society@kiit.ac.in',
+                      ),
                 ),
                 const SizedBox(height: 10),
                 _buildInfoCard(
                   icon: Icons.location_on,
                   label:
                       '12, KIIT Campus 6 Rd, Chandaka Industrial Estate, Patia, Bhubaneswar, Odisha 751024',
-                  onTap: () => _launchURL(
-                      context,
-                      'https://www.google.com/maps/place/KIIT+Robotics+Society/@20.355509,85.820066,17z/data=!4m6!3m5!1s0x3a1908c555555555:0x35232e5ac74b6dc3!8m2!3d20.3555094!4d85.8200663!16s%2Fg%2F11sfg889nd?hl=en&entry=ttu&g_ep=EgoyMDI1MDYxNi4wIKXMDSoASAFQAw%3D%3D'),
+                  onTap:
+                      () => _launchURL(
+                        context,
+                        'https://www.google.com/maps/place/KIIT+Robotics+Society/@20.355509,85.820066,17z/data=!4m6!3m5!1s0x3a1908c555555555:0x35232e5ac74b6dc3!8m2!3d20.3555094!4d85.8200663!16s%2Fg%2F11sfg889nd?hl=en&entry=ttu&g_ep=EgoyMDI1MDYxNi4wIKXMDSoASAFQAw%3D%3D',
+                      ),
                 ),
                 const SizedBox(height: 30),
-                const Text('Follow us on',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: textColor)),
+                const Text(
+                  'Follow us on',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
                 const SizedBox(height: 10),
                 Wrap(
                   alignment: WrapAlignment.center,
                   spacing: 20,
                   children: [
                     IconButton(
-                      icon: const FaIcon(FontAwesomeIcons.facebookF,
-                          color: textColor),
-                      onPressed: () => _launchURL(
-                          context, 'https://www.facebook.com/share/15JkdWEtz5/'),
+                      icon: const FaIcon(
+                        FontAwesomeIcons.facebookF,
+                        color: textColor,
+                      ),
+                      onPressed:
+                          () => _launchURL(
+                            context,
+                            'https://www.facebook.com/share/15JkdWEtz5/',
+                          ),
                     ),
                     IconButton(
-                      icon: const FaIcon(FontAwesomeIcons.instagram,
-                          color: textColor),
-                      onPressed: () => _launchURL(
-                          context,
-                          'https://www.instagram.com/kiit_robotics.society?igsh=bnFhM3EzMWg1YW1u'),
+                      icon: const FaIcon(
+                        FontAwesomeIcons.instagram,
+                        color: textColor,
+                      ),
+                      onPressed:
+                          () => _launchURL(
+                            context,
+                            'https://www.instagram.com/kiit_robotics.society?igsh=bnFhM3EzMWg1YW1u',
+                          ),
                     ),
                     IconButton(
-                      icon: const FaIcon(FontAwesomeIcons.youtube,
-                          color: textColor),
-                      onPressed: () => _launchURL(
-                          context, 'https://www.youtube.com/c/KIITROBOTICSSOCIETY'),
+                      icon: const FaIcon(
+                        FontAwesomeIcons.youtube,
+                        color: textColor,
+                      ),
+                      onPressed:
+                          () => _launchURL(
+                            context,
+                            'https://www.youtube.com/c/KIITROBOTICSSOCIETY',
+                          ),
                     ),
                     IconButton(
-                      icon: const FaIcon(FontAwesomeIcons.linkedinIn,
-                          color: textColor),
-                      onPressed: () => _launchURL(context,
-                          'https://www.linkedin.com/company/kiit-robotics-society-bbsr'),
+                      icon: const FaIcon(
+                        FontAwesomeIcons.linkedinIn,
+                        color: textColor,
+                      ),
+                      onPressed:
+                          () => _launchURL(
+                            context,
+                            'https://www.linkedin.com/company/kiit-robotics-society-bbsr',
+                          ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 30),
-                const SizedBox(height: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Report bugs?',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    ElevatedButton.icon(
-                      onPressed: () => _launchURL(context, bugReportURL),
-                      icon: const Icon(Icons.bug_report, color: Colors.black),
-                      label: const Text('Found'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: textColor,
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Found a bug?',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
                         ),
                       ),
-                    ),
-                  ],
-                )
+                      const SizedBox(height: 6),
+                      ElevatedButton.icon(
+                        onPressed: () => _launchURL(context, bugReportURL),
+                        icon: const Icon(Icons.bug_report, color: Colors.black),
+                        label: const Text('Report Bug'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: textColor,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -221,15 +237,21 @@ KRS paves innovations' road.''',
     required String label,
     required VoidCallback onTap,
   }) {
+    final width = MediaQuery.of(context).size.width;
     return Card(
       color: Colors.black12,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 4,
-      child: ListTile(
-        leading: Icon(icon, color: textColor),
-        title:
-            Text(label, style: const TextStyle(color: textColor, fontSize: 14)),
-        onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: ListTile(
+          leading: Icon(icon, color: textColor),
+          title: Text(
+            label,
+            style: TextStyle(color: textColor, fontSize: width * 0.04),
+          ),
+          onTap: onTap,
+        ),
       ),
     );
   }

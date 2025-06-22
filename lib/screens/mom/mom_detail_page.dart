@@ -4,11 +4,12 @@ import 'edit_mom_page.dart';
 import 'package:krs_app/services/mom_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:krs_app/services/auth.dart';
 
 const Color bgColor = Color(0xFF06142E);
 const Color orangeColor = Color(0xFFE5A122);
 
-class MoMDetailPage extends StatelessWidget {
+class MoMDetailPage extends StatefulWidget {
   final String title;
   final String date;
   final String uploadedBy;
@@ -27,6 +28,25 @@ class MoMDetailPage extends StatelessWidget {
     required this.meetingLink,
     required this.id,
   });
+
+  @override
+  State<MoMDetailPage> createState() => _MoMDetailPageState();
+}
+
+class _MoMDetailPageState extends State<MoMDetailPage> {
+  bool _isAdmin = false;
+  @override
+  void initState() {
+    super.initState();
+    _checkAdminStatus();
+  }
+
+  Future<void> _checkAdminStatus() async {
+    final isAdmin = await AuthService().isAdmin();
+    setState(() {
+      _isAdmin = isAdmin;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +73,7 @@ class MoMDetailPage extends StatelessWidget {
 
               // Title
               Text(
-                title,
+                widget.title,
                 style: TextStyle(
                   fontSize: width * 0.07,
                   fontWeight: FontWeight.bold,
@@ -63,7 +83,7 @@ class MoMDetailPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 10),
-              Text(date, style: const TextStyle(color: Colors.white70)),
+              Text(widget.date, style: const TextStyle(color: Colors.white70)),
               const Divider(color: orangeColor, thickness: 1),
               const SizedBox(height: 16),
 
@@ -83,7 +103,7 @@ class MoMDetailPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  meetingType,
+                  widget.meetingType,
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
@@ -99,7 +119,7 @@ class MoMDetailPage extends StatelessWidget {
               GestureDetector(
                 onTap:
                     () => launchUrl(
-                      Uri.parse(meetingLink),
+                      Uri.parse(widget.meetingLink),
                       mode: LaunchMode.externalApplication,
                     ),
                 child: Container(
@@ -110,7 +130,7 @@ class MoMDetailPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    meetingLink,
+                    widget.meetingLink,
                     style: const TextStyle(
                       color: Colors.blueAccent,
                       decoration: TextDecoration.underline,
@@ -131,7 +151,7 @@ class MoMDetailPage extends StatelessWidget {
                 spacing: 10,
                 runSpacing: 10,
                 children:
-                    domains
+                    widget.domains
                         .map(
                           (domain) => Container(
                             padding: const EdgeInsets.symmetric(
@@ -173,7 +193,7 @@ class MoMDetailPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        uploadedBy,
+                        widget.uploadedBy,
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),
@@ -184,102 +204,108 @@ class MoMDetailPage extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _iconCircleButton(Icons.edit, () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => EditMoMPage(
-                              momId: id,
-                              initialTitle: title,
-                              initialLink: meetingLink,
-                              initialType: meetingType,
-                              initialDomains: domains,
-                            ),
-                      ),
-                    );
-
-                    if (result == true) {
-                      // Fetch updated MoM by ID from provider
-                      await Provider.of<MoMProvider>(context, listen: false).loadMoMs();
-                      final updatedMoM = Provider.of<MoMProvider>(
-                        context,
-                        listen: false,
-                      ).momList.firstWhere((m) => m['id'] == id);
-                      // Replace this page with updated version
-                      Navigator.pushReplacement(
+              if (_isAdmin) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _iconCircleButton(Icons.edit, () async {
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder:
-                              (context) => MoMDetailPage(
-                                title: updatedMoM['title'],
-                                date: updatedMoM['date'],
-                                uploadedBy:
-                                    updatedMoM['uploadedBy'] is Map
-                                        ? updatedMoM['uploadedBy']['name']
-                                        : updatedMoM['uploadedBy'],
-                                meetingType: updatedMoM['meetingType'],
-                                domains: List<String>.from(
-                                  updatedMoM['domains'],
-                                ),
-                                meetingLink: updatedMoM['meetingLink'],
-                                id: updatedMoM['id'],
+                              (context) => EditMoMPage(
+                                momId: widget.id,
+                                initialTitle: widget.title,
+                                initialLink: widget.meetingLink,
+                                initialType: widget.meetingType,
+                                initialDomains: widget.domains,
                               ),
                         ),
                       );
-                    }
-                  }),
-                  const SizedBox(width: 30),
-                  _iconCircleButton(Icons.delete, () async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder:
-                          (_) => AlertDialog(
-                            title: const Text("Delete MoM?"),
-                            content: const Text(
-                              "Are you sure you want to delete this MoM? This action cannot be undone.",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, false),
-                                child: const Text("Cancel"),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, true),
-                                child: const Text(
-                                  "Delete",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ),
-                            ],
-                          ),
-                    );
 
-                    if (confirm == true) {
-                      try {
-                        final message = await MoMService.deleteMoM(id);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(message)));
-                          if (message == "MoM deleted successfully") {
-                            Navigator.pop(context, true);
-                          } // Go back to previous screen after deletion
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(e.toString())));
+                      if (result == true) {
+                        // Fetch updated MoM by ID from provider
+                        await Provider.of<MoMProvider>(
+                          context,
+                          listen: false,
+                        ).loadMoMs();
+                        final updatedMoM = Provider.of<MoMProvider>(
+                          context,
+                          listen: false,
+                        ).momList.firstWhere((m) => m['id'] == widget.id);
+                        // Replace this page with updated version
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => MoMDetailPage(
+                                  title: updatedMoM['title'],
+                                  date: updatedMoM['date'],
+                                  uploadedBy:
+                                      updatedMoM['uploadedBy'] is Map
+                                          ? updatedMoM['uploadedBy']['name']
+                                          : updatedMoM['uploadedBy'],
+                                  meetingType: updatedMoM['meetingType'],
+                                  domains: List<String>.from(
+                                    updatedMoM['domains'],
+                                  ),
+                                  meetingLink: updatedMoM['meetingLink'],
+                                  id: updatedMoM['id'],
+                                ),
+                          ),
+                        );
+                      }
+                    }),
+                    const SizedBox(width: 30),
+                    _iconCircleButton(Icons.delete, () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (_) => AlertDialog(
+                              title: const Text("Delete MoM?"),
+                              content: const Text(
+                                "Are you sure you want to delete this MoM? This action cannot be undone.",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(context, false),
+                                  child: const Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text(
+                                    "Delete",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      );
+
+                      if (confirm == true) {
+                        try {
+                          final message = await MoMService.deleteMoM(widget.id);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(SnackBar(content: Text(message)));
+                            if (message == "MoM deleted successfully") {
+                              Navigator.pop(context, true);
+                            } // Go back to previous screen after deletion
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())),
+                            );
+                          }
                         }
                       }
-                    }
-                  }),
-                ],
-              ),
+                    }),
+                  ],
+                ),
+              ],
               const SizedBox(height: 20),
             ],
           ),

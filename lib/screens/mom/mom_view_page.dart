@@ -5,6 +5,7 @@ import 'upload_mom_page.dart';
 import '../../widgets/mom/view_mom/mom_constants.dart';
 import '../../widgets/mom/view_mom/mom_list_view.dart';
 import '../../widgets/mom/view_mom/mom_search_bar.dart';
+import 'package:krs_app/services/auth.dart';
 
 /// Main page for viewing and managing Minutes of Meeting (MoM) entries
 /// Displays a searchable list of MoMs with options to add new entries
@@ -21,14 +22,23 @@ class _MoMViewPageState extends State<MoMViewPage> {
 
   /// Current search query string
   String _query = '';
+  bool _isAdmin = false;
 
   /// Initialize the page and load MoM data
   @override
   void initState() {
     super.initState();
+    _checkAdminStatus();
     // Load MoMs when page is first created
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MoMProvider>(context, listen: false).loadMoMs();
+    });
+  }
+
+  Future<void> _checkAdminStatus() async {
+    final isAdmin = await AuthService().isAdmin();
+    setState(() {
+      _isAdmin = isAdmin;
     });
   }
 
@@ -113,12 +123,16 @@ class _MoMViewPageState extends State<MoMViewPage> {
           ],
         ),
       ),
+
       // Floating action button to add new MoM
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToUpload,
-        backgroundColor: MoMConstants.primaryAccent,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton:
+          _isAdmin
+              ? FloatingActionButton(
+                onPressed: _navigateToUpload,
+                backgroundColor: MoMConstants.primaryAccent,
+                child: const Icon(Icons.add),
+              )
+              : null,
     );
   }
 

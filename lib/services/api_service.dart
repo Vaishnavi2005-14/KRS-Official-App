@@ -64,20 +64,48 @@ class ApiService {
   // }
 
   static Future<List<Attendance>> fetchAllAttendance(String token) async {
-    // final uri = Uri.https(baseUrl, '/api/attendance/all');
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/attendance/all'),
-      headers: {
-        'Content-Type': 'application/json',
-        "Authorization": "Bearer $token",
-      },
-    );
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseUrl/api/attendance/all'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              throw Exception(
+                'Connection timeout. Please check your internet connection.',
+              );
+            },
+          );
 
-    if (response.statusCode == 200) {
-      final List data = json.decode(response.body);
-      return data.map((json) => Attendance.fromJson(json)).toList();
-    } else {
-      throw _createApiException(response, 'Failed to load attendance records');
+      if (response.statusCode == 200) {
+        final List data = json.decode(response.body);
+        return data.map((json) => Attendance.fromJson(json)).toList();
+      } else if (response.statusCode == 401) {
+        throw Exception('Authentication failed. Please login again.');
+      } else if (response.statusCode >= 500) {
+        throw Exception('Server error. Please try again later.');
+      } else {
+        throw Exception('Failed to load attendance records. Please try again.');
+      }
+    } catch (e) {
+      final message = e.toString().toLowerCase();
+
+      if (message.contains('timeout') ||
+          message.contains('host lookup') ||
+          message.contains('network') ||
+          message.contains('failed') ||
+          message.contains('unreachable')) {
+        throw Exception(
+          'No internet connection. Please check your network and try again.',
+        );
+      }
+
+      throw Exception('Error fetching attendance records: $e');
     }
   }
 

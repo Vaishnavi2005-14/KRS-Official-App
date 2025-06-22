@@ -32,7 +32,7 @@ class AttendanceRecord {
       status: status ?? this.status,
       rollNo: rollNo ?? this.rollNo,
       remarks: remarks ?? this.remarks,
-      image: image ?? this.image,
+      image: image ?? image,
     );
   }
 

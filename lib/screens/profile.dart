@@ -23,11 +23,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? roll;
   String? year;
   String? branch;
+  String? phone;
+  String? status;
 
   @override
   void initState() {
     super.initState();
     loadData();
+  }
+
+  void logout() async {
+    final AuthService authService = AuthService();
+    Provider.of<LoaderProvider>(context, listen: false).showLoader(context);
+
+    await authService.logout();
+    if (!mounted) return;
+    Provider.of<LoaderProvider>(context, listen: false).hideLoader();
+    setState(() {
+      Navigator.pushReplacementNamed(context, '/login');
+    });
+
+    Fluttertoast.showToast(
+      msg: "You have been logged out successfully!",
+      backgroundColor: Colors.green,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
   }
 
   Future<void> loadData() async {
@@ -41,28 +62,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       roll = prefs.getString('rollNo');
       year = prefs.getString('year');
       branch = prefs.getString('branch');
+      phone = prefs.getString('phone');
+      status = prefs.getString('status');
     });
-  }
-
-  Future<void> _logout() async {
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final loaderProvider = Provider.of<LoaderProvider>(context, listen: false);
-
-    loaderProvider.showLoader(context);
-
-    await authService.logout();
-
-    if (!mounted) return;
-    loaderProvider.hideLoader();
-
-    Navigator.pushReplacementNamed(context, '/login');
-
-    Fluttertoast.showToast(
-      msg: "You have been logged out successfully!",
-      backgroundColor: Colors.green,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
   }
 
   @override
@@ -98,7 +100,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       roll: roll,
                       year: year,
                       branch: branch,
-                      onLogout: _logout,
+                      phone: phone,
+                      status: status,
+                      onLogout: logout,
                     ),
                   ),
                 ),
@@ -120,11 +124,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           InkWell(
             onTap: () {},
             child: Container(
+              padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: Colors.transparent,
-                boxShadow: [
-                  BoxShadow(color: Color(0xffE5A122), blurRadius: 80),
-                ],
+                color: Colors.white.withAlpha(75),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: SvgPicture.asset(
                 height: h * 0.04,
@@ -139,15 +142,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           Spacer(),
           InkWell(
-            onTap: _logout,
+            onTap: logout,
             child: Container(
+              padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: Colors.transparent,
-                boxShadow: [
-                  BoxShadow(color: Color(0xffE5A122), blurRadius: 80),
-                ],
+                color: Colors.white.withAlpha(75),
+                borderRadius: BorderRadius.circular(5),
               ),
-              child: Icon(Icons.logout, color: Color(0xffE5A122)),
+              child: Icon(
+                Icons.logout_rounded,
+                color: Color(0xffE5A122),
+                size: 30,
+              ),
             ),
           ),
         ],
@@ -165,6 +171,8 @@ class ProfileContent extends StatelessWidget {
   final String? roll;
   final String? year;
   final String? branch;
+  final String? phone;
+  final String? status;
   final VoidCallback onLogout;
 
   const ProfileContent({
@@ -177,6 +185,8 @@ class ProfileContent extends StatelessWidget {
     this.roll,
     this.year,
     this.branch,
+    this.phone,
+    this.status,
     required this.onLogout,
   });
 
@@ -205,8 +215,9 @@ class ProfileContent extends StatelessWidget {
               child: ClipOval(
                 child: Image(
                   image: NetworkImage(
-                    profileImage ??
-                        'https://krs.kiit.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FKRS.31bc350a.png&w=384&q=75',
+                    (profileImage != null && profileImage!.isNotEmpty)
+                        ? profileImage!
+                        : 'https://krs.kiit.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FKRS.31bc350a.png&w=384&q=75',
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -271,7 +282,7 @@ class ProfileContent extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFF0D1F3D),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFFFA000).withOpacity(0.3)),
+            border: Border.all(color: const Color(0xFFFFA000).withAlpha(900)),
           ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -304,10 +315,20 @@ class ProfileContent extends StatelessWidget {
                   ProfileInfoRow(title: 'Branch', value: branch!),
                   const SizedBox(height: 12),
                 ],
+                if (phone != null) ...[
+                  ProfileInfoRow(title: 'Phone', value: phone!),
+                  const SizedBox(height: 12),
+                ],
+                if (status != null) ...[
+                  ProfileInfoRow(title: 'Status', value: status!),
+                  const SizedBox(height: 12),
+                ],
                 if (roll == null &&
                     designation == null &&
                     year == null &&
-                    branch == null)
+                    branch == null &&
+                    phone == null &&
+                    status == null)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(

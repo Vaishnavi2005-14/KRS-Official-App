@@ -21,13 +21,14 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
 
   void _login() async {
+    FocusScope.of(context).unfocus();
     Provider.of<LoaderProvider>(context, listen: false).showLoader(context);
 
     bool success = await _authService.login(
       emailController.text,
       passwordController.text,
     );
-    bool isAdmin = await _authService.isAdmin();
+
     if (!mounted) return;
     Provider.of<LoaderProvider>(context, listen: false).hideLoader();
 
@@ -45,10 +46,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
 
-      if (isAdmin) {
-        Navigator.pushReplacementNamed(context, '/main');
+      String status = await _authService.getUserStatus();
+      if (status == 'pending') {
+        Navigator.pushReplacementNamed(context, '/wait');
+      } else if (status == 'active') {
+        bool isAdmin = await _authService.isAdmin();
+        if (isAdmin) {
+          Navigator.pushReplacementNamed(context, '/admin-main');
+        } else {
+          Navigator.pushReplacementNamed(context, '/main');
+        }
       } else {
-        Navigator.pushReplacementNamed(context, '/main');
+        await Fluttertoast.showToast(
+          msg: "Your account has been deactivated. Contact admin.",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       }
     } else {
       await Fluttertoast.showToast(
@@ -62,6 +78,82 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _googleSignIn() async {
+    Provider.of<LoaderProvider>(context, listen: false).showLoader(context);
+
+    bool success = await _authService.googleSign();
+
+    if (!mounted) return;
+    Provider.of<LoaderProvider>(context, listen: false).hideLoader();
+
+    if (success) {
+      await Fluttertoast.showToast(
+        msg: "Google Sign-In Successful",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      if (!mounted) return;
+
+      String status = await _authService.getUserStatus();
+      print("User status: $status");
+      FocusScope.of(context).unfocus();
+      if (status == 'pending') {
+        Navigator.pushReplacementNamed(context, '/wait');
+      } else if (status == 'active') {
+        bool isAdmin = await _authService.isAdmin();
+        if (isAdmin) {
+          Navigator.pushReplacementNamed(context, '/admin-main');
+        } else {
+          Navigator.pushReplacementNamed(context, '/main');
+        }
+      } else {
+        // yeh likh raaha hu ku ki mujhe yaadh nehi rehta haaye so yeha inactive user k code haaye
+        await Fluttertoast.showToast(
+          msg: "Your account has been deactivated. Contact admin.",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    } else {
+      await Fluttertoast.showToast(
+        msg: "Google Sign-In Failed",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  // void _googleSignIn() async {
+  //   Provider.of<LoaderProvider>(context, listen: false).showLoader(context);
+
+  //   bool success = await _authService.googleSign();
+
+  //   if (!mounted) return;
+  //   Provider.of<LoaderProvider>(context, listen: false).hideLoader();
+
+  //   if (success) {
+  //     bool isAdmin = await _authService.isAdmin();
+
+  //     if (!mounted) return;
+
+  //     if (isAdmin) {
+  //       Navigator.pushReplacementNamed(context, '/main');
+  //     } else {
+  //       Navigator.pushReplacementNamed(context, '/main');
+  //     }
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -71,6 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
+        appBar: AppBar(toolbarHeight: 0, backgroundColor: Color(0xff040E1E)),
         body: Stack(
           children: [
             Container(decoration: const BoxDecoration()),
@@ -98,10 +191,14 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SafeArea(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                padding: EdgeInsets.only(
+                  left: width * 0.05,
+                  right: width * 0.05,
+                  bottom: height * 0.05,
+                ),
                 child: Column(
                   children: [
-                    SizedBox(height: height * 0.12),
+                    SizedBox(height: height * 0.06),
                     Center(
                       child: Column(
                         children: [
@@ -191,7 +288,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           //     ),
                           //   ),
                           // ),
-                          SizedBox(height: height * 0.015),
+                          SizedBox(height: height * 0.025),
                           Container(
                             width: double.infinity,
                             height: height * 0.06,
@@ -203,7 +300,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: TextButton(
                               onPressed: () {
-                                FocusScope.of(context).unfocus;
+                                // FocusScope.of(context).unfocus;
                                 _login();
                               },
                               child: const Text(
@@ -228,17 +325,39 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed: _googleSignIn,
                               icon: SvgPicture.asset(
                                 'assets/ggl.svg',
                                 width: width * 0.06,
                                 height: width * 0.06,
                               ),
                               label: const Text(
-                                'Sign in with Google',
+                                'Continue with Google',
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
+                          ),
+                          SizedBox(height: height * 0.02),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "New to KRS Workspace?",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/signup');
+                                },
+                                child: Text(
+                                  "SignUp",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

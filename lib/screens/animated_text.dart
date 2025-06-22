@@ -8,12 +8,12 @@ class AnimatedLanguageText extends StatefulWidget {
   final Duration pauseDuration;
 
   const AnimatedLanguageText({
-    Key? key,
+    super.key,
     required this.texts,
     this.textStyle,
     this.typingSpeed = const Duration(milliseconds: 100),
     this.pauseDuration = const Duration(seconds: 2),
-  }) : super(key: key);
+  });
 
   @override
   _TypewriterTextState createState() => _TypewriterTextState();
@@ -76,6 +76,7 @@ class _TypewriterTextState extends State<AnimatedLanguageText> {
         color: Colors.grey[400],
         fontSize: isTablet ? 17 : screenWidth * 0.038,
       ),
+      overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.left,
     );
   }

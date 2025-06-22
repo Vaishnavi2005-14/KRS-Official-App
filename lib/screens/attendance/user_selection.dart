@@ -102,6 +102,7 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
                     onChanged: (value) {
                       provider.updateSearchQuery(value);
                     },
+                    placeholder: 'Search by name or roll number',
                   ),
                 ),
 
@@ -127,7 +128,7 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
                                   ),
                                   SizedBox(height: screenHeight * 0.02),
                                   Text(
-                                    'Error: ${provider.error}',
+                                    'Something went wrong',
                                     style: TextStyle(
                                       color: Colors.red,
                                       fontSize: isTablet ? 20 : 16,

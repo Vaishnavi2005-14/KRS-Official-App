@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:krs_app/screens/attendance_gateway.dart';
-import 'package:krs_app/widgets/attendance_setup_dialog.dart';
+import 'package:krs_app/screens/member_management/approve_pending_members.dart';
+import 'package:krs_app/screens/member_management/change_member_role.dart';
+import 'package:krs_app/screens/member_management/change_member_status.dart';
+import 'package:provider/provider.dart';
+import 'package:krs_app/providers/member_management_provider.dart';
 
-class AttendanceHomePage extends StatelessWidget {
-  const AttendanceHomePage({super.key});
+class MemberManagementHub extends StatelessWidget {
+  const MemberManagementHub({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,7 @@ class AttendanceHomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Attendance Management",
+                  "Member Management",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: isTablet ? 32 : 28,
@@ -50,32 +53,44 @@ class AttendanceHomePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.05),
-                _buildAttendanceCard(
+                _buildMemberCard(
                   context,
-                  title: "Mark New Attendance",
-                  subtitle: "Create and mark attendance for today",
-                  icon: Icons.add_circle_outline,
+                  title: "Approve Pending Users",
+                  subtitle: "Review and approve new member requests",
+                  icon: Icons.person_add,
                   screenWidth: screenWidth,
                   screenHeight: screenHeight,
                   isTablet: isTablet,
                   onTap: () {
-                    _showAttendanceSetupDialog(context);
+                    _navigateToApprovePendingMembers(context);
                   },
                 ),
                 SizedBox(height: screenHeight * 0.025),
-                _buildAttendanceCard(
+                _buildMemberCard(
                   context,
-                  title: "View Attendance",
-                  subtitle: "Access attendance records and analytics",
-                  icon: Icons.analytics_outlined,
+                  title: "Change Member Role",
+                  subtitle: "Update member roles",
+                  icon: Icons.badge,
                   screenWidth: screenWidth,
                   screenHeight: screenHeight,
                   isTablet: isTablet,
                   onTap: () {
-                    _navigateToAttendanceGateway(context);
+                    _navigateToChangeMemberRole(context);
                   },
                 ),
-
+                SizedBox(height: screenHeight * 0.025),
+                _buildMemberCard(
+                  context,
+                  title: "Change Member Status",
+                  subtitle: "Activate or deactivate member accounts",
+                  icon: Icons.toggle_on,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
+                  isTablet: isTablet,
+                  onTap: () {
+                    _navigateToChangeMemberStatus(context);
+                  },
+                ),
                 SizedBox(height: screenHeight * 0.1),
               ],
             ),
@@ -85,22 +100,35 @@ class AttendanceHomePage extends StatelessWidget {
     );
   }
 
-  void _showAttendanceSetupDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AttendanceSetupDialog(),
-    );
-  }
+  void _navigateToApprovePendingMembers(BuildContext context) {
+    Provider.of<MemberManagementProvider>(context, listen: false).clearState();
 
-  void _navigateToAttendanceGateway(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AttendanceGatewayPage()),
+      MaterialPageRoute(builder: (context) => ApprovePendingMembersPage()),
     );
   }
 
-  Widget _buildAttendanceCard(
+  void _navigateToChangeMemberRole(BuildContext context) {
+    Provider.of<MemberManagementProvider>(context, listen: false).clearState();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ChangeMemberRolePage()),
+    );
+  }
+
+  void _navigateToChangeMemberStatus(BuildContext context) {
+    // Clear provider state before navigation - THIS IS THE KEY FIX!
+    Provider.of<MemberManagementProvider>(context, listen: false).clearState();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ChangeMemberStatusPage()),
+    );
+  }
+
+  Widget _buildMemberCard(
     BuildContext context, {
     required String title,
     required String subtitle,
@@ -146,7 +174,8 @@ class AttendanceHomePage extends StatelessWidget {
                     title,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: isTablet ? 22 : 18,
+                      fontSize:
+                          isTablet ? screenWidth * 0.06 : screenWidth * 0.045,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -155,7 +184,7 @@ class AttendanceHomePage extends StatelessWidget {
                     subtitle,
                     style: TextStyle(
                       color: Colors.grey[400],
-                      fontSize: isTablet ? 16 : 14,
+                      fontSize: isTablet ? 16 : screenWidth * 0.038,
                     ),
                   ),
                 ],

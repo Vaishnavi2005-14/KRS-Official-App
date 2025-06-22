@@ -159,6 +159,7 @@ class _FilteredAttendanceRecordsPageState
             child: AttendanceSearchBar(
               controller: _searchController,
               onChanged: _filterRecords,
+              placeholder: 'Search by topic',
             ),
           ),
 

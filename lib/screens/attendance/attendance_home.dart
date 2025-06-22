@@ -146,7 +146,8 @@ class AttendanceHomePage extends StatelessWidget {
                     title,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: isTablet ? 22 : 18,
+                      fontSize:
+                          isTablet ? screenWidth * 0.06 : screenWidth * 0.048,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -155,7 +156,7 @@ class AttendanceHomePage extends StatelessWidget {
                     subtitle,
                     style: TextStyle(
                       color: Colors.grey[400],
-                      fontSize: isTablet ? 16 : 14,
+                      fontSize: isTablet ? 16 : screenWidth * 0.04,
                     ),
                   ),
                 ],

@@ -845,9 +845,8 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
     final token = prefs.getString('token') ?? '';
 
     try {
-      Navigator.pop(context); // Close dialog
+      Navigator.pop(context);
 
-      // Show loading
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -862,9 +861,9 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
         attendanceId: attendance.id,
       );
 
-      Navigator.pop(context); // Close loading
-      Navigator.pop(context); // Go back to records page
-      Navigator.pop(context); // Go back to gateway/previous page
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pop(context); 
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1160,7 +1159,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
     } catch (e) {
       _showSaveResultDialog(false, error: e.toString());
     } finally {
-      provider.setSaving(false); // Assuming you have this method in provider
+      provider.setSaving(false);
     }
   }
 
