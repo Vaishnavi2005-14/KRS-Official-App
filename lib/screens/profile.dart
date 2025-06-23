@@ -215,7 +215,7 @@ class ProfileContent extends StatelessWidget {
               child: ClipOval(
                 child: Image(
                   image: NetworkImage(
-                    (profileImage != null && profileImage!.isNotEmpty)
+                    (profileImage?.isNotEmpty ?? false)
                         ? profileImage!
                         : 'https://krs.kiit.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FKRS.31bc350a.png&w=384&q=75',
                   ),
@@ -228,7 +228,7 @@ class ProfileContent extends StatelessWidget {
         SizedBox(height: size.height * 0.02),
         Text(
           name ?? 'Name',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.poppins(
             fontSize: size.width * 0.06,
             fontWeight: FontWeight.bold,
             color: const Color(0xffE5A122),
@@ -236,7 +236,7 @@ class ProfileContent extends StatelessWidget {
         ),
         SizedBox(height: size.height * 0.01),
         Text(
-          "${domain ?? 'Domain'} Team",
+          "${domain?.isNotEmpty ?? false ? domain! : 'Domain'} Team",
           style: TextStyle(
             color: const Color(0xffA4A4A4),
             fontSize: size.width * 0.04,
@@ -266,8 +266,8 @@ class ProfileContent extends StatelessWidget {
                   ).createShader(bounds),
               blendMode: BlendMode.srcIn,
               child: Text(
-                email ?? 'krsmember@kiit.ac.in',
-                style: GoogleFonts.inter(
+                email?.isNotEmpty ?? false ? email! : 'krsmember@kiit.ac.in',
+                style: GoogleFonts.poppins(
                   fontSize: size.width * 0.04,
                   color: Colors.white,
                 ),
@@ -291,49 +291,49 @@ class ProfileContent extends StatelessWidget {
               children: [
                 Text(
                   'Additional Details',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.poppins(
                     color: const Color(0xffE5A122),
                     fontWeight: FontWeight.w600,
                     fontSize: size.width * 0.048,
                   ),
                 ),
                 const SizedBox(height: 16),
-                if (roll != null) ...[
+                if (roll?.isNotEmpty ?? false) ...[
                   ProfileInfoRow(title: 'Roll No', value: roll!),
                   const SizedBox(height: 12),
                 ],
                 const SizedBox(height: 16),
-                if (designation != null) ...[
+                if (designation?.isNotEmpty ?? false) ...[
                   ProfileInfoRow(title: 'Designation', value: designation!),
                   const SizedBox(height: 12),
                 ],
-                if (year != null) ...[
+                if (year?.isNotEmpty ?? false) ...[
                   ProfileInfoRow(title: 'Year', value: year!),
                   const SizedBox(height: 12),
                 ],
-                if (branch != null) ...[
+                if (branch?.isNotEmpty ?? false) ...[
                   ProfileInfoRow(title: 'Branch', value: branch!),
                   const SizedBox(height: 12),
                 ],
-                if (phone != null) ...[
+                if (phone?.isNotEmpty ?? false) ...[
                   ProfileInfoRow(title: 'Phone', value: phone!),
                   const SizedBox(height: 12),
                 ],
-                if (status != null) ...[
+                if (status?.isNotEmpty ?? false) ...[
                   ProfileInfoRow(title: 'Status', value: status!),
                   const SizedBox(height: 12),
                 ],
-                if (roll == null &&
-                    designation == null &&
-                    year == null &&
-                    branch == null &&
-                    phone == null &&
-                    status == null)
+                if (!(roll?.isNotEmpty ?? false) &&
+                    !(designation?.isNotEmpty ?? false) &&
+                    !(year?.isNotEmpty ?? false) &&
+                    !(branch?.isNotEmpty ?? false) &&
+                    !(phone?.isNotEmpty ?? false) &&
+                    !(status?.isNotEmpty ?? false))
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
                       'No additional details available',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.poppins(
                         color: const Color(0xffA4A4A4),
                         fontSize: 14,
                       ),
@@ -363,14 +363,14 @@ class ProfileInfoRow extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.poppins(
             color: const Color(0xffA4A4A4),
             fontSize: 16,
           ),
         ),
         Text(
           value,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.poppins(
             color: Colors.white,
             fontWeight: FontWeight.w600,
             fontSize: 16,
