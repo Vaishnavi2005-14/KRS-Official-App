@@ -99,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       String status = await _authService.getUserStatus();
+      print("User status: $status");
       FocusScope.of(context).unfocus();
       if (status == 'pending') {
         Navigator.pushReplacementNamed(context, '/wait');

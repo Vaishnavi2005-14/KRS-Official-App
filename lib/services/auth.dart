@@ -181,34 +181,30 @@ class AuthService {
         return false;
       }
 
-      // Try login first
-      final loginResponse = await http.post(
+      // Send ID token to your backend
+      final response = await http.post(
         Uri.parse("$baseUrl/google/login"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"idToken": idToken}),
       );
 
-      if (loginResponse.statusCode == 200) {
-        // Existing user login
-        final data = jsonDecode(loginResponse.body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("token", data["token"]);
         prefs.setString("name", data["user"]["name"]);
         prefs.setString("email", data["user"]["email"]);
-        prefs.setString("designation", data["user"]["designation"] ?? "Member");
+        prefs.setString("designation", data["user"]["designation"]);
         prefs.setString("domain", data["user"]["domain"] ?? "");
         prefs.setString("image", data["user"]["image"] ?? "");
-        prefs.setString(
-          "status",
-          data["user"]["status"] ?? "pending",
-        ); // Add status
+        prefs.setString("status", data["user"]["status"] ?? "pending");
         prefs.setString("roll", data["user"]["roll"]?.toString() ?? "");
         prefs.setString("phone", data["user"]["phone"]?.toString() ?? "");
         prefs.setString("branch", data["user"]["branch"] ?? "");
         prefs.setString("year", data["user"]["year"] ?? "");
 
         Fluttertoast.showToast(
-          msg: "Welcome back!",
+          msg: "Google Sign-In successful!",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.green,
@@ -216,41 +212,20 @@ class AuthService {
         );
         return true;
       } else {
-        // Try signup if login fails
-        final signupResponse = await http.post(
-          Uri.parse("$baseUrl/google/signup"),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({"idToken": idToken}),
+        final errorData = jsonDecode(response.body);
+        String errorMessage = errorData['message'] ?? 'Google Sign-In failed';
+
+        Fluttertoast.showToast(
+          msg: errorMessage,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
         );
 
-        if (signupResponse.statusCode == 200) {
-          // New user signup - they will be pending by default
-          Fluttertoast.showToast(
-            msg: "Account created! Please wait for approval.",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.orange,
-            textColor: Colors.white,
-          );
-
-          // Don't save data for pending users, they need to wait for approval
-          await googleSignIn.signOut();
-          return true; // Return true to show success but redirect to waiting
-        } else {
-          final errorData = jsonDecode(signupResponse.body);
-          String errorMessage = errorData['message'] ?? 'Google Sign-In failed';
-
-          Fluttertoast.showToast(
-            msg: errorMessage,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-          );
-
-          await googleSignIn.signOut();
-          return false;
-        }
+        // Sign out from Google if backend fails
+        await googleSignIn.signOut();
+        return false;
       }
     } catch (error) {
       Fluttertoast.showToast(
@@ -261,6 +236,7 @@ class AuthService {
         textColor: Colors.white,
       );
 
+      // Ensure Google session is cleared on error
       await googleSignIn.signOut();
       return false;
     }
