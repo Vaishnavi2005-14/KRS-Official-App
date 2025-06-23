@@ -17,27 +17,26 @@ class NoticePage {
   });
 
   factory NoticePage.fromJson(Map<String, dynamic> json) {
-  int parseInt(dynamic value) {
-    if (value is int) return value;
-    if (value is String) return int.tryParse(value) ?? 1;
-    return 1;
+    int parseInt(dynamic value) {
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value) ?? 1;
+      return 1;
+    }
+
+    final noticesRaw = json['notices'];
+    final noticesList =
+        noticesRaw is List
+            ? noticesRaw
+            : (noticesRaw is Map ? noticesRaw.values.toList() : <dynamic>[]);
+
+    return NoticePage(
+      page: parseInt(json['page']),
+      totalPages: parseInt(json['totalPages']),
+      totalNotices: parseInt(json['totalNotices']),
+      notices: noticesList.map((n) => Notice.fromJson(n)).toList(),
+    );
   }
-
-  final noticesRaw = json['notices'];
-  final noticesList = noticesRaw is List
-      ? noticesRaw
-      : (noticesRaw is Map ? noticesRaw.values.toList() : <dynamic>[]);
-
-  return NoticePage(
-    page: parseInt(json['page']),
-    totalPages: parseInt(json['totalPages']),
-    totalNotices: parseInt(json['totalNotices']),
-    notices: noticesList.map((n) => Notice.fromJson(n)).toList(),
-  );
 }
-
-}
-
 
 class NoticeApiService {
   static const String baseUrl = 'https://krs-app-server.vercel.app';
@@ -69,30 +68,29 @@ class NoticeApiService {
   }
 
   Future<void> deleteNotice(String id) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  if (token == null) {
-    throw Exception('No token found');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token == null) {
+      throw Exception('No token found');
+    }
+
+    final url = Uri.parse('$baseUrl/api/notice/$id');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': 'bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Success, notice deleted
+      return;
+    } else {
+      final jsonData = jsonDecode(response.body);
+      throw Exception(jsonData['message'] ?? 'Failed to delete notice.');
+    }
   }
-
-  final url = Uri.parse('$baseUrl/api/notice/$id');
-  final response = await http.delete(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-      'authorization': 'bearer $token',
-    },
-  );
-
-  if (response.statusCode == 200) {
-    // Success, notice deleted
-    return;
-  } else {
-    final jsonData = jsonDecode(response.body);
-    throw Exception(jsonData['message'] ?? 'Failed to delete notice.');
-  }
-}
-
 
   Future<Notice> editNotice({
     required String id,
@@ -103,8 +101,8 @@ class NoticeApiService {
     if (title.trim().isEmpty || description.trim().isEmpty) {
       throw Exception('Title and description are required.');
     }
-    if (description.length > 100) {
-      throw Exception('Description must be 100 characters or fewer.');
+    if (description.length > 1000) {
+      throw Exception('Description must be 1000 characters or fewer.');
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -133,7 +131,9 @@ class NoticeApiService {
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
       return Notice.fromJson(jsonData['notice'] ?? jsonData);
-    } else if (response.statusCode == 400 || response.statusCode == 401 || response.statusCode == 403) {
+    } else if (response.statusCode == 400 ||
+        response.statusCode == 401 ||
+        response.statusCode == 403) {
       final jsonData = jsonDecode(response.body);
       throw Exception(jsonData['message'] ?? 'Failed to edit notice.');
     } else {
@@ -142,48 +142,47 @@ class NoticeApiService {
   }
 
   Future<Notice> uploadNotice({
-  required String title,
-  required String description,
-  String? attachmentLink,
-}) async {
-  if (title.trim().isEmpty || description.trim().isEmpty) {
-    throw Exception('Title and description are required.');
-  }
+    required String title,
+    required String description,
+    String? attachmentLink,
+  }) async {
+    if (title.trim().isEmpty || description.trim().isEmpty) {
+      throw Exception('Title and description are required.');
+    }
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  if (token == null) {
-    throw Exception('No token found');
-  }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token == null) {
+      throw Exception('No token found');
+    }
 
-  final url = Uri.parse('$baseUrl/api/notice/upload');
-  final body = {
-    'title': title.trim(),
-    'description': description.trim(),
-    if (attachmentLink != null && attachmentLink.trim().isNotEmpty)
-      'attachmentLink': attachmentLink.trim(),
-  };
+    final url = Uri.parse('$baseUrl/api/notice/upload');
+    final body = {
+      'title': title.trim(),
+      'description': description.trim(),
+      if (attachmentLink != null && attachmentLink.trim().isNotEmpty)
+        'attachmentLink': attachmentLink.trim(),
+    };
 
-  final response = await http.post(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-      'authorization': 'bearer $token',
-    },
-    body: jsonEncode(body),
-  );
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': 'bearer $token',
+      },
+      body: jsonEncode(body),
+    );
 
-  if (response.statusCode == 200) {
-    final jsonData = jsonDecode(response.body);
-    return Notice.fromJson(jsonData['notice']);
-  } else if (response.statusCode == 400 || response.statusCode == 401 || response.statusCode == 403) {
-    final jsonData = jsonDecode(response.body);
-    throw Exception(jsonData['message'] ?? 'Failed to upload notice.');
-  } else {
-    throw Exception('Failed to upload notice: ${response.body}');
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final jsonData = jsonDecode(response.body);
+      return Notice.fromJson(jsonData['notice']);
+    } else if (response.statusCode == 400 ||
+        response.statusCode == 401 ||
+        response.statusCode == 403) {
+      final jsonData = jsonDecode(response.body);
+      throw Exception(jsonData['message'] ?? 'Failed to upload notice.');
+    } else {
+      throw Exception('Failed to upload notice: ${response.body}');
+    }
   }
 }
-
-}
-
-

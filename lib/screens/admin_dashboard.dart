@@ -297,7 +297,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           TextEditingController();
                       final TextEditingController linkController =
                           TextEditingController();
-                      const int descMaxLength = 100;
+                      const int descMaxLength = 1000;
                       showDialog(
                         context: context,
                         barrierDismissible: false,
@@ -395,7 +395,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                         TextField(
                                           controller: descController,
                                           style: TextStyle(color: Colors.white),
-                                          maxLines: 3,
+                                          maxLines: null,
                                           maxLength: descMaxLength,
                                           decoration: InputDecoration(
                                             labelText: "Description",

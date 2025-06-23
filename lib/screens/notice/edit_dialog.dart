@@ -138,10 +138,10 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
     return TextFormField(
       controller: _descController,
       style: const TextStyle(color: Colors.white),
-      maxLines: 3,
-      maxLength: 100,
+      maxLines: 100,
+      maxLength: 1000,
       decoration: const InputDecoration(
-        labelText: 'Description (max 100 chars)',
+        labelText: 'Description (max 1000 chars)',
         labelStyle: TextStyle(color: Color(0xffE5A122)),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Color(0xffE5A122)),
@@ -155,9 +155,9 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
           print('[DEBUG] Description validation failed: empty');
           return 'Description required';
         }
-        if (val.length > 100) {
+        if (val.length > 1000) {
           print('[DEBUG] Description validation failed: too long');
-          return 'Max 100 characters';
+          return 'Max 1000 characters';
         }
         return null;
       },
