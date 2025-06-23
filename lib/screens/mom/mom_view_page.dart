@@ -7,8 +7,6 @@ import '../../widgets/mom/view_mom/mom_list_view.dart';
 import '../../widgets/mom/view_mom/mom_search_bar.dart';
 import 'package:krs_app/services/auth.dart';
 
-/// Main page for viewing and managing Minutes of Meeting (MoM) entries
-/// Displays a searchable list of MoMs with options to add new entries
 class MoMViewPage extends StatefulWidget {
   const MoMViewPage({super.key});
 
@@ -17,19 +15,18 @@ class MoMViewPage extends StatefulWidget {
 }
 
 class _MoMViewPageState extends State<MoMViewPage> {
-  /// Controller for the search input field
   final TextEditingController _searchController = TextEditingController();
-
-  /// Current search query string
-  String _query = '';
+  final TextEditingController _dateController = TextEditingController();
+  String _searchQuery = '';
+  String _selectedDate = '';
+  String _selectedType = 'All';
+  String _selectedDomain = 'All';
   bool _isAdmin = false;
 
-  /// Initialize the page and load MoM data
   @override
   void initState() {
     super.initState();
     _checkAdminStatus();
-    // Load MoMs when page is first created
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MoMProvider>(context, listen: false).loadMoMs();
     });
@@ -42,35 +39,65 @@ class _MoMViewPageState extends State<MoMViewPage> {
     });
   }
 
-  /// Clean up resources when page is destroyed
   @override
   void dispose() {
     _searchController.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
-  /// Handles navigation to upload page and refreshes list if needed
   Future<void> _navigateToUpload() async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const UploadMoMPage()),
     );
 
-    // If upload was successful, refresh the MoM list
     if (result == true) {
       Provider.of<MoMProvider>(context, listen: false).loadMoMs();
-      setState(() {}); // Force rebuild to show new data
+      setState(() {});
     }
   }
 
-  /// Updates search query when user types in search bar
   void _onSearchChanged(String value) {
     setState(() {
-      _query = value;
+      _searchQuery = value;
     });
   }
 
-  /// Builds the main UI structure
+  Future<void> _pickDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Colors.orangeAccent,
+              surface: Color(0xFF0E2448),
+            ),
+            dialogBackgroundColor: const Color(0xFF0E2448),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked.toIso8601String().split('T')[0];
+        _dateController.text = _selectedDate;
+      });
+    }
+  }
+
+  void _clearDate() {
+    setState(() {
+      _selectedDate = '';
+      _dateController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -86,36 +113,131 @@ class _MoMViewPageState extends State<MoMViewPage> {
           vertical: MoMLayout.verticalPadding(height),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Search bar for filtering MoMs
+            const Divider(
+              color: Colors.orangeAccent,
+              thickness: 2,
+              height: 16,
+            ),
+            const SizedBox(height: 10),
+
             MoMSearchBar(
               controller: _searchController,
               onChanged: _onSearchChanged,
             ),
+            const SizedBox(height: 12),
+
+            Row(
+              children: [
+            Expanded(
+  child: Row(
+    children: [
+      Expanded(
+        child: GestureDetector(
+          onTap: () => _pickDate(context),
+          child: AbsorbPointer(
+            child: TextFormField(
+              controller: _dateController,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(0xFF0E2448),
+                hintText: 'Search',
+                hintStyle: const TextStyle(color: Colors.white70),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                prefixIcon: const Icon(Icons.calendar_today, color: Colors.white70),
+              ),
+            ),
+          ),
+        ),
+      ),
+      if (_selectedDate.isNotEmpty)
+        IconButton(
+          icon: const Icon(Icons.close, color: Colors.white70),
+          tooltip: 'Clear date',
+          onPressed: _clearDate,
+        ),
+    ],
+  ),
+),
+
+                const SizedBox(width: 10),
+
+                // Meet Type Filter
+                Expanded(
+                  child: DropdownButton<String>(
+                    value: _selectedType,
+                    dropdownColor: const Color(0xFF0E2448),
+                    style: const TextStyle(color: Colors.white),
+                    underline: Container(height: 0),
+                    iconEnabledColor: Colors.white,
+                    isExpanded: true,
+                    items: ['All', ...MoMConstants.meetTypes].map((String type) {
+                      return DropdownMenuItem<String>(
+                        value: type,
+                        child: Text(type),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _selectedType = value);
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+
+                // Domain Filter
+                Expanded(
+                  child: DropdownButton<String>(
+                    value: _selectedDomain,
+                    dropdownColor: const Color(0xFF0E2448),
+                    style: const TextStyle(color: Colors.white),
+                    underline: Container(height: 0),
+                    iconEnabledColor: Colors.white,
+                    isExpanded: true,
+                    items: ['All', ...MoMConstants.domains].map((String domain) {
+                      return DropdownMenuItem<String>(
+                        value: domain,
+                        child: Text(domain),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _selectedDomain = value);
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: MoMLayout.searchSpacing(height)),
 
-            // Main content area - list of MoMs or empty state
             Expanded(
               child: Consumer<MoMProvider>(
                 builder: (context, provider, _) {
-                  // Show skeleton loader while loading
                   if (provider.isLoading) {
                     return _buildSkeletonLoader();
                   }
 
-                  final filteredList = provider.filterMoMs(_query);
+                  final filteredList = provider.filterMoMsAdvanced(
+                    titleQuery: _searchQuery,
+                    dateQuery: _selectedDate,
+                    selectedType: _selectedType,
+                    selectedDomain: _selectedDomain,
+                  );
 
-                  // Show empty state if no MoMs match the search
                   if (filteredList.isEmpty) {
                     return const Center(
-                      child: Text(
-                        "No MoMs available.",
-                        style: MoMTextStyles.emptyState,
-                      ),
+                      child: Text("No MoMs available.", style: MoMTextStyles.emptyState),
                     );
                   }
 
-                  // Show list of filtered MoMs
                   return MoMListView(momList: filteredList);
                 },
               ),
@@ -123,20 +245,16 @@ class _MoMViewPageState extends State<MoMViewPage> {
           ],
         ),
       ),
-
-      // Floating action button to add new MoM
-      floatingActionButton:
-          _isAdmin
-              ? FloatingActionButton(
-                onPressed: _navigateToUpload,
-                backgroundColor: MoMConstants.primaryAccent,
-                child: const Icon(Icons.add),
-              )
-              : null,
+      floatingActionButton: _isAdmin
+          ? FloatingActionButton(
+              onPressed: _navigateToUpload,
+              backgroundColor: MoMConstants.primaryAccent,
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 
-  /// Builds the app bar with responsive title
   AppBar _buildAppBar(double width) {
     return AppBar(
       backgroundColor: Colors.transparent,
@@ -146,10 +264,9 @@ class _MoMViewPageState extends State<MoMViewPage> {
     );
   }
 
-  /// Builds skeleton loader to show while data is loading
   Widget _buildSkeletonLoader() {
     return ListView.builder(
-      itemCount: 6, // Show 6 skeleton items
+      itemCount: 6,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
@@ -159,12 +276,11 @@ class _MoMViewPageState extends State<MoMViewPage> {
     );
   }
 
-  /// Builds individual skeleton item
   Widget _buildSkeletonItem() {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF0A1B3A), // Slightly lighter than primary color
+        color: const Color(0xFF0A1B3A),
         borderRadius: BorderRadius.circular(8.0),
         boxShadow: [
           BoxShadow(
@@ -178,15 +294,10 @@ class _MoMViewPageState extends State<MoMViewPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title skeleton
           _buildShimmerContainer(height: 20, width: double.infinity * 0.7),
           const SizedBox(height: 8),
-
-          // Date skeleton
           _buildShimmerContainer(height: 14, width: double.infinity * 0.4),
           const SizedBox(height: 12),
-
-          // Content lines skeleton
           _buildShimmerContainer(height: 14, width: double.infinity),
           const SizedBox(height: 6),
           _buildShimmerContainer(height: 14, width: double.infinity * 0.8),
@@ -197,23 +308,18 @@ class _MoMViewPageState extends State<MoMViewPage> {
     );
   }
 
-  /// Builds shimmer container for skeleton effect
-  Widget _buildShimmerContainer({
-    required double height,
-    required double width,
-  }) {
+  Widget _buildShimmerContainer({required double height, required double width}) {
     return Container(
       height: height,
       width: width,
       decoration: BoxDecoration(
-        color: const Color(0xFF0E2448), // Muted blue-gray base
+        color: const Color(0xFF0E2448),
         borderRadius: BorderRadius.circular(4.0),
       ),
       child: _buildShimmerEffect(),
     );
   }
 
-  /// Creates shimmer animation effect
   Widget _buildShimmerEffect() {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
@@ -224,9 +330,9 @@ class _MoMViewPageState extends State<MoMViewPage> {
             borderRadius: BorderRadius.circular(4.0),
             gradient: LinearGradient(
               colors: [
-                const Color(0xFF0E2448), // Base muted blue-gray
-                const Color(0xFF1A3A5C), // Lighter accent
-                const Color(0xFF0E2448), // Back to base
+                const Color(0xFF0E2448),
+                const Color(0xFF1A3A5C),
+                const Color(0xFF0E2448),
               ],
               stops: [
                 (value - 0.3).clamp(0.0, 1.0),
@@ -240,10 +346,7 @@ class _MoMViewPageState extends State<MoMViewPage> {
         );
       },
       onEnd: () {
-        // Restart animation
-        if (mounted) {
-          setState(() {});
-        }
+        if (mounted) setState(() {});
       },
     );
   }

@@ -12,39 +12,81 @@ class MoMFormWidgets {
   }
 
   // Text Field Widget
-  static Widget buildTextField(TextEditingController controller, String hint) {
-    return TextFormField(
-      controller: controller,
-      style: AppTextStyles.inputStyle,
-      decoration: AppInputDecoration.getInputDecoration(hint),
-      validator: (value) =>
-          (value == null || value.isEmpty) ? 'Required field' : null,
-    );
-  }
+  
+
+static Widget buildTextField(TextEditingController controller, String hintText) {
+  return StatefulBuilder(
+    builder: (context, setState) {
+      return TextFormField(
+        controller: controller,
+        style: AppTextStyles.inputStyle,
+        onChanged: (_) => setState(() {}), 
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: const TextStyle(color: Colors.grey),
+          filled: true,
+          fillColor: Colors.grey[900], 
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: orangeColor,
+              width: 1.2,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: controller.text.isNotEmpty ? const Color.fromARGB(138, 255, 255, 255) : orangeColor,
+              width: 1.5,
+            ),
+          ),
+        ),
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return 'This field is required';
+          }
+          return null;
+        },
+      );
+    },
+  );
+}
 
   // Domain Selection Widget
   static Widget buildDomainSelector({
-    required List<String> selectedDomains,
-    required Function(String, bool) onDomainChanged,
-  }) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 5,
-      children: AppConstants.domains.map((domain) {
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Checkbox(
-              value: selectedDomains.contains(domain),
-              activeColor: orangeColor,
-              onChanged: (val) => onDomainChanged(domain, val ?? false),
-            ),
-            Text(domain, style: AppTextStyles.domainStyle),
-          ],
-        );
-      }).toList(),
-    );
-  }
+  required List<String> selectedDomains,
+  required Function(String, bool) onDomainChanged,
+}) {
+  final allDomains = AppConstants.domains; 
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: allDomains.map((domain) {
+      final isSelected = selectedDomains.contains(domain);
+
+      return CheckboxListTile(
+        title: Text(
+          domain,
+          style: const TextStyle(color: Colors.white), 
+        ),
+        value: isSelected,
+        activeColor:Color(0xFFE5A122),
+        checkColor: Colors.white,
+        onChanged: (bool? value) {
+          if (value != null) {
+            onDomainChanged(domain, value);
+          }
+        },
+        controlAffinity: ListTileControlAffinity.leading,
+        contentPadding: EdgeInsets.zero,
+      );
+    }).toList(),
+  );
+}
+
 
   // Meeting Type Dropdown Widget
   static Widget buildMeetingTypeDropdown({
@@ -101,10 +143,12 @@ class MoMFormWidgets {
   }
 
   // Title Widget
-  static Widget buildTitle(double width) {
-    return Text(
+ /* static Widget buildTitle(double width) {
+  return Center(
+    child: Text(
       'Upload new MoM',
       style: AppTextStyles.titleStyle.copyWith(fontSize: width * 0.08),
-    );
-  }
+    ),
+  );
+}*/
 }

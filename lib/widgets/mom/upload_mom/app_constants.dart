@@ -15,7 +15,7 @@ class AppConstants {
     'Graphic Designing',
     'Photography',
     'App Development',
-    'Website Development',
+    'Web Development',
     'Machine Learning',
     'Embedded',
   ];
@@ -55,11 +55,13 @@ class AppInputDecoration {
 // Reusable Text Styles
 class AppTextStyles {
   static TextStyle get titleStyle => GoogleFonts.poppins(
-    fontSize: 32, // You might want to make this responsive in the widget
+    fontSize: 32, 
     fontWeight: FontWeight.bold,
     color: orangeColor,
     shadows: const [Shadow(blurRadius: 10, color: orangeColor)],
   );
+  
+
 
   static TextStyle get labelStyle => GoogleFonts.poppins(color: orangeColor);
   
@@ -67,5 +69,8 @@ class AppTextStyles {
   
   static TextStyle get buttonStyle => GoogleFonts.poppins(color: Colors.black);
   
-  static TextStyle get domainStyle => GoogleFonts.poppins(color: Colors.white);
+  static TextStyle get domainStyle => GoogleFonts.poppins(
+  color: Colors.white,
+  fontSize: 20, 
+);
 }
