@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignUp(),
         '/profile': (context) => const ProfileScreen(),
-        '/notices': (context) =>  NoticeBoardPage(),
+        '/notices': (context) => NoticeBoardPage(),
         '/attendance-home': (context) => AttendanceHomePage(),
         '/attendance-marking': (context) => AttendanceMarkingPage(),
         '/attendance-record': (context) => AttendanceRecordsPage(),
