@@ -66,7 +66,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
               Container(
                 padding: EdgeInsets.all(isTablet ? 10 : 8),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withAlpha(26),
                   borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
                 ),
                 child: Icon(
@@ -113,7 +113,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
                     color: Color(0xff06132A),
                     borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
                     border: Border.all(
-                      color: Color(0xFFE5A122).withOpacity(0.3),
+                      color: Color(0xFFE5A122).withAlpha(78),
                       width: 1,
                     ),
                   ),
@@ -123,7 +123,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
                         width: isTablet ? 80 : 70,
                         height: isTablet ? 80 : 70,
                         decoration: BoxDecoration(
-                          color: Color(0xFFE5A122).withOpacity(0.2),
+                          color: Color(0xFFE5A122).withAlpha(51),
                           shape: BoxShape.circle,
                         ),
                         child: CircleAvatar(
@@ -165,7 +165,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
                             Text(
                               widget.userDomain,
                               style: TextStyle(
-                                color: Color(0xFFE5A122).withOpacity(0.8),
+                                color: Color(0xFFE5A122).withAlpha(204),
                                 fontSize: isTablet ? 18 : 16,
                               ),
                             ),
@@ -320,7 +320,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
                                       isTablet ? 16 : 12,
                                     ),
                                     border: Border.all(
-                                      color: Colors.grey.withOpacity(0.3),
+                                      color: Colors.grey.withAlpha(78),
                                       width: 1,
                                     ),
                                   ),
@@ -337,7 +337,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
                                             decoration: BoxDecoration(
                                               color: Color(
                                                 0xFFE5A122,
-                                              ).withOpacity(0.2),
+                                              ).withAlpha(51),
                                               borderRadius:
                                                   BorderRadius.circular(
                                                     isTablet ? 10 : 8,
@@ -373,7 +373,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
                                                       style: TextStyle(
                                                         color: Color(
                                                           0xFFE5A122,
-                                                        ).withOpacity(0.8),
+                                                        ).withAlpha(204),
                                                         fontSize:
                                                             isTablet ? 16 : 14,
                                                       ),
@@ -387,7 +387,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
                                                           ),
                                                       decoration: BoxDecoration(
                                                         color: Colors.grey
-                                                            .withOpacity(0.2),
+                                                            .withAlpha(51),
                                                         borderRadius:
                                                             BorderRadius.circular(
                                                               6,
@@ -425,7 +425,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
                                               .getStatusColor(
                                                 record['status'] ?? 'Unknown',
                                               )
-                                              .withOpacity(0.2),
+                                              .withAlpha(51),
                                           borderRadius: BorderRadius.circular(
                                             isTablet ? 10 : 8,
                                           ),
@@ -478,7 +478,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
           decoration: BoxDecoration(
             color: Color(0xff06132A),
             borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-            border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+            border: Border.all(color: Colors.grey.withAlpha(78), width: 1),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

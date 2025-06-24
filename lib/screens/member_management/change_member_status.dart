@@ -53,7 +53,7 @@ class _ChangeMemberStatusPageState extends State<ChangeMemberStatusPage> {
             Container(
               padding: EdgeInsets.all(isTablet ? 10 : 8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha(26),
                 borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
               ),
               child: Icon(
@@ -250,7 +250,7 @@ class _ChangeMemberStatusPageState extends State<ChangeMemberStatusPage> {
           decoration: BoxDecoration(
             color: Color(0xff06132A),
             borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-            border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+            border: Border.all(color: Colors.grey.withAlpha(78), width: 1),
           ),
           child: Row(
             children: [
@@ -394,7 +394,7 @@ class _ChangeMemberStatusPageState extends State<ChangeMemberStatusPage> {
             borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
             border: Border.all(
               color:
-                  hasChanged ? Color(0xFFE5A122) : Colors.grey.withOpacity(0.3),
+                  hasChanged ? Color(0xFFE5A122) : Colors.grey.withAlpha(78),
               width: hasChanged ? 2 : 1,
             ),
           ),
@@ -406,7 +406,7 @@ class _ChangeMemberStatusPageState extends State<ChangeMemberStatusPage> {
                     width: isTablet ? 60 : 50,
                     height: isTablet ? 60 : 50,
                     decoration: BoxDecoration(
-                      color: Color(0xFFE5A122).withOpacity(0.2),
+                      color: Color(0xFFE5A122).withAlpha(51),
                       shape: BoxShape.circle,
                     ),
                     child: CircleAvatar(
@@ -450,7 +450,7 @@ class _ChangeMemberStatusPageState extends State<ChangeMemberStatusPage> {
                         Text(
                           member['email'] ?? '',
                           style: TextStyle(
-                            color: Color(0xFFE5A122).withOpacity(0.8),
+                            color: Color(0xFFE5A122).withAlpha(204),
                             fontSize: isTablet ? 16 : 14,
                           ),
                         ),
@@ -473,7 +473,7 @@ class _ChangeMemberStatusPageState extends State<ChangeMemberStatusPage> {
                               decoration: BoxDecoration(
                                 color: _getStatusColor(
                                   currentStatus,
-                                ).withOpacity(0.2),
+                                ).withAlpha(51),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: _getStatusColor(currentStatus),
@@ -519,7 +519,7 @@ class _ChangeMemberStatusPageState extends State<ChangeMemberStatusPage> {
                           color:
                               hasChanged
                                   ? Color(0xFFE5A122)
-                                  : Colors.grey.withOpacity(0.5),
+                                  : Colors.grey.withAlpha(128),
                           width: 1,
                         ),
                       ),
@@ -632,7 +632,7 @@ class _ChangeMemberStatusPageState extends State<ChangeMemberStatusPage> {
               borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
             ),
             child: Container(
-              width: isTablet ? screenWidth * 0.5 : screenWidth * 0.8,
+              width: isTablet ? screenWidth * 128 : screenWidth * 204,
               padding: EdgeInsets.all(screenWidth * 0.06),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -642,8 +642,8 @@ class _ChangeMemberStatusPageState extends State<ChangeMemberStatusPage> {
                     decoration: BoxDecoration(
                       color:
                           success
-                              ? Colors.green.withOpacity(0.2)
-                              : Colors.red.withOpacity(0.2),
+                              ? Colors.green.withAlpha(51)
+                              : Colors.red.withAlpha(51),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

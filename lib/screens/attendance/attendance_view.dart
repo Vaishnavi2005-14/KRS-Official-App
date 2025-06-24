@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/attendance_record.dart';
@@ -78,7 +79,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
             Container(
               padding: EdgeInsets.all(isTablet ? 10 : 8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha(26),
                 borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
               ),
               child: GestureDetector(
@@ -154,7 +155,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                   color: Color(0xff06132A),
                   borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
                   border: Border.all(
-                    color: Color(0xFFE5A122).withOpacity(0.3),
+                    color: Color(0xFFE5A122).withAlpha(78),
                     width: 1,
                   ),
                 ),
@@ -370,7 +371,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                                   isTablet ? 16 : 12,
                                 ),
                                 border: Border.all(
-                                  color: Colors.grey.withOpacity(0.3),
+                                  color: Colors.grey.withAlpha(78),
                                   width: 1,
                                 ),
                               ),
@@ -384,7 +385,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                                         decoration: BoxDecoration(
                                           color: Color(
                                             0xFFE5A122,
-                                          ).withOpacity(0.2),
+                                          ).withAlpha(51),
                                           shape: BoxShape.circle,
                                         ),
                                         child: CircleAvatar(
@@ -434,7 +435,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                                               style: TextStyle(
                                                 color: Color(
                                                   0xFFE5A122,
-                                                ).withOpacity(0.8),
+                                                ).withAlpha(204),
                                                 fontSize: isTablet ? 16 : 14,
                                               ),
                                             ),
@@ -473,7 +474,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                                             decoration: BoxDecoration(
                                               color: _getStatusColor(
                                                 record.status,
-                                              ).withOpacity(0.2),
+                                              ).withAlpha(51),
                                               borderRadius:
                                                   BorderRadius.circular(
                                                     isTablet ? 10 : 8,
@@ -521,7 +522,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                                         decoration: BoxDecoration(
                                           color: Color(
                                             0xFFE5A122,
-                                          ).withOpacity(0.2),
+                                          ).withAlpha(51),
                                           borderRadius: BorderRadius.circular(
                                             isTablet ? 10 : 8,
                                           ),
@@ -648,7 +649,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                   Container(
                     padding: EdgeInsets.all(isTablet ? 16 : 12),
                     decoration: BoxDecoration(
-                      color: Color(0xFFE5A122).withOpacity(0.2),
+                      color: Color(0xFFE5A122).withAlpha(51),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -674,7 +675,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                       color: Color(0xff040E1E),
                       borderRadius: BorderRadius.circular(isTablet ? 12 : 8),
                       border: Border.all(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: Colors.grey.withAlpha(78),
                         width: 1,
                       ),
                     ),
@@ -743,7 +744,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                   Container(
                     padding: EdgeInsets.all(isTablet ? 20 : 16),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.2),
+                      color: Colors.red.withAlpha(51),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -860,24 +861,23 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
         token: token,
         attendanceId: attendance.id,
       );
-
+      if (!mounted) return;
       Navigator.pop(context);
       Navigator.pop(context);
-      Navigator.pop(context); 
+      Navigator.pop(context);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Attendance record deleted successfully'),
-          backgroundColor: Colors.green,
-        ),
+      Fluttertoast.showToast(
+        msg: "Attendance record deleted successfully",
+        backgroundColor: Colors.green,
+        toastLength: Toast.LENGTH_LONG,
       );
     } catch (e) {
-      Navigator.pop(context); // Close loading
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error deleting record: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
+      if (!mounted) return;
+      Navigator.pop(context);
+      Fluttertoast.showToast(
+        msg: 'Error deleting record: ${e.toString()}',
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
       );
     }
   }
@@ -918,7 +918,7 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                         Container(
                           padding: EdgeInsets.all(isTablet ? 16 : 12),
                           decoration: BoxDecoration(
-                            color: Color(0xFFE5A122).withOpacity(0.2),
+                            color: Color(0xFFE5A122).withAlpha(51),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -1081,13 +1081,11 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                                 onPressed: () {
                                   if (status == 'Absent with reason' &&
                                       remarks.trim().isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Please provide a reason for absence',
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      ),
+                                    Fluttertoast.showToast(
+                                      msg:
+                                          "Please provide a reason for absence",
+                                      backgroundColor: Colors.red,
+                                      toastLength: Toast.LENGTH_LONG,
                                     );
                                     return;
                                   }
@@ -1188,8 +1186,8 @@ class _AttendanceViewPageState extends State<AttendanceViewPage> {
                     decoration: BoxDecoration(
                       color:
                           success
-                              ? Colors.green.withOpacity(0.2)
-                              : Colors.red.withOpacity(0.2),
+                              ? Colors.green.withAlpha(51)
+                              : Colors.red.withAlpha(51),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

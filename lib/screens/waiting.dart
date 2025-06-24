@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:krs_app/services/auth.dart';
 
@@ -66,13 +67,10 @@ class _WaitingState extends State<Waiting> with TickerProviderStateMixin {
               showButton = true;
             });
             _fadeController.forward();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Your account has been deactivated. Contact admin.',
-                ),
-                backgroundColor: Colors.red,
-              ),
+            Fluttertoast.showToast(
+              msg: 'Your account has been deactivated. Contact admin.',
+              backgroundColor: Colors.red,
+              toastLength: Toast.LENGTH_LONG,
             );
           }
           break;

@@ -70,7 +70,7 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios : true
   image_path : "assets/krs_big.png"
-  background_color: "#000000"
+  adaptive_icon_background: "#000000"
 
 # The following section is specific to Flutter packages.
 flutter:

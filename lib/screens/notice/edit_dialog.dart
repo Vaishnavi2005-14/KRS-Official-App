@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/models/notice.dart';
 import 'package:krs_app/services/notice_service.dart';
 
@@ -22,8 +23,12 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
     super.initState();
     _titleController = TextEditingController(text: widget.notice.title);
     _descController = TextEditingController(text: widget.notice.description);
-    _attachmentController = TextEditingController(text: widget.notice.attachmentLink ?? '');
-    print('[DEBUG] EditNoticeDialog initialized with notice ID: ${widget.notice.id}');
+    _attachmentController = TextEditingController(
+      text: widget.notice.attachmentLink ?? '',
+    );
+    print(
+      '[DEBUG] EditNoticeDialog initialized with notice ID: ${widget.notice.id}',
+    );
   }
 
   @override
@@ -48,29 +53,24 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
         id: widget.notice.id,
         title: _titleController.text,
         description: _descController.text,
-        attachmentLink: _attachmentController.text.isNotEmpty
-            ? _attachmentController.text
-            : null,
+        attachmentLink:
+            _attachmentController.text.isNotEmpty
+                ? _attachmentController.text
+                : null,
       );
-      print('[DEBUG] Notice updated successfully: ${updatedNotice.id}');
-      if (context.mounted) {
+      if (mounted) {
         Navigator.of(context).pop(updatedNotice);
         return;
       }
     } catch (e) {
-      print('[ERROR] Failed to edit notice: $e');
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[800],
-            content: Text('Error: $e', style: const TextStyle(color: Colors.white)),
-          ),
-        );
-      }
+      Fluttertoast.showToast(
+        msg: "Error : $e",
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
+      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
-        print('[DEBUG] EditNoticeDialog loading state set to false');
       }
     }
   }
@@ -84,7 +84,10 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
     return AlertDialog(
       backgroundColor: bgColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text('Edit Notice', style: TextStyle(color: goldColor, fontWeight: FontWeight.bold)),
+      title: const Text(
+        'Edit Notice',
+        style: TextStyle(color: goldColor, fontWeight: FontWeight.bold),
+      ),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -187,21 +190,23 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xffE5A122),
         foregroundColor: const Color(0xff06132A),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       onPressed: _isLoading ? null : _submit,
-      child: _isLoading
-          ? const SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Color(0xff06132A),
+      child:
+          _isLoading
+              ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Color(0xff06132A),
+                ),
+              )
+              : const Text(
+                'Save',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            )
-          : const Text('Save', style: TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 }

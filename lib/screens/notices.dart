@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/models/notice.dart';
 import 'package:krs_app/screens/notice/edit_dialog.dart';
 import 'package:krs_app/services/auth.dart';
@@ -97,17 +98,18 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                         child: ListView.builder(
                           padding: const EdgeInsets.symmetric(horizontal: 18),
                           itemCount: 3,
-                          itemBuilder: (context, index) => NoticeCard(
-                            day: '00',
-                            month: '---',
-                            heading: '',
-                            body: '',
-                            onViewAttachment: null,
-                            onEdit: null,
-                            onDelete: null,
-                            isAdmin: false,
-                            attachmentUrl: '',
-                          ),
+                          itemBuilder:
+                              (context, index) => NoticeCard(
+                                day: '00',
+                                month: '---',
+                                heading: '',
+                                body: '',
+                                onViewAttachment: null,
+                                onEdit: null,
+                                onDelete: null,
+                                isAdmin: false,
+                                attachmentUrl: '',
+                              ),
                         ),
                       );
                     }
@@ -145,71 +147,26 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                           month: month,
                           heading: notice.title,
                           body: notice.description,
-                          onViewAttachment: (notice.attachmentLink != null &&
-                                  notice.attachmentLink!.isNotEmpty)
-                              ? () => _openAttachment(
+                          onViewAttachment:
+                              (notice.attachmentLink != null &&
+                                      notice.attachmentLink!.isNotEmpty)
+                                  ? () => _openAttachment(
                                     context,
                                     notice.attachmentLink!,
                                   )
-                              : null,
-                          onEdit: isAdmin
-                              ? () async {
-                                  final updatedNotice =
-                                      await showDialog<Notice>(
-                                    context: context,
-                                    builder: (ctx) => EditNoticeDialog(
-                                      notice: notice,
-                                    ),
-                                  );
-                                  if (updatedNotice != null) {
-                                    setState(() {
-                                      _fetchNotices();
-                                    });
-                                    ScaffoldMessenger.of(
-                                      context,
-                                    ).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Notice updated successfully',
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
-                              : null,
-                          onDelete: isAdmin
-                              ? () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: const Text('Delete Notice'),
-                                      content: const Text(
-                                        'Are you sure you want to delete this notice?',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(false),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(true),
-                                          child: const Text(
-                                            'Delete',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  if (confirm == true) {
-                                    try {
-                                      await NoticeApiService().deleteNotice(
-                                        notice.id,
-                                      );
+                                  : null,
+                          onEdit:
+                              isAdmin
+                                  ? () async {
+                                    final updatedNotice =
+                                        await showDialog<Notice>(
+                                          context: context,
+                                          builder:
+                                              (ctx) => EditNoticeDialog(
+                                                notice: notice,
+                                              ),
+                                        );
+                                    if (updatedNotice != null) {
                                       setState(() {
                                         _fetchNotices();
                                       });
@@ -218,20 +175,69 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
                                       ).showSnackBar(
                                         const SnackBar(
                                           content: Text(
-                                            'Notice deleted successfully',
+                                            'Notice updated successfully',
                                           ),
                                         ),
                                       );
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(content: Text('Error: $e')),
-                                      );
                                     }
                                   }
-                                }
-                              : null,
+                                  : null,
+                          onDelete:
+                              isAdmin
+                                  ? () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder:
+                                          (ctx) => AlertDialog(
+                                            title: const Text('Delete Notice'),
+                                            content: const Text(
+                                              'Are you sure you want to delete this notice?',
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed:
+                                                    () => Navigator.of(
+                                                      ctx,
+                                                    ).pop(false),
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed:
+                                                    () => Navigator.of(
+                                                      ctx,
+                                                    ).pop(true),
+                                                child: const Text(
+                                                  'Delete',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                    );
+                                    if (confirm == true) {
+                                      try {
+                                        await NoticeApiService().deleteNotice(
+                                          notice.id,
+                                        );
+                                        setState(() {
+                                          _fetchNotices();
+                                        });
+                                        Fluttertoast.showToast(
+                                          msg: 'Notice deleted successfully',
+                                          backgroundColor: Colors.green,
+                                        );
+                                      } catch (e) {
+                                        Fluttertoast.showToast(
+                                          msg: 'Error: $e',
+                                          backgroundColor: Colors.red,
+                                          toastLength: Toast.LENGTH_LONG,
+                                        );
+                                      }
+                                    }
+                                  }
+                                  : null,
                           isAdmin: isAdmin,
                           attachmentUrl: notice.attachmentLink ?? '',
                         );
@@ -279,8 +285,9 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
       mode: LaunchMode.externalApplication,
     );
     if (!launched) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open attachment')),
+      Fluttertoast.showToast(
+        msg: 'Could not open attachment',
+        backgroundColor: Colors.red,
       );
     }
   }

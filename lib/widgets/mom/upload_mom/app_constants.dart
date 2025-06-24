@@ -14,8 +14,8 @@ class AppConstants {
     'Video Editing',
     'Graphic Designing',
     'Photography',
-    'App Development',
-    'Web Development',
+    'App Dev',
+    'Web Dev',
     'Machine Learning',
     'Embedded',
   ];
@@ -24,7 +24,7 @@ class AppConstants {
     'Scrum',
     'Leads Only',
     'Domain-Specific',
-    'Inter-Domain'
+    'Inter-Domain',
   ];
 }
 
@@ -55,22 +55,18 @@ class AppInputDecoration {
 // Reusable Text Styles
 class AppTextStyles {
   static TextStyle get titleStyle => GoogleFonts.poppins(
-    fontSize: 32, 
+    fontSize: 32,
     fontWeight: FontWeight.bold,
     color: orangeColor,
     shadows: const [Shadow(blurRadius: 10, color: orangeColor)],
   );
-  
-
 
   static TextStyle get labelStyle => GoogleFonts.poppins(color: orangeColor);
-  
+
   static TextStyle get inputStyle => GoogleFonts.poppins(color: Colors.white);
-  
+
   static TextStyle get buttonStyle => GoogleFonts.poppins(color: Colors.black);
-  
-  static TextStyle get domainStyle => GoogleFonts.poppins(
-  color: Colors.white,
-  fontSize: 20, 
-);
+
+  static TextStyle get domainStyle =>
+      GoogleFonts.poppins(color: Colors.white, fontSize: 20);
 }

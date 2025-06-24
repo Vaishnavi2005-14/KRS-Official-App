@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:krs_app/widgets/mom/upload_mom/app_constants.dart';
 
 // ============================================================================
 // REUSABLE FORM WIDGETS
@@ -61,10 +62,13 @@ class FormWidgets {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       child: TextFormField(
+        cursorColor: Colors.white,
         controller: controller,
         style: const TextStyle(color: Colors.white, fontFamily: 'Poppins'),
         decoration: getInputDecoration(hint),
-        validator: validator ?? (value) => value?.isEmpty == true ? 'Required field' : null,
+        validator:
+            validator ??
+            (value) => value?.isEmpty == true ? 'Required field' : null,
       ),
     );
   }
@@ -75,10 +79,7 @@ class FormWidgets {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildSectionLabel('MoM TITLE'),
-        buildTextField(
-          controller: controller,
-          hint: 'Enter title...',
-        ),
+        buildTextField(controller: controller, hint: 'Enter title...'),
       ],
     );
   }
@@ -89,10 +90,7 @@ class FormWidgets {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildSectionLabel('MoM LINK'),
-        buildTextField(
-          controller: controller,
-          hint: 'Enter link...',
-        ),
+        buildTextField(controller: controller, hint: 'Enter link...'),
       ],
     );
   }
@@ -140,15 +138,18 @@ class DomainSelectionWidgets {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
-        children: domainsInRow.map((domain) => 
-          Expanded(
-            child: _buildDomainCheckbox(
-              domain: domain,
-              isSelected: selectedDomains.contains(domain),
-              onToggle: () => onDomainToggle(domain),
-            ),
-          )
-        ).toList(),
+        children:
+            domainsInRow
+                .map(
+                  (domain) => Expanded(
+                    child: _buildDomainCheckbox(
+                      domain: domain,
+                      isSelected: selectedDomains.contains(domain),
+                      onToggle: () => onDomainToggle(domain),
+                    ),
+                  ),
+                )
+                .toList(),
       ),
     );
   }
@@ -172,9 +173,10 @@ class DomainSelectionWidgets {
               border: Border.all(color: const Color(0xFFE5A122), width: 2),
               borderRadius: BorderRadius.circular(3),
             ),
-            child: isSelected
-                ? const Icon(Icons.check, size: 12, color: Colors.black)
-                : null,
+            child:
+                isSelected
+                    ? const Icon(Icons.check, size: 12, color: Colors.black)
+                    : null,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -216,19 +218,25 @@ class DropdownWidgets {
             value: selectedType,
             style: const TextStyle(color: Colors.white, fontFamily: 'Poppins'),
             decoration: FormWidgets.getInputDecoration('Select Meeting Type'),
-            icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFFE5A122)),
-            items: meetingTypes.map(
-              (type) => DropdownMenuItem(
-                value: type,
-                child: Text(
-                  typeDisplayNames[type] ?? type,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-              ),
-            ).toList(),
+            icon: const Icon(
+              Icons.keyboard_arrow_down,
+              color: Color(0xFFE5A122),
+            ),
+            items:
+                meetingTypes
+                    .map(
+                      (type) => DropdownMenuItem(
+                        value: type,
+                        child: Text(
+                          typeDisplayNames[type] ?? type,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
             onChanged: onChanged,
           ),
         ),
@@ -254,27 +262,29 @@ class ButtonWidgets {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFE5A122),
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
           elevation: 5,
         ),
-        child: isLoading
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+        child:
+            isLoading
+                ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(orangeColor),
+                  ),
+                )
+                : Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              )
-            : Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins',
-                ),
-              ),
       ),
     );
   }

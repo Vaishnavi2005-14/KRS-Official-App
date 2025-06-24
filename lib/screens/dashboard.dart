@@ -93,7 +93,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     fit: BoxFit.contain,
                     placeholderBuilder:
                         (context) => Container(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withAlpha(51),
                           child: Icon(
                             Icons.image,
                             color: Colors.white,
@@ -129,7 +129,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   margin: EdgeInsets.only(right: 16),
                   padding: EdgeInsets.all(isTablet ? 10 : 8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withAlpha(51),
                     borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
                   ),
                   child: Icon(
@@ -159,7 +159,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             // ),
             Padding(
               padding: EdgeInsets.only(
-                top: screenWidth * 0.10,
+                top: screenWidth * 260,
                 left: screenWidth * 0.05,
                 right: screenWidth * 0.05,
               ),
@@ -324,17 +324,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         decoration: BoxDecoration(
           color: Color(0xff06132A),
           borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-          border: Border.all(
-            color: Color(0xFFE5A122).withOpacity(0.3),
-            width: 1,
-          ),
+          border: Border.all(color: Color(0xFFE5A122).withAlpha(78), width: 1),
         ),
         child: Row(
           children: [
             Container(
               padding: EdgeInsets.all(screenWidth * 0.03),
               decoration: BoxDecoration(
-                color: Color(0xFFE5A122).withOpacity(0.2),
+                color: Color(0xFFE5A122).withAlpha(51),
                 borderRadius: BorderRadius.circular(isTablet ? 12 : 8),
               ),
               child: Icon(

@@ -80,7 +80,6 @@ class _MyAppState extends State<MyApp> {
         '/signup': (context) => SignUp(),
         '/wait': (context) => Waiting(),
         '/login': (context) => LoginScreen(),
-        '/signup': (context) => SignUp(),
         '/profile': (context) => const ProfileScreen(),
         '/notices': (context) =>  NoticeBoardPage(),
         '/attendance-home': (context) => AttendanceHomePage(),
@@ -88,7 +87,6 @@ class _MyAppState extends State<MyApp> {
         '/attendance-record': (context) => AttendanceRecordsPage(),
         '/attendance-gateway': (context) => AttendanceGatewayPage(),
         '/dashboard': (context) => const DashboardScreen(),
-        '/wait': (context) => Waiting(),
       },
     );
   }
