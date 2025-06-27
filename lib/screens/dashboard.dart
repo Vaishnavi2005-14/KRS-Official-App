@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:krs_app/screens/animated_text.dart';
-// import 'package:krs_app/screens/attendance/attendance_home.dart';
-// import 'package:krs_app/screens/member_management/member_management_hub.dart';
 import 'package:krs_app/screens/mom/mom_view_page.dart';
 import 'package:krs_app/services/auth.dart';
 import 'package:flutter_svg/svg.dart';
@@ -42,25 +40,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final isTablet = screenWidth > 600;
+    final s = MediaQuery.sizeOf(context);
+    final isTablet = s.width > 600;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(
-      //     'DASHBOARD',
-      //     style: TextStyle(
-      //       color: Colors.black,
-      //       fontSize: isTablet ? 28 : 24,
-      //       fontWeight: FontWeight.bold,
-      //     ),
-      //   ),
-      //   backgroundColor: Color(0xFFE5A122),
-      //   elevation: 0,
-      //   automaticallyImplyLeading: false,
-      //   toolbarHeight: isTablet ? 70 : 56,
-      // ),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight + 5),
         child: ClipRRect(
@@ -159,9 +142,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             // ),
             Padding(
               padding: EdgeInsets.only(
-                top: screenWidth * 260,
-                left: screenWidth * 0.05,
-                right: screenWidth * 0.05,
+                top: s.height * 0.01,
+                left: s.width * 0.05,
+                right: s.width * 0.05,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,13 +169,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               "Welcome, $_name!",
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: isTablet ? 32 : screenWidth * 0.065,
+                                fontSize: isTablet ? 32 : s.width * 0.065,
                                 fontWeight: FontWeight.bold,
                               ),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
                             ),
-                            SizedBox(height: screenHeight * 0.008),
+                            SizedBox(height: s.height * 0.008),
                             // Text(
                             //   "What would you like to do today?",
                             //   style: TextStyle(
@@ -223,7 +206,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ],
                   ),
 
-                  SizedBox(height: screenHeight * 0.04),
+                  SizedBox(height: s.height * 0.04),
                   // Container(
                   //   width: double.infinity,
                   //   child: Image.asset('assets/robot.png', fit: BoxFit.cover),
@@ -268,8 +251,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     title: "Minutes of Meeting",
                     subtitle: "View and edit MoM",
                     icon: Icons.library_books_outlined,
-                    screenWidth: screenWidth,
-                    screenHeight: screenHeight,
+                    screenWidth: s.width,
+                    screenHeight: s.height,
                     isTablet: isTablet,
                     onTap: () {
                       Navigator.push(
@@ -279,7 +262,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     },
                   ),
 
-                  SizedBox(height: screenHeight * 0.025),
+                  SizedBox(height: s.height * 0.025),
 
                   // SizedBox(height: screenHeight * 0.025),
                   // _buildDashboardCard(

@@ -64,9 +64,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final isTablet = screenWidth > 600;
+    final s = MediaQuery.sizeOf(context);
+    final isTablet = s.width > 600;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -151,9 +150,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                top: screenWidth * 260,
-                left: screenWidth * 0.05,
-                right: screenWidth * 0.05,
+                top: s.height * 0.01,
+                right: s.width * 0.02,
+                left: s.width * 0.02,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +177,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                 "Welcome, $_name!",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: isTablet ? 32 : screenWidth * 0.065,
+                                  fontSize: isTablet ? 32 : s.width * 0.065,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -186,7 +185,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: screenHeight * 0.008),
+                          SizedBox(height: s.height * 0.008),
                           AnimatedLanguageText(
                             texts: [
                               "What would you like to do today?",
@@ -227,14 +226,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.03),
+                  SizedBox(height: s.height * 0.03),
                   if (_isSuperUser) ...[
                     _buildDashboardCard(
                       title: "Member Management",
                       subtitle: "Manage member approvals and roles",
                       icon: Icons.admin_panel_settings,
-                      screenWidth: screenWidth,
-                      screenHeight: screenHeight,
+                      screenWidth: s.width,
+                      screenHeight: s.height,
                       isTablet: isTablet,
                       onTap: () {
                         Navigator.push(
@@ -245,15 +244,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         );
                       },
                     ),
-                    SizedBox(height: screenHeight * 0.025),
+                    SizedBox(height: s.height * 0.025),
                   ],
                   if (_isPrivilegedAdminOperationsUser) ...[
                     _buildDashboardCard(
                       title: "Attendance",
                       subtitle: "Mark and manage student attendance",
                       icon: Icons.people_outline,
-                      screenWidth: screenWidth,
-                      screenHeight: screenHeight,
+                      screenWidth: s.width,
+                      screenHeight: s.height,
                       isTablet: isTablet,
                       onTap: () {
                         Navigator.push(
@@ -264,15 +263,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         );
                       },
                     ),
-                    SizedBox(height: screenHeight * 0.025),
+                    SizedBox(height: s.height * 0.025),
                   ],
 
                   _buildDashboardCard(
                     title: "Minutes of Meeting",
                     subtitle: "View and edit MoM",
                     icon: Icons.library_books_outlined,
-                    screenWidth: screenWidth,
-                    screenHeight: screenHeight,
+                    screenWidth: s.width,
+                    screenHeight: s.height,
                     isTablet: isTablet,
                     onTap: () {
                       Navigator.push(
@@ -282,13 +281,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     },
                   ),
 
-                  SizedBox(height: screenHeight * 0.025),
+                  SizedBox(height: s.height * 0.025),
                   _buildDashboardCard(
                     title: "Notice",
                     subtitle: "Upload Notices",
                     icon: Icons.file_upload_outlined,
-                    screenWidth: screenWidth,
-                    screenHeight: screenHeight,
+                    screenWidth: s.width,
+                    screenHeight: s.height,
                     isTablet: isTablet,
                     onTap: () {
                       final TextEditingController titleController =
@@ -670,7 +669,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 260),
+            SizedBox(height: s.height * 260),
           ],
         ),
       ),
@@ -694,10 +693,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         decoration: BoxDecoration(
           color: Color(0xff06132A),
           borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-          border: Border.all(
-            color: Color(0xFFE5A122).withAlpha(78),
-            width: 1,
-          ),
+          border: Border.all(color: Color(0xFFE5A122).withAlpha(78), width: 1),
         ),
         child: Row(
           children: [

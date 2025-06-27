@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:krs_app/screens/mom/mom_detail_page.dart';
+import 'package:krs_app/services/connectivity.dart';
 import 'package:krs_app/widgets/mom/edit_mom/constants_file.dart';
 import 'package:provider/provider.dart';
 import '../../providers/mom_provider.dart';
@@ -16,6 +21,10 @@ class MoMViewPage extends StatefulWidget {
 }
 
 class _MoMViewPageState extends State<MoMViewPage> {
+  final ConnectivityService _connectivityService = ConnectivityService();
+  bool _isConnected = false;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   String _searchQuery = '';
@@ -24,9 +33,39 @@ class _MoMViewPageState extends State<MoMViewPage> {
   String _selectedDomain = 'All';
   bool _isAdmin = false;
 
+  Future<void> _checkInitialConnectivity() async {
+    bool connected = await _connectivityService.isConnected();
+    setState(() {
+      _isConnected = connected;
+    });
+  }
+
+  void _listenToConnectivityChanges() {
+    _connectivitySubscription = _connectivityService.connectivityStream.listen((
+      List<ConnectivityResult> results,
+    ) {
+      bool wasConnected = _isConnected;
+      bool isNowConnected = !results.contains(ConnectivityResult.none);
+
+      setState(() {
+        _isConnected = isNowConnected;
+      });
+
+      if (!wasConnected && isNowConnected) {
+        Future.delayed(Duration(milliseconds: 500), () {
+          if (mounted) {
+            Provider.of<MoMProvider>(context, listen: false).loadMoMs();
+          }
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _checkInitialConnectivity();
+    _listenToConnectivityChanges();
     _checkAdminStatus();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MoMProvider>(context, listen: false).loadMoMs();
@@ -42,6 +81,7 @@ class _MoMViewPageState extends State<MoMViewPage> {
 
   @override
   void dispose() {
+    _connectivitySubscription?.cancel();
     _searchController.dispose();
     _dateController.dispose();
     super.dispose();
@@ -127,171 +167,196 @@ class _MoMViewPageState extends State<MoMViewPage> {
               horizontal: MoMLayout.horizontalPadding(s.width),
               vertical: MoMLayout.verticalPadding(s.height),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildPageTitle(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: MoMSearchBar(
-                        controller: _searchController,
-                        onChanged: _onSearchChanged,
-                      ),
-                    ),
-                    SizedBox(width: s.width * 0.02),
-                    GestureDetector(
-                      onTap: () => _pickDate(context),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white38,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Icon(
-                          Icons.calendar_month_rounded,
-                          size: 34,
-                          color: Color(0xffE5A122),
-                        ),
-                      ),
-                    ),
-                    if (_selectedDate.isNotEmpty)
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Color(0xffE5A122)),
-                        tooltip: 'Clear date',
-                        onPressed: _clearDate,
-                      ),
-                  ],
-                ),
-                SizedBox(height: s.height * 0.02),
-
-                Row(
-                  children: [
-                    // Meet Type Filter
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        hint: Text("Meeting Type"),
-
-                        value: _selectedType,
-                        dropdownColor: const Color(0xFF0E2448),
-
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50),
-                            borderSide: BorderSide(
-                              color: Color(0xffE5A122),
-                              width: 2,
+            child:
+                _isConnected
+                    ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildPageTitle(),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: MoMSearchBar(
+                                controller: _searchController,
+                                onChanged: _onSearchChanged,
+                              ),
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50),
-                            borderSide: BorderSide(
-                              color: Color(0xffE5A122),
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                        iconEnabledColor: Color(0xffE5A122),
-                        isExpanded: true,
-                        items:
-                            ['All', ...MoMConstants.meetTypes].map((
-                              String type,
-                            ) {
-                              return DropdownMenuItem<String>(
-                                value: type,
-                                child: Text(
-                                  type,
-                                  style: TextStyle(color: Color(0xffE5A122)),
+                            SizedBox(width: s.width * 0.02),
+                            GestureDetector(
+                              onTap: () => _pickDate(context),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white38,
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
+                                child: Icon(
+                                  Icons.calendar_month_rounded,
+                                  size: 34,
+                                  color: Color(0xffE5A122),
+                                ),
+                              ),
+                            ),
+                            if (_selectedDate.isNotEmpty)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Color(0xffE5A122),
+                                ),
+                                tooltip: 'Clear date',
+                                onPressed: _clearDate,
+                              ),
+                          ],
+                        ),
+                        SizedBox(height: s.height * 0.02),
+
+                        Row(
+                          children: [
+                            // Meet Type Filter
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                hint: Text("Meeting Type"),
+
+                                value: _selectedType,
+                                dropdownColor: const Color(0xFF0E2448),
+
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                    borderSide: BorderSide(
+                                      color: Color(0xffE5A122),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                    borderSide: BorderSide(
+                                      color: Color(0xffE5A122),
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                                iconEnabledColor: Color(0xffE5A122),
+                                isExpanded: true,
+                                items:
+                                    ['All', ...MoMConstants.meetTypes].map((
+                                      String type,
+                                    ) {
+                                      return DropdownMenuItem<String>(
+                                        value: type,
+                                        child: Text(
+                                          type,
+                                          style: TextStyle(
+                                            color: Color(0xffE5A122),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    setState(() => _selectedType = value);
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(width: s.width * 0.02),
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedDomain,
+                                dropdownColor: const Color(0xFF0E2448),
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                    borderSide: BorderSide(
+                                      color: Color(0xffE5A122),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                    borderSide: BorderSide(
+                                      color: Color(0xffE5A122),
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                                iconEnabledColor: Color(0xffE5A122),
+                                isExpanded: true,
+                                items:
+                                    ['All', ...MoMConstants.domains].map((
+                                      String domain,
+                                    ) {
+                                      return DropdownMenuItem<String>(
+                                        value: domain,
+                                        child: Text(
+                                          domain,
+                                          style: TextStyle(
+                                            color: Color(0xffE5A122),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    setState(() => _selectedDomain = value);
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: s.height * 0.02),
+
+                        Expanded(
+                          child: Consumer<MoMProvider>(
+                            builder: (context, provider, _) {
+                              if (provider.isLoading) {
+                                return _buildSkeletonLoader();
+                              }
+
+                              final filteredList = provider.filterMoMsAdvanced(
+                                titleQuery: _searchQuery,
+                                dateQuery: _selectedDate,
+                                selectedType: _selectedType,
+                                selectedDomain: _selectedDomain,
                               );
-                            }).toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() => _selectedType = value);
-                          }
-                        },
-                      ),
-                    ),
-                    SizedBox(width: s.width * 0.02),
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedDomain,
-                        dropdownColor: const Color(0xFF0E2448),
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50),
-                            borderSide: BorderSide(
-                              color: Color(0xffE5A122),
-                              width: 2,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50),
-                            borderSide: BorderSide(
-                              color: Color(0xffE5A122),
-                              width: 2,
-                            ),
+
+                              if (filteredList.isEmpty) {
+                                return const Center(
+                                  child: Text(
+                                    "No MoMs available.",
+                                    style: MoMTextStyles.emptyState,
+                                  ),
+                                );
+                              }
+
+                              return MoMListView(momList: filteredList);
+                            },
                           ),
                         ),
-                        iconEnabledColor: Color(0xffE5A122),
-                        isExpanded: true,
-                        items:
-                            ['All', ...MoMConstants.domains].map((
-                              String domain,
-                            ) {
-                              return DropdownMenuItem<String>(
-                                value: domain,
-                                child: Text(
-                                  domain,
-                                  style: TextStyle(color: Color(0xffE5A122)),
-                                ),
-                              );
-                            }).toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() => _selectedDomain = value);
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: s.height * 0.02),
-
-                Expanded(
-                  child: Consumer<MoMProvider>(
-                    builder: (context, provider, _) {
-                      if (provider.isLoading) {
-                        return _buildSkeletonLoader();
-                      }
-
-                      final filteredList = provider.filterMoMsAdvanced(
-                        titleQuery: _searchQuery,
-                        dateQuery: _selectedDate,
-                        selectedType: _selectedType,
-                        selectedDomain: _selectedDomain,
-                      );
-
-                      if (filteredList.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            "No MoMs available.",
-                            style: MoMTextStyles.emptyState,
+                      ],
+                    )
+                    : Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Center(
+                          child: SvgPicture.asset(
+                            "assets/no_internet.svg",
+                            width: s.width * 0.5,
+                            height: s.height * 0.5,
                           ),
-                        );
-                      }
-
-                      return MoMListView(momList: filteredList);
-                    },
-                  ),
-                ),
-              ],
-            ),
+                        ),
+                        Text(
+                          "Not Connected to Internet",
+                          style: TextStyle(fontSize: 24, color: orangeColor),
+                        ),
+                      ],
+                    ),
           ),
         ),
         floatingActionButton:
-            _isAdmin
+            _isAdmin && _isConnected
                 ? FloatingActionButton(
                   shape: CircleBorder(
                     side: BorderSide(width: 2, color: Color(0xffE5A122)),
