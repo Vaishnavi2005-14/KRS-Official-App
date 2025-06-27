@@ -75,7 +75,7 @@ class _FilteredAttendanceRecordsPageState
             Container(
               padding: EdgeInsets.all(isTablet ? 10 : 8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha(26),
                 borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
               ),
               child: Icon(
@@ -113,7 +113,7 @@ class _FilteredAttendanceRecordsPageState
               color: Color(0xff06132A),
               borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
               border: Border.all(
-                color: Color(0xFFE5A122).withOpacity(0.3),
+                color: Color(0xFFE5A122).withAlpha(78),
                 width: 1,
               ),
             ),
@@ -138,7 +138,7 @@ class _FilteredAttendanceRecordsPageState
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Color(0xFFE5A122).withOpacity(0.2),
+                    color: Color(0xFFE5A122).withAlpha(51),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -206,7 +206,7 @@ class _FilteredAttendanceRecordsPageState
                               isTablet ? 16 : 12,
                             ),
                             border: Border.all(
-                              color: Colors.grey.withOpacity(0.3),
+                              color: Colors.grey.withAlpha(78),
                               width: 1,
                             ),
                           ),
@@ -232,7 +232,7 @@ class _FilteredAttendanceRecordsPageState
                                   width: isTablet ? 60 : 50,
                                   height: isTablet ? 60 : 50,
                                   decoration: BoxDecoration(
-                                    color: Color(0xFFE5A122).withOpacity(0.2),
+                                    color: Color(0xFFE5A122).withAlpha(51),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
@@ -261,7 +261,7 @@ class _FilteredAttendanceRecordsPageState
                                         style: TextStyle(
                                           color: Color(
                                             0xFFE5A122,
-                                          ).withOpacity(0.8),
+                                          ).withAlpha(204),
                                           fontSize: isTablet ? 16 : 14,
                                         ),
                                       ),

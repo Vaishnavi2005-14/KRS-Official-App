@@ -27,7 +27,6 @@ import 'package:krs_app/providers/user_attendance_provider.dart';
 import 'package:krs_app/screens/attendance/attendance_gateway.dart';
 import 'package:krs_app/providers/member_management_provider.dart';
 
-
 Future<void> main() async {
   await dotenv.load();
   runApp(
@@ -80,7 +79,6 @@ class _MyAppState extends State<MyApp> {
         '/signup': (context) => SignUp(),
         '/wait': (context) => Waiting(),
         '/login': (context) => LoginScreen(),
-        '/signup': (context) => SignUp(),
         '/profile': (context) => const ProfileScreen(),
         '/notices': (context) => NoticeBoardPage(),
         '/attendance-home': (context) => AttendanceHomePage(),
@@ -88,7 +86,6 @@ class _MyAppState extends State<MyApp> {
         '/attendance-record': (context) => AttendanceRecordsPage(),
         '/attendance-gateway': (context) => AttendanceGatewayPage(),
         '/dashboard': (context) => const DashboardScreen(),
-        '/wait': (context) => Waiting(),
       },
     );
   }

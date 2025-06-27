@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/screens/attendance/attendance_marking.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/providers/attendance_provider.dart';
@@ -36,9 +37,7 @@ class _AttendanceSetupDialogState extends State<AttendanceSetupDialog> {
       ),
       child: Container(
         width: isTablet ? screenWidth * 0.6 : screenWidth * 0.9,
-        constraints: BoxConstraints(
-          maxHeight: screenHeight * 0.8,
-        ),
+        constraints: BoxConstraints(maxHeight: screenHeight * 0.8),
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(screenWidth * 0.05),
@@ -371,11 +370,10 @@ class _AttendanceSetupDialogState extends State<AttendanceSetupDialog> {
 
   void _handleSubmit() async {
     if (_topicController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter a topic/session name'),
-          backgroundColor: Colors.red,
-        ),
+      Fluttertoast.showToast(
+        msg: 'Please enter a topic/session name',
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
       );
       return;
     }
@@ -405,11 +403,10 @@ class _AttendanceSetupDialogState extends State<AttendanceSetupDialog> {
         );
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error setting up attendance: $e'),
-          backgroundColor: Colors.red,
-        ),
+      Fluttertoast.showToast(
+        msg: 'Error setting up attendance: $e',
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
       );
       setState(() {
         _isLoading = false;

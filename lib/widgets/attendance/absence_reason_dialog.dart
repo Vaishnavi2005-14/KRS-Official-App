@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AbsenceReasonDialog extends StatefulWidget {
   final Function(String) onSave;
@@ -28,7 +29,7 @@ class _AbsenceReasonDialogState extends State<AbsenceReasonDialog> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 600;
-    
+
     return Dialog(
       backgroundColor: Color(0xff06132A),
       shape: RoundedRectangleBorder(
@@ -36,10 +37,8 @@ class _AbsenceReasonDialogState extends State<AbsenceReasonDialog> {
       ),
       child: Container(
         width: isTablet ? screenWidth * 0.6 : screenWidth * 0.9,
-        constraints: BoxConstraints(
-          maxHeight: screenHeight * 0.7, 
-        ),
-        child: SingleChildScrollView( 
+        constraints: BoxConstraints(maxHeight: screenHeight * 0.7),
+        child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(screenWidth * 0.05),
             child: Column(
@@ -56,20 +55,18 @@ class _AbsenceReasonDialogState extends State<AbsenceReasonDialog> {
                 ),
                 SizedBox(height: screenHeight * 0.025),
                 Container(
-                  constraints: BoxConstraints(
-                    maxHeight: screenHeight * 0.3,
-                  ),
+                  constraints: BoxConstraints(maxHeight: screenHeight * 78),
                   decoration: BoxDecoration(
                     color: Color(0xff040E1E),
                     borderRadius: BorderRadius.circular(isTablet ? 12 : 8),
                     border: Border.all(
-                      color: Color(0xFFE5A122).withOpacity(0.3),
+                      color: Color(0xFFE5A122).withAlpha(78),
                     ),
                   ),
                   child: SingleChildScrollView(
                     child: TextField(
                       controller: _reasonController,
-                      maxLines: null, 
+                      maxLines: null,
                       minLines: isTablet ? 4 : 3,
                       keyboardType: TextInputType.multiline,
                       style: TextStyle(
@@ -102,7 +99,9 @@ class _AbsenceReasonDialogState extends State<AbsenceReasonDialog> {
                             vertical: isTablet ? 16 : 12,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
+                            borderRadius: BorderRadius.circular(
+                              isTablet ? 10 : 8,
+                            ),
                             side: BorderSide(color: Colors.grey),
                           ),
                         ),
@@ -122,14 +121,10 @@ class _AbsenceReasonDialogState extends State<AbsenceReasonDialog> {
                         onPressed: () {
                           final reason = _reasonController.text.trim();
                           if (reason.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Please enter a reason',
-                                  style: TextStyle(fontSize: isTablet ? 16 : 14),
-                                ),
-                                backgroundColor: Colors.red,
-                              ),
+                            Fluttertoast.showToast(
+                              msg: "Please enter a reason",
+                              backgroundColor: Colors.red,
+                              toastLength: Toast.LENGTH_LONG,
                             );
                             return;
                           }
@@ -142,7 +137,9 @@ class _AbsenceReasonDialogState extends State<AbsenceReasonDialog> {
                             vertical: isTablet ? 16 : 12,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
+                            borderRadius: BorderRadius.circular(
+                              isTablet ? 10 : 8,
+                            ),
                           ),
                         ),
                         child: Text(

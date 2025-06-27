@@ -21,7 +21,7 @@ class AttendanceSearchBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Color(0xff06132A),
         borderRadius: BorderRadius.circular(isTablet ? 18 : 14),
-        border: Border.all(color: Color(0xFFE5A122).withOpacity(0.3), width: 1),
+        border: Border.all(color: Color(0xFFE5A122).withAlpha(78), width: 1),
       ),
       child: TextField(
         controller: controller,

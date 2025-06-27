@@ -51,6 +51,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   lottie: ^3.3.1
   flutter_launcher_icons: ^0.14.4
+  connectivity_plus: ^6.1.4
 
 
 dev_dependencies:
@@ -70,7 +71,7 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios : true
   image_path : "assets/krs_big.png"
-  background_color: "#000000"
+  adaptive_icon_background: "#000000"
 
 # The following section is specific to Flutter packages.
 flutter:

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/services/mom_service.dart';
 import '../../widgets/mom/edit_mom/constants_file.dart';
 import '../../widgets/mom/edit_mom/form_validator.dart';
-import '../../widgets/mom/edit_mom/snackbar_utils.dart';
 import '../../widgets/mom/edit_mom/form_widgets.dart';
-
-// ============================================================================
-// MAIN EDIT MOM PAGE
-// ============================================================================
 
 class EditMoMPage extends StatefulWidget {
   final String momId;
@@ -30,21 +26,13 @@ class EditMoMPage extends StatefulWidget {
 }
 
 class _EditMoMPageState extends State<EditMoMPage> {
-  // ============================================================================
-  // PROPERTIES
-  // ============================================================================
-  
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
   late final TextEditingController _linkController;
-  
+
   String _selectedType = AppConstants.defaultMeetingType;
   Set<String> _selectedDomains = {};
   bool _isLoading = false;
-
-  // ============================================================================
-  // LIFECYCLE METHODS
-  // ============================================================================
 
   @override
   void initState() {
@@ -58,10 +46,6 @@ class _EditMoMPageState extends State<EditMoMPage> {
     _linkController.dispose();
     super.dispose();
   }
-
-  // ============================================================================
-  // INITIALIZATION
-  // ============================================================================
 
   void _initializeForm() {
     _initializeControllers();
@@ -98,7 +82,7 @@ class _EditMoMPageState extends State<EditMoMPage> {
       AppConstants.domains,
       AppConstants.defaultDomains,
     );
-    
+
     // Debug print for development
     FormDataUtils.debugPrintDomainInitialization(
       widget.initialDomains ?? AppConstants.defaultDomains,
@@ -120,17 +104,25 @@ class _EditMoMPageState extends State<EditMoMPage> {
     // Validate domains first
     final domainError = FormValidator.validateDomains(_selectedDomains);
     if (domainError != null) {
-      SnackBarUtils.showError(context, domainError);
+      Fluttertoast.showToast(
+        msg: domainError,
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
+      );
       return false;
     }
-    
+
     // Validate form fields
     return _formKey.currentState?.validate() ?? false;
   }
 
   Future<void> _performSave() async {
     _setLoadingState(true);
-    SnackBarUtils.showLoading(context, message: 'Saving MoM...');
+    Fluttertoast.showToast(
+      msg: "Saving MoM",
+      backgroundColor: Colors.green,
+      toastLength: Toast.LENGTH_LONG,
+    );
 
     try {
       final result = await _callSaveAPI();
@@ -154,16 +146,22 @@ class _EditMoMPageState extends State<EditMoMPage> {
 
   void _handleSaveSuccess(String result) {
     if (mounted) {
-      SnackBarUtils.hide(context);
-      SnackBarUtils.showSuccess(context, result);
+      Fluttertoast.showToast(
+        msg: result,
+        backgroundColor: Colors.green,
+        toastLength: Toast.LENGTH_LONG,
+      );
       Navigator.pop(context, true);
     }
   }
 
   void _handleSaveError(dynamic error) {
     if (mounted) {
-      SnackBarUtils.hide(context);
-      SnackBarUtils.showError(context, 'Failed to save MoM: ${error.toString()}');
+      Fluttertoast.showToast(
+        msg: 'Failed to save MoM: ${error.toString()}',
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
+      );
     }
   }
 
@@ -193,7 +191,12 @@ class _EditMoMPageState extends State<EditMoMPage> {
 
   void _onMeetingTypeChanged(String? value) {
     if (value != null) {
-      setState(() => _selectedType = value);
+      setState(() {
+        _selectedType = value;
+        if (value.toLowerCase() == 'scrum') {
+          _selectedDomains = Set<String>.from(AppConstants.domains);
+        }
+      });
     }
   }
 
@@ -203,20 +206,11 @@ class _EditMoMPageState extends State<EditMoMPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgColor,
-      appBar: _buildAppBar(),
-      body: _buildBody(),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: AppColors.bgColor,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: AppColors.orangeColor),
-        onPressed: () => Navigator.pop(context),
+    return GestureDetector(
+      onTap: FocusScope.of(context).unfocus,
+      child: Scaffold(
+        appBar: AppBar(toolbarHeight: 0),
+        body: SafeArea(child: _buildBody()),
       ),
     );
   }
@@ -225,18 +219,19 @@ class _EditMoMPageState extends State<EditMoMPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.defaultPadding,
-        vertical: 10,
+        vertical: 20,
       ),
       child: Form(
         key: _formKey,
         child: ListView(
           children: [
             _buildPageTitle(),
-            const SizedBox(height: AppDimensions.largePadding),
+            Divider(color: Color(0xff855D13), thickness: 2),
+            SizedBox(height: AppDimensions.defaultPadding),
             _buildFormFields(),
-            const SizedBox(height: AppDimensions.extraLargePadding),
+            SizedBox(height: AppDimensions.extraLargePadding),
             _buildSaveButton(),
-            const SizedBox(height: AppDimensions.defaultPadding),
+            SizedBox(height: AppDimensions.defaultPadding),
           ],
         ),
       ),
@@ -249,9 +244,7 @@ class _EditMoMPageState extends State<EditMoMPage> {
       'Edit MoM',
       style: AppTextStyles.titleStyle.copyWith(
         fontSize: width * 0.08,
-        shadows: const [
-          Shadow(blurRadius: 10, color: AppColors.orangeColor)
-        ],
+        shadows: const [Shadow(blurRadius: 10, color: AppColors.orangeColor)],
       ),
     );
   }
@@ -261,7 +254,7 @@ class _EditMoMPageState extends State<EditMoMPage> {
       children: [
         FormWidgets.buildTitleField(_titleController),
         FormWidgets.buildLinkField(_linkController),
-        const SizedBox(height: AppDimensions.defaultPadding),
+        SizedBox(height: AppDimensions.defaultPadding),
         DomainSelectionWidgets.buildDomainSelection(
           domains: AppConstants.domains,
           selectedDomains: _selectedDomains,

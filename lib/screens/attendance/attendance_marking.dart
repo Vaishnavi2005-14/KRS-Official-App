@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/providers/attendance_provider.dart';
 import 'package:krs_app/widgets/attendance/member_attendance_card.dart';
@@ -50,11 +51,10 @@ class _AttendanceMarkingPageState extends State<AttendanceMarkingPage> {
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Something went wrong while loading members'),
-            backgroundColor: Colors.red,
-          ),
+        Fluttertoast.showToast(
+          msg: "Something went wrong while loading members",
+          backgroundColor: Colors.red,
+          toastLength: Toast.LENGTH_LONG,
         );
       }
     }
@@ -82,7 +82,7 @@ class _AttendanceMarkingPageState extends State<AttendanceMarkingPage> {
             Container(
               padding: EdgeInsets.all(isTablet ? 10 : 8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha(26),
                 borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
               ),
               child: Icon(
@@ -219,7 +219,7 @@ class _AttendanceMarkingPageState extends State<AttendanceMarkingPage> {
           decoration: BoxDecoration(
             color: Color(0xff06132A),
             borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-            border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+            border: Border.all(color: Colors.grey.withAlpha(78), width: 1),
           ),
           child: Column(
             children: [
@@ -443,8 +443,8 @@ class _AttendanceMarkingPageState extends State<AttendanceMarkingPage> {
                     decoration: BoxDecoration(
                       color:
                           success
-                              ? Colors.green.withOpacity(0.2)
-                              : Colors.red.withOpacity(0.2),
+                              ? Colors.green.withAlpha(51)
+                              : Colors.red.withAlpha(51),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

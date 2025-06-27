@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/providers/mom_provider.dart';
 import 'edit_mom_page.dart';
 import 'package:krs_app/services/mom_service.dart';
@@ -50,103 +51,122 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    final s = MediaQuery.sizeOf(context);
 
     return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: bgColor,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: orangeColor),
-        centerTitle: true,
-      ),
+      appBar: AppBar(toolbarHeight: 0),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(
-            horizontal: width * 0.06,
-            vertical: width * 0.04,
+            horizontal: s.width * 0.06,
+            vertical: s.height * 0.01,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
-
-              // Title
               Text(
                 widget.title,
                 style: TextStyle(
-                  fontSize: width * 0.07,
+                  fontSize: s.width * 0.09,
                   fontWeight: FontWeight.bold,
                   color: orangeColor,
                   shadows: const [Shadow(blurRadius: 10, color: orangeColor)],
                 ),
               ),
 
-              const SizedBox(height: 10),
-              Text(widget.date, style: const TextStyle(color: Colors.white70)),
-              const Divider(color: orangeColor, thickness: 1),
-              const SizedBox(height: 16),
+              SizedBox(height: s.height * 0.01),
+              Text(
+                widget.date,
+                style: const TextStyle(
+                  color: Color(0xff865D10),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Divider(color: Color(0xff865D10), thickness: 2),
+              SizedBox(height: s.height * 0.01),
 
               // Meeting Type
-              Text(
-                "Meeting Type",
-                style: TextStyle(color: orangeColor, fontSize: width * 0.045),
-              ),
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(color: orangeColor),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  widget.meetingType,
-                  style: const TextStyle(color: Colors.white),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Meeting Type",
+                    style: TextStyle(
+                      color: orangeColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: s.width * 0.045,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xff151E2D),
+                      border: Border.all(color: orangeColor),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Text(
+                      widget.meetingType,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: s.height * 0.04),
 
               // Link
-              Text(
-                "Link",
-                style: TextStyle(color: orangeColor, fontSize: width * 0.045),
-              ),
-              const SizedBox(height: 6),
-              GestureDetector(
-                onTap:
-                    () => launchUrl(
-                      Uri.parse(widget.meetingLink),
-                      mode: LaunchMode.externalApplication,
-                    ),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: orangeColor),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    widget.meetingLink,
-                    style: const TextStyle(
-                      color: Colors.blueAccent,
-                      decoration: TextDecoration.underline,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Link",
+                    style: TextStyle(
+                      color: orangeColor,
+                      fontSize: s.width * 0.045,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
+
+                  GestureDetector(
+                    onTap:
+                        () => launchUrl(
+                          Uri.parse(widget.meetingLink),
+                          mode: LaunchMode.externalApplication,
+                        ),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Color(0xff151E2D),
+                        border: Border.all(color: orangeColor),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Text(
+                        "MoM Link",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: s.height * 0.05),
 
               // Domains
               Text(
                 "Domains",
-                style: TextStyle(color: orangeColor, fontSize: width * 0.045),
+                style: TextStyle(
+                  color: orangeColor,
+                  fontSize: s.width * 0.045,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: s.height * 0.01),
               Wrap(
                 spacing: 10,
                 runSpacing: 10,
@@ -171,7 +191,7 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
                         .toList(),
               ),
 
-              const SizedBox(height: 120),
+              SizedBox(height: s.height * 0.15),
 
               // Uploaded by
               Center(
@@ -180,12 +200,12 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
                   children: [
                     const Text(
                       "Uploaded by",
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(color: orangeColor),
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: s.height * 0.01),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
+                        horizontal: 20,
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
@@ -201,14 +221,14 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: s.height * 0.04),
 
               // Buttons
               if (_isAdmin) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _iconCircleButton(Icons.edit, () async {
+                    _iconCircleButton(Icons.edit_outlined, () async {
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -223,41 +243,44 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
                         ),
                       );
 
-                      if (result == true) {
-                        // Fetch updated MoM by ID from provider
+                      if (result == true && context.mounted) {
                         await Provider.of<MoMProvider>(
                           context,
                           listen: false,
                         ).loadMoMs();
-                        final updatedMoM = Provider.of<MoMProvider>(
-                          context,
-                          listen: false,
-                        ).momList.firstWhere((m) => m['id'] == widget.id);
-                        // Replace this page with updated version
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => MoMDetailPage(
-                                  title: updatedMoM['title'],
-                                  date: updatedMoM['date'],
-                                  uploadedBy:
-                                      updatedMoM['uploadedBy'] is Map
-                                          ? updatedMoM['uploadedBy']['name']
-                                          : updatedMoM['uploadedBy'],
-                                  meetingType: updatedMoM['meetingType'],
-                                  domains: List<String>.from(
-                                    updatedMoM['domains'],
+                        if (context.mounted) {
+                          final updatedMoM = Provider.of<MoMProvider>(
+                            context,
+                            listen: false,
+                          ).momList.firstWhere((m) => m['id'] == widget.id);
+
+                          // Replace this page with updated version
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => MoMDetailPage(
+                                    title: updatedMoM['title'],
+                                    date: updatedMoM['date'],
+                                    uploadedBy:
+                                        updatedMoM['uploadedBy'] is Map
+                                            ? updatedMoM['uploadedBy']['name']
+                                            : updatedMoM['uploadedBy'],
+                                    meetingType: updatedMoM['meetingType'],
+                                    domains: List<String>.from(
+                                      updatedMoM['domains'],
+                                    ),
+                                    meetingLink: updatedMoM['meetingLink'],
+                                    id: updatedMoM['id'],
                                   ),
-                                  meetingLink: updatedMoM['meetingLink'],
-                                  id: updatedMoM['id'],
-                                ),
-                          ),
-                        );
+                            ),
+                          );
+                        }
                       }
                     }),
-                    const SizedBox(width: 30),
-                    _iconCircleButton(Icons.delete, () async {
+                    SizedBox(width: 30),
+                    _iconCircleButton(Icons.delete_outline, () async {
                       final confirm = await showDialog<bool>(
                         context: context,
                         builder:
@@ -286,27 +309,28 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
                       if (confirm == true) {
                         try {
                           final message = await MoMService.deleteMoM(widget.id);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(
-                              context,
-                            ).showSnackBar(SnackBar(content: Text(message)));
-                            if (message == "MoM deleted successfully") {
-                              Navigator.pop(context, true);
-                            } // Go back to previous screen after deletion
-                          }
+                          Fluttertoast.showToast(
+                            msg: message,
+                            backgroundColor: Colors.green,
+                            toastLength: Toast.LENGTH_LONG,
+                          );
+                          if (message == "MoM deleted successfully" &&
+                              context.mounted) {
+                            Navigator.pop(context, true);
+                          } // Go back to previous screen after deletion
                         } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())),
-                            );
-                          }
+                          Fluttertoast.showToast(
+                            msg: e.toString(),
+                            backgroundColor: Colors.red,
+                            toastLength: Toast.LENGTH_LONG,
+                          );
                         }
                       }
                     }),
                   ],
                 ),
               ],
-              const SizedBox(height: 20),
+              SizedBox(height: s.height * 0.02),
             ],
           ),
         ),

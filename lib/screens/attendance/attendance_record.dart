@@ -61,12 +61,13 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
 
   void _filterRecords(String query) {
     _searchQuery = query;
-    _filteredRecords = _allRecords.where((record) {
-      final topic = record.topic.toLowerCase();
-      final date = record.date.toLowerCase();
-      final searchLower = query.toLowerCase();
-      return topic.contains(searchLower) || date.contains(searchLower);
-    }).toList();
+    _filteredRecords =
+        _allRecords.where((record) {
+          final topic = record.topic.toLowerCase();
+          final date = record.date.toLowerCase();
+          final searchLower = query.toLowerCase();
+          return topic.contains(searchLower) || date.contains(searchLower);
+        }).toList();
     notifyListeners();
   }
 
@@ -101,7 +102,7 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
             Container(
               padding: EdgeInsets.all(isTablet ? 10 : 8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha(26),
                 borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
               ),
               child: Icon(
@@ -142,13 +143,14 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
           Expanded(
             child: Skeletonizer(
               enabled: _isLoading,
-              child: _isLoading
-                  ? _buildSkeletonList(screenWidth, screenHeight, isTablet)
-                  : _error != null
+              child:
+                  _isLoading
+                      ? _buildSkeletonList(screenWidth, screenHeight, isTablet)
+                      : _error != null
                       ? _buildErrorWidget(screenWidth, screenHeight, isTablet)
                       : _filteredRecords.isEmpty
-                          ? _buildEmptyWidget(screenWidth, screenHeight, isTablet)
-                          : _buildRecordsList(screenWidth, screenHeight, isTablet),
+                      ? _buildEmptyWidget(screenWidth, screenHeight, isTablet)
+                      : _buildRecordsList(screenWidth, screenHeight, isTablet),
             ),
           ),
         ],
@@ -156,7 +158,11 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
     );
   }
 
-  Widget _buildErrorWidget(double screenWidth, double screenHeight, bool isTablet) {
+  Widget _buildErrorWidget(
+    double screenWidth,
+    double screenHeight,
+    bool isTablet,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -173,10 +179,7 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
           SizedBox(height: screenHeight * 0.02),
           Text(
             'Something went wrong',
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: isTablet ? 20 : 16,
-            ),
+            style: TextStyle(color: Colors.red, fontSize: isTablet ? 20 : 16),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: screenHeight * 0.01),
@@ -221,7 +224,11 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
     );
   }
 
-  Widget _buildEmptyWidget(double screenWidth, double screenHeight, bool isTablet) {
+  Widget _buildEmptyWidget(
+    double screenWidth,
+    double screenHeight,
+    bool isTablet,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -270,7 +277,11 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
     );
   }
 
-  Widget _buildRecordsList(double screenWidth, double screenHeight, bool isTablet) {
+  Widget _buildRecordsList(
+    double screenWidth,
+    double screenHeight,
+    bool isTablet,
+  ) {
     return ListView.builder(
       padding: EdgeInsets.symmetric(
         horizontal: screenWidth * 0.04,
@@ -285,20 +296,18 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
           decoration: BoxDecoration(
             color: Color(0xff06132A),
             borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-            border: Border.all(
-              color: Colors.grey.withOpacity(0.3),
-              width: 1,
-            ),
+            border: Border.all(color: Colors.grey.withAlpha(78), width: 1),
           ),
           child: InkWell(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => AttendanceViewPage(
-                    title: attendance.topic,
-                    date: attendance.date,
-                  ),
+                  builder:
+                      (_) => AttendanceViewPage(
+                        title: attendance.topic,
+                        date: attendance.date,
+                      ),
                 ),
               );
             },
@@ -309,7 +318,7 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
                   width: isTablet ? 60 : 50,
                   height: isTablet ? 60 : 50,
                   decoration: BoxDecoration(
-                    color: Color(0xFFE5A122).withOpacity(0.2),
+                    color: Color(0xFFE5A122).withAlpha(51),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -335,7 +344,7 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
                       Text(
                         attendance.date,
                         style: TextStyle(
-                          color: Color(0xFFE5A122).withOpacity(0.8),
+                          color: Color(0xFFE5A122).withAlpha(204),
                           fontSize: isTablet ? 16 : 14,
                         ),
                       ),
@@ -355,7 +364,11 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
     );
   }
 
-  Widget _buildSkeletonList(double screenWidth, double screenHeight, bool isTablet) {
+  Widget _buildSkeletonList(
+    double screenWidth,
+    double screenHeight,
+    bool isTablet,
+  ) {
     return ListView.builder(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
       itemCount: 6,
@@ -366,7 +379,7 @@ class _AttendanceRecordsPageState extends State<AttendanceRecordsPage> {
           decoration: BoxDecoration(
             color: Color(0xff06132A),
             borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-            border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+            border: Border.all(color: Colors.grey.withAlpha(78), width: 1),
           ),
           child: Row(
             children: [

@@ -33,7 +33,7 @@ class MemberAttendanceCard extends StatelessWidget {
               color:
                   isHighlighted
                       ? Colors.red
-                      : Color(0xFFE5A122).withOpacity(0.3),
+                      : Color(0xFFE5A122).withAlpha(78),
               width: isHighlighted ? 2 : 1,
             ),
           ),
@@ -160,7 +160,7 @@ class MemberAttendanceCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Color(0xff040E1E),
                       borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
-                      border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                      border: Border.all(color: Colors.orange.withAlpha(78)),
                     ),
                     child: Text(
                       provider.remarks[member.id]?.isNotEmpty == true
@@ -215,10 +215,10 @@ class MemberAttendanceCard extends StatelessWidget {
           horizontal: screenWidth * 0.02,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? color : color.withOpacity(0.15),
+          color: isSelected ? color : color.withAlpha(38),
           borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
           border: Border.all(
-            color: isSelected ? color : color.withOpacity(0.5),
+            color: isSelected ? color : color.withAlpha(128),
             width: 1,
           ),
         ),
