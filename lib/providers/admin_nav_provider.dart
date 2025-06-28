@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:krs_app/screens/admin_dashboard.dart';
-import 'package:krs_app/screens/notices.dart';
+import 'package:krs_app/screens/notice/notices.dart';
 import 'package:krs_app/screens/profile.dart';
 
 class AdminNavigationProvider extends ChangeNotifier {
