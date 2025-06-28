@@ -36,47 +36,61 @@ class NoticeCard extends StatelessWidget {
           DateCard(day: day, month: month),
           const SizedBox(width: 16),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  heading,
-                  style: const TextStyle(
-                    color: Color(0xffE5A122),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+            child: Card(
+              color: const Color(0xff23263b),
+              elevation: 3,
+              margin: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  body,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                // Show attachment button only if attachmentUrl is not empty and onViewAttachment is not null
-                if (attachmentUrl.trim().isNotEmpty && onViewAttachment != null)
-                  TextButton.icon(
-                    onPressed: onViewAttachment,
-                    icon: const Icon(
-                      Icons.attach_file,
-                      color: Color(0xFFE5A122),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      heading,
+                      style: const TextStyle(
+                        color: Color(0xffE5A122),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
-                    label: const Text(
-                      "Attachment",
-                      style: TextStyle(color: Color(0xFFE5A122)),
+                    const SizedBox(height: 8),
+                    Text(
+                      body,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        height: 1.4,
+                      ),
                     ),
-                  ),
-                NoticeActions(
-                  attachmentUrl: attachmentUrl,
-                  onEdit: isAdmin ? onEdit : null,
-                  onDelete: isAdmin ? onDelete : null,
-                  showActions: isAdmin,
+                    const SizedBox(height: 12),
+                    if (attachmentUrl.trim().isNotEmpty &&
+                        onViewAttachment != null)
+                      TextButton.icon(
+                        onPressed: onViewAttachment,
+                        icon: const Icon(
+                          Icons.attach_file,
+                          color: Color(0xFFE5A122),
+                        ),
+                        label: const Text(
+                          "Attachment",
+                          style: TextStyle(color: Color(0xFFE5A122)),
+                        ),
+                      ),
+                    NoticeActions(
+                      attachmentUrl: attachmentUrl,
+                      onEdit: isAdmin ? onEdit : null,
+                      onDelete: isAdmin ? onDelete : null,
+                      showActions: isAdmin,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ],
