@@ -11,9 +11,9 @@ class MemberManagementProvider with ChangeNotifier {
   bool _isSaving = false;
   String? _error;
 
-  Set<String> _selectedMembers = {};
-  Map<String, bool> _memberStatus = {};
-  Map<String, String> _memberUpdates = {};
+  final Set<String> _selectedMembers = {};
+  final Map<String, bool> _memberStatus = {};
+  final Map<String, String> _memberUpdates = {};
 
   // ... all your existing getters remain the same
 

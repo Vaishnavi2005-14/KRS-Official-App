@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/models/notice.dart';
 import 'package:krs_app/services/notice_service.dart';
 
@@ -58,17 +59,11 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
         return;
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[800],
-            content: Text(
-              'Error: $e',
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
-        );
-      }
+      Fluttertoast.showToast(
+        msg: "Error : $e",
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
+      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

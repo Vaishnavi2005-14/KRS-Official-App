@@ -54,6 +54,7 @@ dependencies:
   firebase_core: ^3.14.0
   firebase_messaging: ^15.2.7
   flutter_local_notifications: ^17.2.3
+  connectivity_plus: ^6.1.4
 
 
 dev_dependencies:
@@ -73,7 +74,7 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios : true
   image_path : "assets/krs_big.png"
-  background_color: "#000000"
+  adaptive_icon_background: "#000000"
 
 # The following section is specific to Flutter packages.
 flutter:

@@ -147,7 +147,7 @@ class MemberManagementHub extends StatelessWidget {
           color: Color(0xff06132A),
           borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
           border: Border.all(
-            color: Color(0xFFE5A122).withOpacity(0.3),
+            color: Color(0xFFE5A122).withAlpha(78),
             width: 1,
           ),
         ),
@@ -156,7 +156,7 @@ class MemberManagementHub extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(screenWidth * 0.03),
               decoration: BoxDecoration(
-                color: Color(0xFFE5A122).withOpacity(0.2),
+                color: Color(0xFFE5A122).withAlpha(51),
                 borderRadius: BorderRadius.circular(isTablet ? 12 : 8),
               ),
               child: Icon(

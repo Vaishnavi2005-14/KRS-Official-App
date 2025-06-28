@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/models/notice.dart';
 import 'package:krs_app/screens/notice/edit_dialog.dart';
 import 'package:krs_app/services/auth.dart';
@@ -18,51 +19,159 @@ class NoticeBoardPage extends StatefulWidget {
 
 class _NoticeBoardPageState extends State<NoticeBoardPage> {
   late Future<bool> _adminFuture;
-  late Future<NoticePage> _noticesFuture;
+  Future<NoticePage>? _noticesFuture; // Nullable for extra safety
 
   int _currentPage = 1;
-  int _totalPages = 10;
-  final int _limit = 10;
+  int _totalPages = 1;
+  final int _limit = 6;
 
   @override
   void initState() {
     super.initState();
     _adminFuture = AuthService().isAdmin();
-    _fetchNotices();
-  }
-
-  void _fetchNotices() {
     _noticesFuture = NoticeApiService().fetchNotices(
       page: _currentPage,
       limit: _limit,
     );
-    setState(() {});
+  }
+
+  void _fetchNotices() {
+    setState(() {
+      _noticesFuture = NoticeApiService().fetchNotices(
+        page: _currentPage,
+        limit: _limit,
+      );
+    });
   }
 
   void _onPrevPressed() {
-    if (_currentPage <= 1) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You are already on the first page.')),
-      );
-    } else {
+    if (_currentPage > 1) {
       setState(() {
         _currentPage--;
-        _fetchNotices();
       });
+      _fetchNotices();
     }
   }
 
   void _onNextPressed() {
-    if (_currentPage >= _totalPages) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You are already on the last page.')),
-      );
-    } else {
+    if (_currentPage < _totalPages) {
       setState(() {
         _currentPage++;
-        _fetchNotices();
       });
+      _fetchNotices();
     }
+  }
+
+  // --- Custom Delete Dialog ---
+  Future<bool?> showDeleteDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (ctx) => Dialog(
+            backgroundColor: const Color(0xff10162a),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Red circular icon
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                      size: 44,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  // Bold title
+                  const Text(
+                    'Delete Notice?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 20,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Message
+                  const Text(
+                    'Are you sure you want to delete this entire notice? This action cannot be undone.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 15,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  // Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(
+                              color: Colors.white54,
+                              width: 1.2,
+                            ),
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: () => Navigator.of(ctx).pop(false),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: () => Navigator.of(ctx).pop(true),
+                          child: const Text(
+                            'Delete',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+    );
   }
 
   @override
@@ -79,174 +188,161 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
 
           return Column(
             children: [
-              NavigationRow(
-                onPrevPressed: _onPrevPressed,
-                onNextPressed: _onNextPressed,
-              ),
+              if (_totalPages > 1)
+                NavigationRow(
+                  onPrevPressed: _currentPage > 1 ? _onPrevPressed : null,
+                  onNextPressed:
+                      _currentPage < _totalPages ? _onNextPressed : null,
+                  showPrev: _totalPages > 1 && _currentPage > 1,
+                  showNext: _totalPages > 1 && _currentPage < _totalPages,
+                )
+              else
+                const SizedBox(height: 20),
               Expanded(
-                child: FutureBuilder<NoticePage>(
-                  future: _noticesFuture,
-                  builder: (context, noticeSnapshot) {
-                    final isNoticesLoading =
-                        noticeSnapshot.connectionState ==
-                        ConnectionState.waiting;
+                child:
+                    _noticesFuture == null
+                        ? const SizedBox.shrink()
+                        : FutureBuilder<NoticePage>(
+                          future: _noticesFuture,
+                          builder: (context, noticeSnapshot) {
+                            final isNoticesLoading =
+                                noticeSnapshot.connectionState ==
+                                ConnectionState.waiting;
 
-                    if (isAdminLoading || isNoticesLoading) {
-                      return Skeletonizer(
-                        enabled: true,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 18),
-                          itemCount: 3,
-                          itemBuilder: (context, index) => NoticeCard(
-                            day: '00',
-                            month: '---',
-                            heading: '',
-                            body: '',
-                            onViewAttachment: null,
-                            onEdit: null,
-                            onDelete: null,
-                            isAdmin: false,
-                            attachmentUrl: '',
-                          ),
-                        ),
-                      );
-                    }
-
-                    if (noticeSnapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${noticeSnapshot.error}'),
-                      );
-                    }
-
-                    final noticePage = noticeSnapshot.data;
-                    final notices = noticePage?.notices ?? [];
-                    _totalPages = noticePage?.totalPages ?? 1;
-
-                    if (notices.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          'No notices found.',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      );
-                    }
-
-                    return ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 18),
-                      itemCount: notices.length,
-                      itemBuilder: (context, index) {
-                        final notice = notices[index];
-                        final day = notice.uploadedAt.day.toString();
-                        final month = _monthAbbreviation(
-                          notice.uploadedAt.month,
-                        );
-                        return NoticeCard(
-                          day: day,
-                          month: month,
-                          heading: notice.title,
-                          body: notice.description,
-                          onViewAttachment: (notice.attachmentLink != null &&
-                                  notice.attachmentLink!.isNotEmpty)
-                              ? () => _openAttachment(
-                                    context,
-                                    notice.attachmentLink!,
-                                  )
-                              : null,
-                          onEdit: isAdmin
-                              ? () async {
-                                  final updatedNotice =
-                                      await showDialog<Notice>(
-                                    context: context,
-                                    builder: (ctx) => EditNoticeDialog(
-                                      notice: notice,
-                                    ),
-                                  );
-                                  if (updatedNotice != null) {
-                                    setState(() {
-                                      _fetchNotices();
-                                    });
-                                    ScaffoldMessenger.of(
-                                      context,
-                                    ).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Notice updated successfully',
-                                        ),
+                            if (isAdminLoading || isNoticesLoading) {
+                              return Skeletonizer(
+                                enabled: true,
+                                child: ListView.builder(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                  ),
+                                  itemCount: 3,
+                                  itemBuilder:
+                                      (context, index) => NoticeCard(
+                                        day: '00',
+                                        month: '---',
+                                        heading: '',
+                                        body: '',
+                                        onViewAttachment: null,
+                                        onEdit: null,
+                                        onDelete: null,
+                                        isAdmin: false,
+                                        attachmentUrl: '',
                                       ),
-                                    );
-                                  }
-                                }
-                              : null,
-                          onDelete: isAdmin
-                              ? () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: const Text('Delete Notice'),
-                                      content: const Text(
-                                        'Are you sure you want to delete this notice?',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(false),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(true),
-                                          child: const Text(
-                                            'Delete',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  if (confirm == true) {
-                                    try {
-                                      await NoticeApiService().deleteNotice(
-                                        notice.id,
-                                      );
-                                      setState(() {
-                                        _fetchNotices();
-                                      });
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Notice deleted successfully',
-                                          ),
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(content: Text('Error: $e')),
-                                      );
-                                    }
-                                  }
-                                }
-                              : null,
-                          isAdmin: isAdmin,
-                          attachmentUrl: notice.attachmentLink ?? '',
-                        );
-                      },
-                    );
-                  },
-                ),
+                                ),
+                              );
+                            }
+
+                            if (noticeSnapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${noticeSnapshot.error}'),
+                              );
+                            }
+
+                            final noticePage = noticeSnapshot.data;
+                            final notices = noticePage?.notices ?? [];
+                            _totalPages = noticePage?.totalPages ?? 1;
+
+                            if (notices.isEmpty) {
+                              return const Center(
+                                child: Text(
+                                  'No notices found.',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              );
+                            }
+
+                            return ListView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                              ),
+                              itemCount: notices.length,
+                              itemBuilder: (context, index) {
+                                final notice = notices[index];
+                                final day = notice.uploadedAt.day.toString();
+                                final month = _monthAbbreviation(
+                                  notice.uploadedAt.month,
+                                );
+                                return NoticeCard(
+                                  day: day,
+                                  month: month,
+                                  heading: notice.title,
+                                  body: notice.description,
+                                  onViewAttachment:
+                                      (notice.attachmentLink != null &&
+                                              notice.attachmentLink!.isNotEmpty)
+                                          ? () => _openAttachment(
+                                            context,
+                                            notice.attachmentLink!,
+                                          )
+                                          : null,
+                                  onEdit:
+                                      isAdmin
+                                          ? () async {
+                                            final updatedNotice =
+                                                await showDialog<Notice>(
+                                                  context: context,
+                                                  builder:
+                                                      (ctx) => EditNoticeDialog(
+                                                        notice: notice,
+                                                      ),
+                                                );
+                                            if (updatedNotice != null) {
+                                              setState(() {
+                                                _fetchNotices();
+                                              });
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    'Notice updated successfully',
+                                                backgroundColor: Colors.green,
+                                                toastLength: Toast.LENGTH_LONG,
+                                              );
+                                            }
+                                          }
+                                          : null,
+                                  onDelete:
+                                      isAdmin
+                                          ? () async {
+                                            final confirm =
+                                                await showDeleteDialog(context);
+                                            if (confirm == true) {
+                                              try {
+                                                await NoticeApiService()
+                                                    .deleteNotice(notice.id);
+                                                setState(() {
+                                                  _fetchNotices();
+                                                });
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Notice deleted successfully",
+                                                );
+                                              } catch (e) {
+                                                Fluttertoast.showToast(
+                                                  msg: "Error : $e",
+                                                  backgroundColor: Colors.red,
+                                                  toastLength:
+                                                      Toast.LENGTH_LONG,
+                                                );
+                                              }
+                                            }
+                                          }
+                                          : null,
+                                  isAdmin: isAdmin,
+                                  attachmentUrl: notice.attachmentLink ?? '',
+                                );
+                              },
+                            );
+                          },
+                        ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  'Page $_currentPage of $_totalPages',
-                  style: const TextStyle(color: Colors.white70),
+              if (_totalPages > 1)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    'Page $_currentPage of $_totalPages',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
                 ),
-              ),
             ],
           );
         },
@@ -279,8 +375,10 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
       mode: LaunchMode.externalApplication,
     );
     if (!launched) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open attachment')),
+      Fluttertoast.showToast(
+        msg: 'Could not open attachment',
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
       );
     }
   }

@@ -1,42 +1,34 @@
 import 'package:flutter/material.dart';
-import 'mom_constants.dart';
 
-/// Custom search bar widget for filtering MoM entries
-/// Provides a styled text input field with search icon and border
 class MoMSearchBar extends StatelessWidget {
-  /// Text controller to manage the search input
   final TextEditingController controller;
-  
-  /// Callback function triggered when search text changes
+
   final Function(String) onChanged;
 
   const MoMSearchBar({
     super.key,
-    required this.controller, 
+    required this.controller,
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // Custom border styling with rounded corners
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: MoMConstants.primaryAccent, 
-          width: MoMLayout.searchBorderWidth,
+    return TextField(
+      style: TextStyle(color: Color(0xffE5A122)),
+      onChanged: onChanged,
+      cursorColor: Color(0xffE5A122),
+      autocorrect: true,
+      decoration: InputDecoration(
+        suffixIcon: Icon(Icons.search_rounded, color: Color(0xffE5A122)),
+        hintText: "Search...",
+        hintStyle: TextStyle(color: Color(0xffE5A122)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xffE5A122), width: 3),
+          borderRadius: BorderRadius.circular(50),
         ),
-        borderRadius: BorderRadius.circular(MoMLayout.searchBorderRadius),
-      ),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        style: MoMTextStyles.searchInput,
-        decoration: const InputDecoration(
-          hintText: 'Search...',
-          hintStyle: MoMTextStyles.searchHint,
-          border: InputBorder.none, // Remove default border
-          prefixIcon: Icon(Icons.search, color: MoMConstants.primaryAccent),
-          contentPadding: EdgeInsets.symmetric(vertical: 15),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xffE5A122), width: 3),
+          borderRadius: BorderRadius.circular(50),
         ),
       ),
     );

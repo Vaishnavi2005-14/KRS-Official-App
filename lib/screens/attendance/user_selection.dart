@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -56,7 +57,7 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
               Container(
                 padding: EdgeInsets.all(isTablet ? 10 : 8),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withAlpha(26),
                   borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
                 ),
                 child: Icon(
@@ -234,7 +235,7 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
                                       isTablet ? 16 : 12,
                                     ),
                                     border: Border.all(
-                                      color: Colors.grey.withOpacity(0.3),
+                                      color: Colors.grey.withAlpha(78),
                                       width: 1,
                                     ),
                                   ),
@@ -251,7 +252,7 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
                                           decoration: BoxDecoration(
                                             color: Color(
                                               0xFFE5A122,
-                                            ).withOpacity(0.2),
+                                            ).withAlpha(51),
                                             shape: BoxShape.circle,
                                           ),
                                           child: CircleAvatar(
@@ -301,7 +302,7 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
                                                 style: TextStyle(
                                                   color: Color(
                                                     0xFFE5A122,
-                                                  ).withOpacity(0.8),
+                                                  ).withAlpha(204),
                                                   fontSize: isTablet ? 16 : 14,
                                                 ),
                                               ),
@@ -354,7 +355,7 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
           decoration: BoxDecoration(
             color: Color(0xff06132A),
             borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-            border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+            border: Border.all(color: Colors.grey.withAlpha(78), width: 1),
           ),
           child: Row(
             children: [
@@ -402,7 +403,7 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-    if (token.isNotEmpty) {
+    if (token.isNotEmpty && mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -417,11 +418,10 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Authentication error. Please login again.'),
-          backgroundColor: Colors.red,
-        ),
+      Fluttertoast.showToast(
+        msg: 'Authentication error. Please login again.',
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
       );
     }
   }

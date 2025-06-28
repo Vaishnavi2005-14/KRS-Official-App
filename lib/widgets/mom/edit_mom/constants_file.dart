@@ -29,8 +29,8 @@ class AppConstants {
     'Video Editing',
     'Graphic Designing',
     'Photography',
-    'App Development',
-    'Website Development',
+    'App Dev',
+    'Web Dev',
     'Machine Learning',
     'Embedded',
   ];

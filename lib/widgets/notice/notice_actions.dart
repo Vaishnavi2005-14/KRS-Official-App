@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NoticeActions extends StatelessWidget {
   final String? attachmentUrl;
@@ -17,17 +18,25 @@ class NoticeActions extends StatelessWidget {
 
   Future<void> _handleAttachment(BuildContext context) async {
     if (attachmentUrl == null || attachmentUrl!.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('No Attachment Found !!!')));
+      Fluttertoast.showToast(
+        msg: 'No Attachment Found !!!',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
       return;
     }
     final uri = Uri.parse(attachmentUrl!);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open attachment')),
+      Fluttertoast.showToast(
+        msg: 'Could not open attachment',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
       );
     }
   }
@@ -45,7 +54,6 @@ class NoticeActions extends StatelessWidget {
             ),
             onPressed: () => _handleAttachment(context),
           ),
-        // This Spacer pushes the actions to the right
         const Spacer(),
         if (showActions) ...[
           if (onEdit != null)

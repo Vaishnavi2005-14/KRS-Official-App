@@ -1,7 +1,3 @@
-// ============================================================================
-// FORM VALIDATION UTILITIES
-// ============================================================================
-
 class FormValidator {
   // Validate required text fields
   static String? validateRequired(String? value, {String fieldName = 'Field'}) {
@@ -36,7 +32,6 @@ class FormValidator {
   
   // Validate link field
   static String? validateLink(String? value) {
-    // For now, just check if it's not empty
     // You can use validateUrl if you want stricter validation
     return validateRequired(value, fieldName: 'Link');
   }
@@ -50,9 +45,6 @@ class FormValidator {
   }
 }
 
-// ============================================================================
-// FORM DATA UTILITIES
-// ============================================================================
 
 class FormDataUtils {
   // Find matching domain from available domains list

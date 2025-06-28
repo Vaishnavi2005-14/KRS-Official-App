@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:krs_app/widgets/mom/edit_mom/constants_file.dart';
 import '../../services/mom_service.dart';
-import '../../widgets/mom/upload_mom/app_constants.dart';
 import '../../widgets/mom/upload_mom/mom_form_widgets.dart';
 
 class UploadMoMPage extends StatefulWidget {
@@ -20,38 +21,46 @@ class _UploadMoMPageState extends State<UploadMoMPage> {
   bool _isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    if (selectedType == 'Scrum') {
+      selectedDomains = List.from(AppConstants.domains);
+    }
+  }
+
+  @override
   void dispose() {
     titleController.dispose();
     linkController.dispose();
     super.dispose();
   }
 
-  void _onDomainChanged(String domain, bool isSelected) {
+  // New callback for domain dialog
+  void _onDomainsChanged(List<String> newDomains) {
     setState(() {
-      if (isSelected) {
-        selectedDomains.add(domain);
-      } else {
-        selectedDomains.remove(domain);
-      }
+      selectedDomains = newDomains;
     });
   }
 
   void _onTypeChanged(String newType) {
     setState(() {
       selectedType = newType;
+      if (newType == 'Scrum' && selectedDomains.isEmpty) {
+        selectedDomains = List.from(AppConstants.domains);
+      } else {
+        selectedDomains = List.empty();
+      }
     });
   }
 
   Future<void> _uploadMoM() async {
     if (!_formKey.currentState!.validate()) return;
-
     if (selectedDomains.isEmpty) {
-      _showMessage('Please select at least one domain');
+      _showMessage('Please select at least one domain', 0);
       return;
     }
 
     setState(() => _isLoading = true);
-
     try {
       final message = await MoMService.uploadMoM(
         title: titleController.text.trim(),
@@ -60,14 +69,13 @@ class _UploadMoMPageState extends State<UploadMoMPage> {
         meetType: selectedType.toLowerCase().replaceAll(' ', '-'),
       );
 
-      _showMessage(message);
-
-      if (message.toLowerCase().contains("success")) {
+      _showMessage(message, 1);
+      if (message.toLowerCase().contains("success") && mounted) {
         _resetForm();
         Navigator.pop(context, true);
       }
     } catch (e) {
-      _showMessage('An error occurred: $e');
+      _showMessage('An error occurred: $e', 0);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -82,52 +90,93 @@ class _UploadMoMPageState extends State<UploadMoMPage> {
     });
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+  void _showMessage(String message, int status) {
+    Fluttertoast.showToast(
+      msg: message,
+      backgroundColor: status == 1 ? Colors.green : Colors.red,
+    );
+  }
+
+  Widget _buildPageTitle() {
+    final width = MediaQuery.of(context).size.width;
+    return Text(
+      'Upload MoM',
+      style: AppTextStyles.titleStyle.copyWith(
+        fontSize: width * 0.1,
+        shadows: const [Shadow(blurRadius: 10, color: AppColors.orangeColor)],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    final s = MediaQuery.sizeOf(context);
+    return GestureDetector(
+      onTap: FocusScope.of(context).unfocus,
+      child: Scaffold(
+        appBar: AppBar(toolbarHeight: 0),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(right: 15, left: 15, top: 25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPageTitle(),
+                Divider(color: Color(0xff855D13), thickness: 2),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      MoMFormWidgets.buildLabel('MoM TITLE'),
+                      SizedBox(height: s.height * 0.005),
+                      MoMFormWidgets.buildTextField(
+                        titleController,
+                        'Enter title...',
+                      ),
+                      SizedBox(height: s.height * 0.01),
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MoMFormWidgets.buildTitle(width),
-              const SizedBox(height: 30),
-              
-              MoMFormWidgets.buildLabel('MoM TITLE'),
-              MoMFormWidgets.buildTextField(titleController, 'Enter title...'),
-              
-              MoMFormWidgets.buildLabel('MoM LINK'),
-              MoMFormWidgets.buildTextField(linkController, 'Enter link...'),
-              
-              MoMFormWidgets.buildLabel('SELECT DOMAINS'),
-              MoMFormWidgets.buildDomainSelector(
-                selectedDomains: selectedDomains,
-                onDomainChanged: _onDomainChanged,
-              ),
-              
-              MoMFormWidgets.buildLabel('MoM TYPE'),
-              MoMFormWidgets.buildMeetingTypeDropdown(
-                selectedType: selectedType,
-                onTypeChanged: _onTypeChanged,
-              ),
-              
-              const SizedBox(height: 30),
-              MoMFormWidgets.buildUploadButton(
-                isLoading: _isLoading,
-                onPressed: _uploadMoM,
-              ),
-            ],
+                      MoMFormWidgets.buildLabel('MoM LINK'),
+                      SizedBox(height: 4),
+                      MoMFormWidgets.buildTextField(
+                        linkController,
+                        'Enter link...',
+                      ),
+                      SizedBox(height: s.height * 0.01),
+
+                      MoMFormWidgets.buildLabel(
+                        'SELECT DOMAINS (you can select 1 or more)',
+                      ),
+                      SizedBox(height: s.height * 0.01),
+
+                      // Add the domain selector button here
+                      MoMFormWidgets.buildDomainSelectorButton(
+                        context: context,
+                        selectedDomains: selectedDomains,
+                        onDomainsChanged: _onDomainsChanged,
+                        buttonText: 'Select Domains',
+                      ),
+
+                      SizedBox(height: s.height * 0.01),
+
+                      MoMFormWidgets.buildLabel('MoM TYPE'),
+                      SizedBox(height: s.height * 0.005),
+                      MoMFormWidgets.buildMeetingTypeDropdown(
+                        selectedType: selectedType,
+                        onTypeChanged: _onTypeChanged,
+                      ),
+                      SizedBox(height: s.height * 0.05),
+                      Center(
+                        child: MoMFormWidgets.buildUploadButton(
+                          isLoading: _isLoading,
+                          onPressed: _uploadMoM,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

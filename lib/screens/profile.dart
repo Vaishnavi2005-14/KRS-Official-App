@@ -19,6 +19,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? email;
   String? profileImage;
   String? domain;
+  String? designation;
+  String? roll;
+  String? year;
+  String? branch;
+  String? phone;
+  String? status;
 
   @override
   void initState() {
@@ -52,6 +58,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       email = prefs.getString('email');
       profileImage = prefs.getString('image');
       domain = prefs.getString("domain");
+      designation = prefs.getString("designation");
+      roll = prefs.getString('rollNo');
+      year = prefs.getString('year');
+      branch = prefs.getString('branch');
+      phone = prefs.getString('phone');
+      status = prefs.getString('status');
     });
   }
 
@@ -79,7 +91,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
-                    child: _buildProfileContent(size),
+                    child: ProfileContent(
+                      name: name,
+                      email: email,
+                      profileImage: profileImage,
+                      domain: domain,
+                      designation: designation,
+                      roll: roll,
+                      year: year,
+                      branch: branch,
+                      phone: phone,
+                      status: status,
+                      onLogout: logout,
+                    ),
                   ),
                 ),
               ],
@@ -102,7 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
               padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: Colors.white.withAlpha(78),
+                color: Colors.white.withAlpha(75),
                 borderRadius: BorderRadius.circular(5),
               ),
               child: SvgPicture.asset(
@@ -115,13 +139,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
+
           Spacer(),
           InkWell(
             onTap: logout,
             child: Container(
               padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: Colors.white.withAlpha(78),
+                color: Colors.white.withAlpha(75),
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Icon(
@@ -135,15 +160,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+}
 
-  Widget _buildProfileContent(Size size) {
+class ProfileContent extends StatelessWidget {
+  final String? name;
+  final String? email;
+  final String? profileImage;
+  final String? domain;
+  final String? designation;
+  final String? roll;
+  final String? year;
+  final String? branch;
+  final String? phone;
+  final String? status;
+  final VoidCallback onLogout;
+
+  const ProfileContent({
+    super.key,
+    this.name,
+    this.email,
+    this.profileImage,
+    this.domain,
+    this.designation,
+    this.roll,
+    this.year,
+    this.branch,
+    this.phone,
+    this.status,
+    required this.onLogout,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Column(
       children: [
         SizedBox(height: size.height * 0.05),
         Container(
           height: size.height * 0.15,
           width: size.height * 0.15,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
               colors: [Color(0xffE5A122), Color(0xff194DA6)],
@@ -159,10 +215,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ClipOval(
                 child: Image(
                   image: NetworkImage(
-                    (profileImage != null && profileImage!.isNotEmpty)
+                    (profileImage?.isNotEmpty ?? false)
                         ? profileImage!
                         : 'https://krs.kiit.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FKRS.31bc350a.png&w=384&q=75',
                   ),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -171,17 +228,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SizedBox(height: size.height * 0.02),
         Text(
           name ?? 'Name',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.poppins(
             fontSize: size.width * 0.06,
             fontWeight: FontWeight.bold,
-            color: Color(0xffE5A122),
+            color: const Color(0xffE5A122),
           ),
         ),
         SizedBox(height: size.height * 0.01),
         Text(
-          "$domain Team",
+          "${domain?.isNotEmpty ?? false ? domain! : 'Domain'} Team",
           style: TextStyle(
-            color: Color(0xffA4A4A4),
+            color: const Color(0xffA4A4A4),
             fontSize: size.width * 0.04,
           ),
         ),
@@ -191,7 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             ShaderMask(
               shaderCallback:
-                  (bounds) => LinearGradient(
+                  (bounds) => const LinearGradient(
                     colors: [Color(0xffE5A122), Color(0xff194DA6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -202,21 +259,122 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(width: size.width * 0.01),
             ShaderMask(
               shaderCallback:
-                  (bounds) => LinearGradient(
+                  (bounds) => const LinearGradient(
                     colors: [Color(0xffE5A122), Color(0xff194DA6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ).createShader(bounds),
               blendMode: BlendMode.srcIn,
               child: Text(
-                email ?? 'krsmember@kiit.ac.in',
-                style: GoogleFonts.inter(
+                email?.isNotEmpty ?? false ? email! : 'krsmember@kiit.ac.in',
+                style: GoogleFonts.poppins(
                   fontSize: size.width * 0.04,
                   color: Colors.white,
                 ),
               ),
             ),
           ],
+        ),
+        SizedBox(height: size.height * 0.04),
+
+        Container(
+          width: size.width * 0.9,
+          decoration: BoxDecoration(
+            color: const Color(0xFF0D1F3D),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFFFA000).withAlpha(900)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Additional Details',
+                  style: GoogleFonts.poppins(
+                    color: const Color(0xffE5A122),
+                    fontWeight: FontWeight.w600,
+                    fontSize: size.width * 0.048,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (roll?.isNotEmpty ?? false) ...[
+                  ProfileInfoRow(title: 'Roll No', value: roll!),
+                  const SizedBox(height: 12),
+                ],
+                const SizedBox(height: 16),
+                if (designation?.isNotEmpty ?? false) ...[
+                  ProfileInfoRow(title: 'Designation', value: designation!),
+                  const SizedBox(height: 12),
+                ],
+                if (year?.isNotEmpty ?? false) ...[
+                  ProfileInfoRow(title: 'Year', value: year!),
+                  const SizedBox(height: 12),
+                ],
+                if (branch?.isNotEmpty ?? false) ...[
+                  ProfileInfoRow(title: 'Branch', value: branch!),
+                  const SizedBox(height: 12),
+                ],
+                if (phone?.isNotEmpty ?? false) ...[
+                  ProfileInfoRow(title: 'Phone', value: phone!),
+                  const SizedBox(height: 12),
+                ],
+                if (status?.isNotEmpty ?? false) ...[
+                  ProfileInfoRow(title: 'Status', value: status!),
+                  const SizedBox(height: 12),
+                ],
+                if (!(roll?.isNotEmpty ?? false) &&
+                    !(designation?.isNotEmpty ?? false) &&
+                    !(year?.isNotEmpty ?? false) &&
+                    !(branch?.isNotEmpty ?? false) &&
+                    !(phone?.isNotEmpty ?? false) &&
+                    !(status?.isNotEmpty ?? false))
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'No additional details available',
+                      style: GoogleFonts.poppins(
+                        color: const Color(0xffA4A4A4),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: size.height * 0.03),
+      ],
+    );
+  }
+}
+
+class ProfileInfoRow extends StatelessWidget {
+  final String title;
+  final String value;
+
+  const ProfileInfoRow({super.key, required this.title, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.poppins(
+            color: const Color(0xffA4A4A4),
+            fontSize: 16,
+          ),
+        ),
+        Text(
+          value,
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
         ),
       ],
     );

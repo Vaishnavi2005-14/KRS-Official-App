@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 //import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,14 +19,7 @@ class _InfoPageState extends State<InfoPage> {
   void _launchURL(BuildContext context, String url) async {
     final uri = Uri.parse(url);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Could not launch $url'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      Fluttertoast.showToast(msg: 'Could not launch $url');
     }
   }
 
@@ -35,6 +29,7 @@ class _InfoPageState extends State<InfoPage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'About Us',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),

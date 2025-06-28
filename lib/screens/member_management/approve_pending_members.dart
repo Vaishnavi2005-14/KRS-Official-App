@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/widgets/attendance/attendance_search_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:krs_app/providers/member_management_provider.dart';
@@ -54,7 +55,7 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
             Container(
               padding: EdgeInsets.all(isTablet ? 10 : 8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha(26),
                 borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
               ),
               child: Icon(
@@ -194,7 +195,7 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
           decoration: BoxDecoration(
             color: Color(0xff06132A),
             borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-            border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+            border: Border.all(color: Colors.grey.withAlpha(78), width: 1),
           ),
           child: Row(
             children: [
@@ -333,8 +334,7 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
             color: Color(0xff06132A),
             borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
             border: Border.all(
-              color:
-                  isApproved ? Color(0xFFE5A122) : Colors.grey.withOpacity(0.3),
+              color: isApproved ? Color(0xFFE5A122) : Colors.grey.withAlpha(78),
               width: isApproved ? 2 : 1,
             ),
           ),
@@ -346,7 +346,7 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
                     width: isTablet ? 60 : 50,
                     height: isTablet ? 60 : 50,
                     decoration: BoxDecoration(
-                      color: Color(0xFFE5A122).withOpacity(0.2),
+                      color: Color(0xFFE5A122).withAlpha(51),
                       shape: BoxShape.circle,
                     ),
                     child: CircleAvatar(
@@ -390,7 +390,7 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
                         Text(
                           member['email'] ?? '',
                           style: TextStyle(
-                            color: Color(0xFFE5A122).withOpacity(0.8),
+                            color: Color(0xFFE5A122).withAlpha(204),
                             fontSize: isTablet ? 16 : 14,
                           ),
                         ),
@@ -407,7 +407,7 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.2),
+                      color: Colors.red.withAlpha(51),
                       borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
                     ),
                     child: IconButton(
@@ -443,8 +443,8 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
                       value: isApproved,
                       activeColor: Colors.green,
                       inactiveThumbColor: Colors.grey,
-                      inactiveTrackColor: Colors.grey.withOpacity(0.3),
-                      activeTrackColor: Colors.green.withOpacity(0.3),
+                      inactiveTrackColor: Colors.grey.withAlpha(78),
+                      activeTrackColor: Colors.green.withAlpha(78),
                       onChanged: (value) {
                         provider.toggleMemberSelection(memberId);
                       },
@@ -486,7 +486,7 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
                   Container(
                     padding: EdgeInsets.all(isTablet ? 20 : 16),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.2),
+                      color: Colors.red.withAlpha(51),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -550,22 +550,16 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
                               member['_id'],
                             );
                             if (success) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Member request deleted successfully',
-                                  ),
-                                  backgroundColor: Colors.green,
-                                ),
+                              Fluttertoast.showToast(
+                                msg: 'Member request deleted successfully',
+                                backgroundColor: Colors.green,
+                                toastLength: Toast.LENGTH_LONG,
                               );
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Failed to delete member request',
-                                  ),
-                                  backgroundColor: Colors.red,
-                                ),
+                              Fluttertoast.showToast(
+                                msg: 'Failed to delete member request',
+                                backgroundColor: Colors.red,
+                                toastLength: Toast.LENGTH_LONG,
                               );
                             }
                           },
@@ -643,8 +637,8 @@ class _ApprovePendingMembersPageState extends State<ApprovePendingMembersPage> {
                     decoration: BoxDecoration(
                       color:
                           success
-                              ? Colors.green.withOpacity(0.2)
-                              : Colors.red.withOpacity(0.2),
+                              ? Colors.green.withAlpha(51)
+                              : Colors.red.withAlpha(51),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

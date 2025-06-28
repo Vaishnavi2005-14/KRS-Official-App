@@ -66,15 +66,14 @@ class _TypewriterTextState extends State<AnimatedLanguageText> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final isTablet = screenWidth > 600;
+    final s = MediaQuery.sizeOf(context);
+    final isTablet = s.width > 600;
 
     return Text(
       _displayedText,
       style: TextStyle(
         color: Colors.grey[400],
-        fontSize: isTablet ? 17 : screenWidth * 0.038,
+        fontSize: isTablet ? 17 : s.width * 0.038,
       ),
       overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.left,

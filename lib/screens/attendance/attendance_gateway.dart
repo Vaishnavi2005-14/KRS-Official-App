@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/screens/attendance/filtered_attendance_record.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,7 +37,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
             Container(
               padding: EdgeInsets.all(isTablet ? 10 : 8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha(26),
                 borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
               ),
               child: Icon(
@@ -79,7 +80,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                             isTablet ? 16 : 12,
                           ),
                           side: BorderSide(
-                            color: Color(0xFFE5A122).withOpacity(0.3),
+                            color: Color(0xFFE5A122).withAlpha(78),
                             width: 1,
                           ),
                         ),
@@ -89,7 +90,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                           Container(
                             padding: EdgeInsets.all(isTablet ? 12 : 10),
                             decoration: BoxDecoration(
-                              color: Color(0xFFE5A122).withOpacity(0.2),
+                              color: Color(0xFFE5A122).withAlpha(51),
                               borderRadius: BorderRadius.circular(
                                 isTablet ? 10 : 8,
                               ),
@@ -154,7 +155,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                             isTablet ? 16 : 12,
                           ),
                           side: BorderSide(
-                            color: Color(0xFFE5A122).withOpacity(0.3),
+                            color: Color(0xFFE5A122).withAlpha(78),
                             width: 1,
                           ),
                         ),
@@ -164,7 +165,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                           Container(
                             padding: EdgeInsets.all(isTablet ? 12 : 10),
                             decoration: BoxDecoration(
-                              color: Color(0xFFE5A122).withOpacity(0.2),
+                              color: Color(0xFFE5A122).withAlpha(51),
                               borderRadius: BorderRadius.circular(
                                 isTablet ? 10 : 8,
                               ),
@@ -228,7 +229,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                             isTablet ? 16 : 12,
                           ),
                           side: BorderSide(
-                            color: Color(0xFFE5A122).withOpacity(0.3),
+                            color: Color(0xFFE5A122).withAlpha(78),
                             width: 1,
                           ),
                         ),
@@ -238,7 +239,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                           Container(
                             padding: EdgeInsets.all(isTablet ? 12 : 10),
                             decoration: BoxDecoration(
-                              color: Color(0xFFE5A122).withOpacity(0.2),
+                              color: Color(0xFFE5A122).withAlpha(51),
                               borderRadius: BorderRadius.circular(
                                 isTablet ? 10 : 8,
                               ),
@@ -319,7 +320,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
                             Container(
                               padding: EdgeInsets.all(isTablet ? 16 : 12),
                               decoration: BoxDecoration(
-                                color: Color(0xFFE5A122).withOpacity(0.2),
+                                color: Color(0xFFE5A122).withAlpha(51),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -564,7 +565,7 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
       }
 
       final attendanceRecords = await provider.fetchAttendanceByRange(token);
-
+      if (!mounted) return;
       Navigator.pop(context);
       Navigator.push(
         context,
@@ -578,11 +579,10 @@ class _AttendanceGatewayPageState extends State<AttendanceGatewayPage> {
         ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Something went wrong'),
-          backgroundColor: Colors.red,
-        ),
+      Fluttertoast.showToast(
+        msg: "Something went wrong",
+        backgroundColor: Colors.red,
+        toastLength: Toast.LENGTH_LONG,
       );
     }
   }
