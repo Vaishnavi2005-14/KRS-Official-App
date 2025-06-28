@@ -6,6 +6,8 @@ import 'package:krs_app/screens/mom/mom_view_page.dart';
 import 'package:krs_app/services/auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:krs_app/screens/info.dart';
+import 'package:krs_app/screens/attendance/user_attendance_detail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -38,6 +40,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _name = value;
       });
     });
+  }
+
+  Future<void> _navigateToMyAttendance() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+      final userId = prefs.getString('userId') ?? '';
+      final userDomain = prefs.getString('domain') ?? '';
+      final userImage = prefs.getString('image') ?? '';
+      final userRoll = prefs.getString('roll') ?? '';
+
+      if (token.isNotEmpty && userId.isNotEmpty) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => UserAttendanceDetailPage(
+                  userId: userId,
+                  userName: _name,
+                  userDomain: userDomain,
+                  userImage: userImage,
+                  userRoll: userRoll,
+                ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Unable to load user data. Please login again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading attendance: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -277,6 +320,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         MaterialPageRoute(builder: (context) => MoMViewPage()),
                       );
                     },
+                  ),
+
+                  SizedBox(height: screenHeight * 0.025),
+
+                  _buildDashboardCard(
+                    title: "My Attendance",
+                    subtitle: "Check your attendance records",
+                    icon: Icons.person_search,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                    isTablet: isTablet,
+                    onTap: _navigateToMyAttendance,
                   ),
 
                   SizedBox(height: screenHeight * 0.025),

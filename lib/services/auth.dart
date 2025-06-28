@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import './notification_service.dart';
 
 class AuthService {
   final String? webId = dotenv.env['GOOGLE_CLIENT_ID'];
@@ -22,17 +25,88 @@ class AuthService {
     return _googleSignIn!;
   }
 
+  Future<void> initializeNotifications() async {
+    try {
+      await NotificationService().initialize();
+      print('Notification service initialized');
+    } catch (e) {
+      print('Error initializing notification service: $e');
+    }
+  }
+
+  Future<void> initializeFCM() async {
+    try {
+      if (Firebase.apps.isEmpty) {
+        return;
+      }
+
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+      NotificationSettings settings = await messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        print('User granted notification permission');
+
+        String? fcmToken = await messaging.getToken();
+        if (fcmToken != null) {
+          print('FCM Token: $fcmToken');
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('fcm_token', fcmToken);
+        }
+      } else {
+        print('User denied notification permission');
+      }
+    } catch (e) {
+      print('FCM initialization error: $e');
+    }
+  }
+
+  Future<String?> getFCMToken() async {
+    try {
+      String? token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('fcm_token', token);
+      }
+      return token;
+    } catch (e) {
+      print('Error getting FCM token: $e');
+      return null;
+    }
+  }
+
   Future<bool> login(String email, String password) async {
+    String? fcmToken;
+
+    try {
+      fcmToken = await getFCMToken();
+    } catch (e) {
+      print('Warning: FCM failed: $e');
+    }
+
     final response = await http.post(
       Uri.parse("$baseUrl/login"),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password}),
+      body: jsonEncode({
+        "email": email,
+        "password": password,
+        if (fcmToken != null) "fcmToken": fcmToken,
+      }),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("token", data["token"]);
+      prefs.setString("userId", data["user"]["id"]);
       prefs.setString("name", data["user"]["name"]);
       prefs.setString("email", data["user"]["email"]);
       prefs.setString("designation", data["user"]["designation"]);
@@ -43,6 +117,8 @@ class AuthService {
       prefs.setString("phone", data["user"]["phone"]?.toString() ?? "");
       prefs.setString("branch", data["user"]["branch"] ?? "");
       prefs.setString("year", data["user"]["year"] ?? "");
+
+      await initializeNotifications();
       return true;
     }
     return false;
@@ -59,6 +135,14 @@ class AuthService {
     String pass,
   ) async {
     try {
+      String? fcmToken;
+
+      try {
+        fcmToken = await getFCMToken();
+      } catch (e) {
+        print('Warning: FCM failed: $e');
+      }
+
       final res = await http.post(
         Uri.parse("$baseUrl/signup"),
         headers: {"Content-Type": "application/json"},
@@ -72,6 +156,7 @@ class AuthService {
           "year": year,
           "password": pass,
           "designation": "Member",
+          if (fcmToken != null) "fcmToken": fcmToken,
         }),
       );
 
@@ -81,6 +166,7 @@ class AuthService {
         if (data['token'] != null && data['user'] != null) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString("token", data["token"]);
+          prefs.setString("userId", data["user"]["id"]);
           prefs.setString("name", data["user"]["name"]);
           prefs.setString("email", data["user"]["email"]);
           prefs.setString(
@@ -95,18 +181,8 @@ class AuthService {
           prefs.setString("branch", data["user"]["branch"] ?? "");
           prefs.setString("year", data["user"]["year"] ?? "");
         }
-        // else {
-        //   // If no token in signup response, login automatically
-        //   bool loginSuccess = await login(email, pass);
-        //   if (!loginSuccess) {
-        //     Fluttertoast.showToast(
-        //       msg: "Account created but login failed. Please login manually.",
-        //       backgroundColor: Colors.orange,
-        //       toastLength: Toast.LENGTH_LONG,
-        //     );
-        //     return false;
-        //   }
-        // }
+
+        await initializeNotifications();
 
         Fluttertoast.showToast(
           msg:
@@ -114,6 +190,7 @@ class AuthService {
           backgroundColor: Colors.green,
           toastLength: Toast.LENGTH_LONG,
         );
+
         return true;
       }
 
@@ -181,17 +258,27 @@ class AuthService {
         return false;
       }
 
-      // Send ID token to your backend
+      String? fcmToken;
+      try {
+        fcmToken = await getFCMToken();
+      } catch (e) {
+        print('Warning: FCM failed: $e');
+      }
+
       final response = await http.post(
         Uri.parse("$baseUrl/google/login"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"idToken": idToken}),
+        body: jsonEncode({
+          "idToken": idToken,
+          if (fcmToken != null) "fcmToken": fcmToken,
+        }),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("token", data["token"]);
+        prefs.setString("userId", data["user"]["id"]);
         prefs.setString("name", data["user"]["name"]);
         prefs.setString("email", data["user"]["email"]);
         prefs.setString("designation", data["user"]["designation"]);
@@ -202,6 +289,8 @@ class AuthService {
         prefs.setString("phone", data["user"]["phone"]?.toString() ?? "");
         prefs.setString("branch", data["user"]["branch"] ?? "");
         prefs.setString("year", data["user"]["year"] ?? "");
+
+        await initializeNotifications();
 
         Fluttertoast.showToast(
           msg: "Google Sign-In successful!",
@@ -223,7 +312,6 @@ class AuthService {
           textColor: Colors.white,
         );
 
-        // Sign out from Google if backend fails
         await googleSignIn.signOut();
         return false;
       }
@@ -236,7 +324,6 @@ class AuthService {
         textColor: Colors.white,
       );
 
-      // Ensure Google session is cleared on error
       await googleSignIn.signOut();
       return false;
     }

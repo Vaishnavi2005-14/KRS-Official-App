@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     FocusScope.of(context).unfocus();
     Provider.of<LoaderProvider>(context, listen: false).showLoader(context);
-
+    print("USer Name & Password : ${emailController.text}, ${passwordController.text}");
     bool success = await _authService.login(
       emailController.text,
       passwordController.text,

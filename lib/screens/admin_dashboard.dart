@@ -3,6 +3,7 @@ import 'package:krs_app/providers/notice_provider.dart';
 import 'package:krs_app/screens/animated_text.dart';
 import 'package:krs_app/screens/attendance/attendance_home.dart';
 import 'package:krs_app/screens/info.dart';
+import 'package:krs_app/screens/send_notification.dart';
 import 'package:krs_app/screens/member_management/member_management_hub.dart';
 import 'package:krs_app/screens/mom/mom_view_page.dart';
 import 'package:krs_app/services/auth.dart';
@@ -662,10 +663,29 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       );
                     },
                   ),
+                  SizedBox(height: screenHeight * 0.025),
+                  if (_isSuperUser) ...[
+                    _buildDashboardCard(
+                      title: "Send Notification",
+                      subtitle: "Send announcements to all users",
+                      icon: Icons.notifications_active,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight,
+                      isTablet: isTablet,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SendNotificationScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: screenHeight * 0.045),
+                  ],
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.10),
           ],
         ),
       ),

@@ -1,6 +1,9 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:krs_app/providers/notice_provider.dart';
+import 'package:krs_app/providers/notification_provider.dart';
 import 'package:krs_app/screens/attendance/attendance_record.dart';
 import 'package:krs_app/screens/dashboard.dart';
 import 'package:krs_app/navbar.dart';
@@ -26,10 +29,23 @@ import 'package:krs_app/providers/user_selection_provider.dart';
 import 'package:krs_app/providers/user_attendance_provider.dart';
 import 'package:krs_app/screens/attendance/attendance_gateway.dart';
 import 'package:krs_app/providers/member_management_provider.dart';
+import './firebase_options.dart';
 
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  print("Handling a background message: ${message.messageId}");
+  print("Background notification: ${message.notification?.title}");
+}
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(
     MultiProvider(
       providers: [
@@ -45,6 +61,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => MoMProvider()),
         ChangeNotifierProvider(create: (_) => MemberManagementProvider()),
         ChangeNotifierProvider(create: (_) => NoticeProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: const MyApp(),
     ),
@@ -80,15 +97,13 @@ class _MyAppState extends State<MyApp> {
         '/signup': (context) => SignUp(),
         '/wait': (context) => Waiting(),
         '/login': (context) => LoginScreen(),
-        '/signup': (context) => SignUp(),
         '/profile': (context) => const ProfileScreen(),
-        '/notices': (context) =>  NoticeBoardPage(),
+        '/notices': (context) => NoticeBoardPage(),
         '/attendance-home': (context) => AttendanceHomePage(),
         '/attendance-marking': (context) => AttendanceMarkingPage(),
         '/attendance-record': (context) => AttendanceRecordsPage(),
         '/attendance-gateway': (context) => AttendanceGatewayPage(),
         '/dashboard': (context) => const DashboardScreen(),
-        '/wait': (context) => Waiting(),
       },
     );
   }

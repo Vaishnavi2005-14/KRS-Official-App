@@ -22,8 +22,10 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
     super.initState();
     _titleController = TextEditingController(text: widget.notice.title);
     _descController = TextEditingController(text: widget.notice.description);
-    _attachmentController = TextEditingController(text: widget.notice.attachmentLink ?? '');
-    print('[DEBUG] EditNoticeDialog initialized with notice ID: ${widget.notice.id}');
+    _attachmentController = TextEditingController(
+      text: widget.notice.attachmentLink ?? '',
+    );
+   
   }
 
   @override
@@ -31,7 +33,6 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
     _titleController.dispose();
     _descController.dispose();
     _attachmentController.dispose();
-    print('[DEBUG] EditNoticeDialog disposed');
     super.dispose();
   }
 
@@ -41,36 +42,36 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
       return;
     }
     setState(() => _isLoading = true);
-    print('[DEBUG] Submitting edit for notice ID: ${widget.notice.id}');
 
     try {
       final updatedNotice = await NoticeApiService().editNotice(
         id: widget.notice.id,
         title: _titleController.text,
         description: _descController.text,
-        attachmentLink: _attachmentController.text.isNotEmpty
-            ? _attachmentController.text
-            : null,
+        attachmentLink:
+            _attachmentController.text.isNotEmpty
+                ? _attachmentController.text
+                : null,
       );
-      print('[DEBUG] Notice updated successfully: ${updatedNotice.id}');
       if (context.mounted) {
         Navigator.of(context).pop(updatedNotice);
         return;
       }
     } catch (e) {
-      print('[ERROR] Failed to edit notice: $e');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.red[800],
-            content: Text('Error: $e', style: const TextStyle(color: Colors.white)),
+            content: Text(
+              'Error: $e',
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         );
       }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
-        print('[DEBUG] EditNoticeDialog loading state set to false');
       }
     }
   }
@@ -84,7 +85,10 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
     return AlertDialog(
       backgroundColor: bgColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text('Edit Notice', style: TextStyle(color: goldColor, fontWeight: FontWeight.bold)),
+      title: const Text(
+        'Edit Notice',
+        style: TextStyle(color: goldColor, fontWeight: FontWeight.bold),
+      ),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -126,7 +130,6 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
       ),
       validator: (val) {
         if (val == null || val.trim().isEmpty) {
-          print('[DEBUG] Title validation failed');
           return 'Title required';
         }
         return null;
@@ -138,7 +141,7 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
     return TextFormField(
       controller: _descController,
       style: const TextStyle(color: Colors.white),
-      maxLines: 100,
+      maxLines: null,
       maxLength: 1000,
       decoration: const InputDecoration(
         labelText: 'Description (max 1000 chars)',
@@ -152,11 +155,9 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
       ),
       validator: (val) {
         if (val == null || val.trim().isEmpty) {
-          print('[DEBUG] Description validation failed: empty');
           return 'Description required';
         }
         if (val.length > 1000) {
-          print('[DEBUG] Description validation failed: too long');
           return 'Max 1000 characters';
         }
         return null;
@@ -187,21 +188,23 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xffE5A122),
         foregroundColor: const Color(0xff06132A),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       onPressed: _isLoading ? null : _submit,
-      child: _isLoading
-          ? const SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Color(0xff06132A),
+      child:
+          _isLoading
+              ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Color(0xff06132A),
+                ),
+              )
+              : const Text(
+                'Save',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            )
-          : const Text('Save', style: TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 }

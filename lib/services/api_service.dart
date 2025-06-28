@@ -303,4 +303,30 @@ class ApiService {
       throw _createApiException(response, 'Failed to get user attendance');
     }
   }
+
+  static Future<void> sendBroadcastNotification({
+    required String token,
+    required String title,
+    required String body,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+          '$baseUrl/api/notifications/send-broadcast',
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({'title': title, 'body': body}),
+      );
+
+      if (response.statusCode != 200) {
+        final errorData = json.decode(response.body);
+        throw Exception(errorData['message'] ?? 'Failed to send notification');
+      }
+    } catch (e) {
+      throw Exception('Error sending notification: $e');
+    }
+  }
 }

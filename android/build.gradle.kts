@@ -1,8 +1,20 @@
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0")
+    }
+}
+
 allprojects {
     repositories {
         google()
         mavenCentral()
     }
+}
+
+plugins {
+    id("com.android.application") version "8.7.0" apply false
+    id("com.google.gms.google-services") version "4.3.15" apply false
+    id("org.jetbrains.kotlin.android") version "2.0.0" apply false
 }
 
 val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
@@ -12,6 +24,7 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }
