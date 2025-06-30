@@ -23,7 +23,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     FocusScope.of(context).unfocus();
     Provider.of<LoaderProvider>(context, listen: false).showLoader(context);
-    print("USer Name & Password : ${emailController.text}, ${passwordController.text}");
+    print(
+      "USer Name & Password : ${emailController.text}, ${passwordController.text}",
+    );
     bool success = await _authService.login(
       emailController.text,
       passwordController.text,
@@ -206,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             builder: (context, provider, child) {
                               return outlinedText(
                                 text: "KIIT ROBOTICS",
-                                fontSize: width * 0.11,
+                                fontSize: width * 0.10,
                                 textColor: Color(0xff353535),
                                 outlineColor: Color(0xffE5A122),
                               );
@@ -216,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             builder: (context, provider, child) {
                               return outlinedText(
                                 text: "SOCIETY",
-                                fontSize: width * 0.11,
+                                fontSize: width * 0.10,
                                 textColor: Color(0xff353535),
                                 outlineColor: Color(0xffE5A122),
                               );

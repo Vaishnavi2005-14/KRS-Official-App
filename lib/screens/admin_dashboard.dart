@@ -9,6 +9,7 @@ import 'package:krs_app/screens/mom/mom_view_page.dart';
 import 'package:krs_app/services/auth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart'; // Add this import
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -65,10 +66,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final s = MediaQuery.sizeOf(context);
-    final screenHeight= s.height;
-    final screenWidth = s.width;
-    final isTablet = s.width > 600;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isTablet = screenWidth > 600;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -100,7 +100,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     fit: BoxFit.contain,
                     placeholderBuilder:
                         (context) => Container(
-                          color: Colors.white.withAlpha(51),
+                          color: Colors.white.withAlpha(
+                            51,
+                          ), // 20% opacity = 51 alpha
                           child: Icon(
                             Icons.image,
                             color: Colors.white,
@@ -134,7 +136,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   margin: EdgeInsets.only(right: 16),
                   padding: EdgeInsets.all(isTablet ? 10 : 8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(51),
+                    color: Colors.white.withAlpha(51), // 20% opacity = 51 alpha
                     borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
                   ),
                   child: Icon(
@@ -153,9 +155,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                top: s.height * 0.01,
-                right: s.width * 0.02,
-                left: s.width * 0.02,
+                top: screenWidth * 0.10,
+                left: screenWidth * 0.05,
+                right: screenWidth * 0.05,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +182,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                 "Welcome, $_name!",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: isTablet ? 32 : s.width * 0.065,
+                                  fontSize: isTablet ? 32 : screenWidth * 0.065,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -188,7 +190,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: s.height * 0.008),
+                          SizedBox(height: screenHeight * 0.008),
                           AnimatedLanguageText(
                             texts: [
                               "What would you like to do today?",
@@ -229,14 +231,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: s.height * 0.03),
+                  SizedBox(height: screenHeight * 0.03),
                   if (_isSuperUser) ...[
                     _buildDashboardCard(
                       title: "Member Management",
                       subtitle: "Manage member approvals and roles",
                       icon: Icons.admin_panel_settings,
-                      screenWidth: s.width,
-                      screenHeight: s.height,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight,
                       isTablet: isTablet,
                       onTap: () {
                         Navigator.push(
@@ -247,15 +249,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         );
                       },
                     ),
-                    SizedBox(height: s.height * 0.025),
+                    SizedBox(height: screenHeight * 0.025),
                   ],
                   if (_isPrivilegedAdminOperationsUser) ...[
                     _buildDashboardCard(
                       title: "Attendance",
                       subtitle: "Mark and manage student attendance",
                       icon: Icons.people_outline,
-                      screenWidth: s.width,
-                      screenHeight: s.height,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight,
                       isTablet: isTablet,
                       onTap: () {
                         Navigator.push(
@@ -266,15 +268,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         );
                       },
                     ),
-                    SizedBox(height: s.height * 0.025),
+                    SizedBox(height: screenHeight * 0.025),
                   ],
 
                   _buildDashboardCard(
                     title: "Minutes of Meeting",
                     subtitle: "View and edit MoM",
                     icon: Icons.library_books_outlined,
-                    screenWidth: s.width,
-                    screenHeight: s.height,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
                     isTablet: isTablet,
                     onTap: () {
                       Navigator.push(
@@ -284,13 +286,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     },
                   ),
 
-                  SizedBox(height: s.height * 0.025),
+                  SizedBox(height: screenHeight * 0.025),
                   _buildDashboardCard(
                     title: "Notice",
                     subtitle: "Upload Notices",
                     icon: Icons.file_upload_outlined,
-                    screenWidth: s.width,
-                    screenHeight: s.height,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
                     isTablet: isTablet,
                     onTap: () {
                       final TextEditingController titleController =
@@ -331,9 +333,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                         // Top icon
                                         Container(
                                           decoration: BoxDecoration(
-                                            color: Color(
-                                              0xFFE5A122,
-                                            ).withAlpha(265),
+                                            color: Color(0xFFE5A122).withAlpha(
+                                              64,
+                                            ), // 25% opacity = 64 alpha
                                             shape: BoxShape.circle,
                                           ),
                                           padding: EdgeInsets.all(14),
@@ -575,44 +577,27 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                                           .text
                                                                           .trim(),
                                                             );
-                                                            if (!context
-                                                                .mounted) {
-                                                              return;
-                                                            }
                                                             Navigator.of(
                                                               context,
                                                             ).pop();
-
-                                                            ScaffoldMessenger.of(
-                                                              context,
-                                                            ).showSnackBar(
-                                                              SnackBar(
-                                                                content: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons
-                                                                          .check_circle,
-                                                                      color:
-                                                                          Colors
-                                                                              .greenAccent,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 8,
-                                                                    ),
-                                                                    Text(
-                                                                      "Notice uploaded successfully!",
-                                                                      style: TextStyle(
-                                                                        color:
-                                                                            Colors.white,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                backgroundColor:
-                                                                    Color(
-                                                                      0xff194DA6,
-                                                                    ),
-                                                              ),
+                                                            Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Notice uploaded successfully!",
+                                                              toastLength:
+                                                                  Toast
+                                                                      .LENGTH_SHORT,
+                                                              gravity:
+                                                                  ToastGravity
+                                                                      .BOTTOM,
+                                                              timeInSecForIosWeb:
+                                                                  1,
+                                                              backgroundColor:
+                                                                  Color(
+                                                                    0xff194DA6,
+                                                                  ),
+                                                              textColor:
+                                                                  Colors.white,
+                                                              fontSize: 16.0,
                                                             );
                                                           } catch (e) {
                                                             setState(() {
@@ -692,7 +677,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 ],
               ),
             ),
-            SizedBox(height: s.height * 260),
           ],
         ),
       ),
@@ -716,14 +700,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         decoration: BoxDecoration(
           color: Color(0xff06132A),
           borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-          border: Border.all(color: Color(0xFFE5A122).withAlpha(78), width: 1),
+          border: Border.all(
+            color: Color(0xFFE5A122).withAlpha(77), 
+            width: 1,
+          ),
         ),
         child: Row(
           children: [
             Container(
               padding: EdgeInsets.all(screenWidth * 0.03),
               decoration: BoxDecoration(
-                color: Color(0xFFE5A122).withAlpha(51),
+                color: Color(
+                  0xFFE5A122,
+                ).withAlpha(51),
                 borderRadius: BorderRadius.circular(isTablet ? 12 : 8),
               ),
               child: Icon(

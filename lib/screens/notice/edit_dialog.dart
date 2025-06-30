@@ -39,7 +39,6 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) {
-      print('[DEBUG] Form validation failed');
       return;
     }
     setState(() => _isLoading = true);

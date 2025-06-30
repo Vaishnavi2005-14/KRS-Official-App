@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/notification_provider.dart';
@@ -34,10 +35,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
-            side: BorderSide(
-              color: Color(0xFFE5A122),
-              width: 1.5,
-            ),
+            side: BorderSide(color: Color(0xFFE5A122), width: 1.5),
           ),
           backgroundColor: Color(0xff06132A),
           elevation: 12,
@@ -48,7 +46,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: Color(0xFFE5A122).withOpacity(0.15),
+                    color: Color(0xFFE5A122).withAlpha(38),
                     shape: BoxShape.circle,
                   ),
                   padding: EdgeInsets.all(14),
@@ -59,14 +57,16 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                   ),
                 ),
                 SizedBox(height: 16),
+
                 Text(
-                  'Confirm Send Notification',
+                  'Confirm Send Notification?',
                   style: TextStyle(
                     color: Color(0xFFE5A122),
                     fontWeight: FontWeight.bold,
-                    fontSize: isTablet ? 22 : 20,
+                    fontSize: isTablet ? 25 : 23,
                     letterSpacing: 0.5,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 16),
                 Container(
@@ -74,9 +74,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                   decoration: BoxDecoration(
                     color: Color(0xff1A233A),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Color(0xFFE5A122).withOpacity(0.3),
-                    ),
+                    border: Border.all(color: Color(0xFFE5A122).withAlpha(77)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,10 +90,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                       SizedBox(height: 4),
                       Text(
                         _titleController.text.trim(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       SizedBox(height: 12),
                       Text(
@@ -108,11 +103,8 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                                                _bodyController.text.trim(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
+                        _bodyController.text.trim(),
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ],
                   ),
@@ -121,10 +113,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                 Text(
                   'This notification will be sent to all active users. Are you sure?',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[400], fontSize: 14),
                 ),
                 SizedBox(height: 24),
                 Row(
@@ -176,21 +165,16 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
   }
 
   Future<void> _sendNotification() async {
-    if (_titleController.text.trim().isEmpty || _bodyController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.error_outline, color: Colors.redAccent),
-              SizedBox(width: 8),
-              Text(
-                'Title and message are required!',
-                style: TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-          backgroundColor: Color(0xff194DA6),
-        ),
+    if (_titleController.text.trim().isEmpty ||
+        _bodyController.text.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Title and message are required!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Color(0xff194DA6),
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
       return;
     }
@@ -203,54 +187,40 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
         throw Exception('Authentication token not found');
       }
 
-      final provider = Provider.of<NotificationProvider>(context, listen: false);
-      
+      final provider = Provider.of<NotificationProvider>(
+        context,
+        listen: false,
+      );
+
       await provider.sendBroadcastNotification(
         token: token,
         title: _titleController.text.trim(),
         body: _bodyController.text.trim(),
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.greenAccent),
-              SizedBox(width: 8),
-              Text(
-                'Notification sent successfully!',
-                style: TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-          backgroundColor: Color(0xff194DA6),
-        ),
+      Fluttertoast.showToast(
+        msg: "Notification sent successfully!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Color(0xff194DA6),
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
 
-      // Clear the form
       _titleController.clear();
       _bodyController.clear();
-      
-      // Go back to dashboard
+
       Navigator.of(context).pop();
-      
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.error_outline, color: Colors.redAccent),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  e.toString().replaceFirst('Exception: ', ''),
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: Color(0xff194DA6),
-        ),
+      Fluttertoast.showToast(
+        msg: e.toString().replaceFirst('Exception: ', ''),
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 2,
+        backgroundColor: Color(0xff194DA6),
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
   }
@@ -273,12 +243,12 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
             title: Text(
               'Send Notification',
               style: TextStyle(
-                color: Colors.white,
+                color: Color(0xFFE5A122),
                 fontWeight: FontWeight.bold,
-                fontSize: isTablet ? 24 : 20,
+                fontSize: isTablet ? 28 : 24,
               ),
             ),
-            backgroundColor: Color(0xFFE5A122),
+            backgroundColor: Color(0xff040E1E),
             elevation: 0,
             leading: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -296,57 +266,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: screenHeight * 0.02),
-                  
-                  // Header
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Color(0xff06132A),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Color(0xFFE5A122).withOpacity(0.3),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFFE5A122).withOpacity(0.15),
-                            shape: BoxShape.circle,
-                          ),
-                          padding: EdgeInsets.all(16),
-                          child: Icon(
-                            Icons.notifications_active,
-                            size: 40,
-                            color: Color(0xFFE5A122),
-                          ),
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          'Send Notification',
-                          style: TextStyle(
-                            color: Color(0xFFE5A122),
-                            fontSize: isTablet ? 24 : 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Send important announcements to all active users',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.grey[400],
-                            fontSize: isTablet ? 16 : 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
 
-                  SizedBox(height: screenHeight * 0.03),
-
-                  // Title Field
                   Text(
                     'Notification Title',
                     style: TextStyle(
@@ -363,10 +283,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                     decoration: InputDecoration(
                       hintText: 'Enter notification title...',
                       hintStyle: TextStyle(color: Colors.grey[500]),
-                      prefixIcon: Icon(
-                        Icons.title,
-                        color: Color(0xFFE5A122),
-                      ),
+                      prefixIcon: Icon(Icons.title, color: Color(0xFFE5A122)),
                       filled: true,
                       fillColor: Color(0xff1A233A),
                       border: OutlineInputBorder(
@@ -375,7 +292,10 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFFE5A122), width: 2),
+                        borderSide: BorderSide(
+                          color: Color(0xFFE5A122),
+                          width: 2,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -386,8 +306,6 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                   ),
 
                   SizedBox(height: screenHeight * 0.02),
-
-                  // Body Field
                   Text(
                     'Notification Message',
                     style: TextStyle(
@@ -407,10 +325,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                       hintStyle: TextStyle(color: Colors.grey[500]),
                       prefixIcon: Padding(
                         padding: EdgeInsets.only(bottom: 60),
-                        child: Icon(
-                          Icons.message,
-                          color: Color(0xFFE5A122),
-                        ),
+                        child: Icon(Icons.message, color: Color(0xFFE5A122)),
                       ),
                       filled: true,
                       fillColor: Color(0xff1A233A),
@@ -420,7 +335,10 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Color(0xFFE5A122), width: 2),
+                        borderSide: BorderSide(
+                          color: Color(0xFFE5A122),
+                          width: 2,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -431,13 +349,12 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                   ),
 
                   SizedBox(height: screenHeight * 0.03),
-
-                  // Send Button
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: provider.isLoading ? null : _showConfirmationDialog,
+                      onPressed:
+                          provider.isLoading ? null : _showConfirmationDialog,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFE5A122),
                         foregroundColor: Colors.black,
@@ -446,52 +363,48 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
                         ),
                         elevation: 3,
                       ),
-                      child: provider.isLoading
-                          ? SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                              ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.send, size: 20),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Send Notification',
-                                  style: TextStyle(
-                                    fontSize: isTablet ? 18 : 16,
-                                    fontWeight: FontWeight.bold,
+                      child:
+                          provider.isLoading
+                              ? SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.black,
                                   ),
                                 ),
-                              ],
-                            ),
+                              )
+                              : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.send, size: 20),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Send Notification',
+                                    style: TextStyle(
+                                      fontSize: isTablet ? 18 : 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                     ),
                   ),
 
                   SizedBox(height: screenHeight * 0.02),
 
-                  // Info Card
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Color(0xff06132A),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.blue.withOpacity(0.3),
-                      ),
+                      border: Border.all(color: Colors.blue.withAlpha(77)),
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: Colors.blue,
-                          size: 24,
-                        ),
+                        Icon(Icons.info_outline, color: Colors.blue, size: 24),
                         SizedBox(width: 12),
                         Expanded(
                           child: Text(

@@ -280,30 +280,178 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
                       }
                     }),
                     SizedBox(width: 30),
+
                     _iconCircleButton(Icons.delete_outline, () async {
                       final confirm = await showDialog<bool>(
                         context: context,
-                        builder:
-                            (_) => AlertDialog(
-                              title: const Text("Delete MoM?"),
-                              content: const Text(
-                                "Are you sure you want to delete this MoM? This action cannot be undone.",
+                        barrierDismissible: false,
+                        builder: (context) {
+                          final screenWidth = MediaQuery.of(context).size.width;
+                          final screenHeight =
+                              MediaQuery.of(context).size.height;
+                          final isTablet = screenWidth > 600;
+
+                          return Dialog(
+                            backgroundColor: Color(0xff06132A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                isTablet ? 20 : 16,
                               ),
-                              actions: [
-                                TextButton(
-                                  onPressed:
-                                      () => Navigator.pop(context, false),
-                                  child: const Text("Cancel"),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text(
-                                    "Delete",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
+                              side: BorderSide(
+                                color: Color(0xFFE5A122),
+                                width: 1.5,
+                              ),
                             ),
+                            elevation: 12,
+                            child: Container(
+                              width:
+                                  isTablet
+                                      ? screenWidth * 0.5
+                                      : screenWidth * 0.8,
+                              padding: EdgeInsets.all(screenWidth * 0.06),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  isTablet ? 20 : 16,
+                                ),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xff06132A),
+                                    Color(0xff1A233A),
+                                  ],
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(isTablet ? 20 : 16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red.withAlpha(
+                                        51,
+                                      ), // 20% opacity
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.red.withAlpha(
+                                            51,
+                                          ), // 20% opacity
+                                          blurRadius: 20,
+                                          spreadRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      Icons.delete_forever,
+                                      color: Colors.red,
+                                      size: isTablet ? 60 : 48,
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.02),
+                                  Text(
+                                    'Delete MoM?',
+                                    style: TextStyle(
+                                      color: Color(0xFFE5A122),
+                                      fontSize: isTablet ? 28 : 22,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(height: screenHeight * 0.015),
+                                  Container(
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xff1A233A),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.red.withAlpha(
+                                          77,
+                                        ), // 30% opacity
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Are you sure you want to delete this MoM? This action cannot be undone.',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: isTablet ? 18 : 15,
+                                        height: 1.4,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.03),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: OutlinedButton(
+                                          onPressed:
+                                              () =>
+                                                  Navigator.pop(context, false),
+                                          style: OutlinedButton.styleFrom(
+                                            side: BorderSide(
+                                              color: Colors.grey[600]!,
+                                              width: 1.5,
+                                            ),
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: Colors.transparent,
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: isTablet ? 16 : 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                    isTablet ? 12 : 10,
+                                                  ),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                              fontSize: isTablet ? 16 : 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: screenWidth * 0.04),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed:
+                                              () =>
+                                                  Navigator.pop(context, true),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                            foregroundColor: Colors.white,
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: isTablet ? 16 : 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                    isTablet ? 12 : 10,
+                                                  ),
+                                            ),
+                                            elevation: 4,
+                                          ),
+                                          child: Text(
+                                            'Delete',
+                                            style: TextStyle(
+                                              fontSize: isTablet ? 16 : 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       );
 
                       if (confirm == true) {
@@ -311,18 +459,24 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
                           final message = await MoMService.deleteMoM(widget.id);
                           Fluttertoast.showToast(
                             msg: message,
-                            backgroundColor: Colors.green,
                             toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Color(0xff194DA6),
+                            textColor: Colors.white,
+                            fontSize: 16.0,
                           );
                           if (message == "MoM deleted successfully" &&
                               context.mounted) {
                             Navigator.pop(context, true);
-                          } // Go back to previous screen after deletion
+                          }
                         } catch (e) {
                           Fluttertoast.showToast(
                             msg: e.toString(),
-                            backgroundColor: Colors.red,
                             toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
                           );
                         }
                       }

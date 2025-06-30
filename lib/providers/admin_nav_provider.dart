@@ -19,4 +19,9 @@ class AdminNavigationProvider extends ChangeNotifier {
     _selectedIndex = index;
     notifyListeners();
   }
+
+  void resetToHome() {
+    _selectedIndex = 0;
+    notifyListeners();
+  }
 }

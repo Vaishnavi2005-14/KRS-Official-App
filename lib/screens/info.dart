@@ -28,13 +28,26 @@ class _InfoPageState extends State<InfoPage> {
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'About Us',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight + 5),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
+
+          child: AppBar(
+            automaticallyImplyLeading: false,
+            title: const Text(
+              'About Us',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            centerTitle: true,
+          ),
         ),
-        centerTitle: true,
       ),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,

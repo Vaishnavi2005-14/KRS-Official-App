@@ -159,7 +159,7 @@ class _SignUpState extends State<SignUp> {
                               builder: (context, provider, child) {
                                 return outlinedText(
                                   text: "KIIT ROBOTICS",
-                                  fontSize: s.width * 0.11,
+                                  fontSize: s.width * 0.10,
                                   textColor: Color(0xff353535),
                                   outlineColor: Color(0xffE5A122),
                                 );
@@ -169,7 +169,7 @@ class _SignUpState extends State<SignUp> {
                               builder: (context, provider, child) {
                                 return outlinedText(
                                   text: "SOCIETY",
-                                  fontSize: s.width * 0.11,
+                                  fontSize: s.width * 0.10,
                                   textColor: Color(0xff353535),
                                   outlineColor: Color(0xffE5A122),
                                 );

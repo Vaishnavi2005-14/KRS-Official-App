@@ -177,7 +177,7 @@ class _NoticeBoardPageState extends State<NoticeBoardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff10162a),
+      backgroundColor: const Color(0xff06132A),
       appBar: const NoticeBoardHeader(),
       body: FutureBuilder<bool>(
         future: _adminFuture,

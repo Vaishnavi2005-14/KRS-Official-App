@@ -55,7 +55,7 @@ class _UserAttendanceDetailPageState extends State<UserAttendanceDetailPage> {
           title: Row(
             children: [
               Text(
-                'USER ATTENDANCE',
+                'DETAILS',
                 style: TextStyle(
                   color: Color(0xFFE5A122),
                   fontSize: isTablet ? 28 : screenWidth * 0.065,

@@ -262,7 +262,14 @@ class AuthService {
       try {
         fcmToken = await getFCMToken();
       } catch (e) {
-        print('Warning: FCM failed: $e');
+        Fluttertoast.showToast(
+          msg: "Failed to get FCM token",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+        return false;
       }
 
       final response = await http.post(
