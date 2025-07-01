@@ -242,7 +242,14 @@ class _AttendanceSetupDialogState extends State<AttendanceSetupDialog> {
   }
 
   Widget _buildTeamDropdown(double screenWidth, bool isTablet) {
-    final teams = ['Development', 'Design', 'Marketing', 'Management'];
+    final teams = ['App Development',
+    'Web Development',
+    'Machine Learning',
+    'Embedded',
+    'Content',
+    'Graphic Designing',
+    'Photography',
+    'Operations',];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
