@@ -84,7 +84,6 @@ class NoticeApiService {
     );
 
     if (response.statusCode == 200) {
-      // Success, notice deleted
       return;
     } else {
       final jsonData = jsonDecode(response.body);
@@ -173,8 +172,9 @@ class NoticeApiService {
       body: jsonEncode(body),
     );
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
+    if (response.statusCode == 201) {
       final jsonData = jsonDecode(response.body);
+      print('Backend response: $jsonData'); 
       return Notice.fromJson(jsonData['notice']);
     } else if (response.statusCode == 400 ||
         response.statusCode == 401 ||

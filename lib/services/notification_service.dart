@@ -12,7 +12,6 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
-    // Request permissions for iOS/Android
     NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
       announcement: false,
@@ -29,9 +28,9 @@ class NotificationService {
       print('User denied notification permission');
     }
 
-    // Initialize local notifications (updated for v17.2.3)
+
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/launcher_icon'); // Use your icon
+        AndroidInitializationSettings('@mipmap/launcher_icon');
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
@@ -51,7 +50,6 @@ class NotificationService {
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
 
-    // Create Android notification channel (updated for newer version)
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'krs_notifications',
       'KRS Notifications',
@@ -69,13 +67,10 @@ class NotificationService {
       await androidImplementation.createNotificationChannel(channel);
     }
 
-    // Handle foreground messages
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
 
-    // Handle notification tap when app is in background but not terminated
     FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
 
-    // Handle notification tap when app is terminated
     RemoteMessage? initialMessage = 
         await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
@@ -83,20 +78,17 @@ class NotificationService {
     }
   }
 
-  // Handle messages when app is in foreground
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
     print('Got a message whilst in the foreground!');
     print('Message data: ${message.data}');
 
     if (message.notification != null) {
       print('Message also contained a notification: ${message.notification}');
-      
-      // Show local notification for foreground messages
+
       await _showLocalNotification(message);
     }
   }
 
-  // Show local notification (updated for v17.2.3)
   Future<void> _showLocalNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
@@ -106,8 +98,8 @@ class NotificationService {
       importance: Importance.max,
       priority: Priority.high,
       showWhen: true,
-      icon: '@mipmap/launcher_icon', // Use your icon
-      color: Color(0xFFE5A122), // Your app's primary color
+      icon: '@mipmap/launcher_icon',
+      color: Color(0xFFE5A122),
       playSound: true,
       enableVibration: true,
     );
@@ -133,16 +125,15 @@ class NotificationService {
     );
   }
 
-  // Handle notification tap
+
   void _handleNotificationTap(RemoteMessage message) {
     print('Notification tapped: ${message.data}');
     
-    // Handle navigation based on notification data
     String? type = message.data['type'];
     switch (type) {
       case 'notice':
         print('Navigating to notices');
-        // You can add navigation logic here later
+  
         break;
       case 'broadcast':
         print('Broadcast notification tapped');
@@ -152,19 +143,14 @@ class NotificationService {
     }
   }
 
-  // Handle local notification tap (updated for v17.2.3)
   void _onNotificationTapped(NotificationResponse notificationResponse) {
-    print('Local notification tapped: ${notificationResponse.payload}');
-    print('Notification ID: ${notificationResponse.id}');
+  
     
-    // Handle different notification types based on payload
     if (notificationResponse.payload != null) {
-      // Parse payload and handle navigation
       print('Handling notification with payload: ${notificationResponse.payload}');
     }
   }
 
-  // Get FCM token
   Future<String?> getToken() async {
     return await _firebaseMessaging.getToken();
   }
