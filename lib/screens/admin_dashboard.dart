@@ -7,9 +7,9 @@ import 'package:krs_app/screens/send_notification.dart';
 import 'package:krs_app/screens/member_management/member_management_hub.dart';
 import 'package:krs_app/screens/mom/mom_view_page.dart';
 import 'package:krs_app/services/auth.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // Add this import
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -100,9 +100,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     fit: BoxFit.contain,
                     placeholderBuilder:
                         (context) => Container(
-                          color: Colors.white.withAlpha(
-                            51,
-                          ), // 20% opacity = 51 alpha
+                          color: Colors.white.withAlpha(51),
                           child: Icon(
                             Icons.image,
                             color: Colors.white,
@@ -136,7 +134,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   margin: EdgeInsets.only(right: 16),
                   padding: EdgeInsets.all(isTablet ? 10 : 8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(51), // 20% opacity = 51 alpha
+                    color: Colors.white.withAlpha(51),
                     borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
                   ),
                   child: Icon(
@@ -307,7 +305,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         barrierDismissible: false,
                         builder: (context) {
                           bool isUploading = false;
-                          String? errorText;
 
                           return StatefulBuilder(
                             builder: (context, setState) {
@@ -333,9 +330,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                         // Top icon
                                         Container(
                                           decoration: BoxDecoration(
-                                            color: Color(0xFFE5A122).withAlpha(
-                                              64,
-                                            ), // 25% opacity = 64 alpha
+                                            color: Color(
+                                              0xFFE5A122,
+                                            ).withAlpha(64),
                                             shape: BoxShape.circle,
                                           ),
                                           padding: EdgeInsets.all(14),
@@ -486,16 +483,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                             ),
                                           ),
                                         ),
-                                        if (errorText != null) ...[
-                                          SizedBox(height: 14),
-                                          Text(
-                                            errorText!,
-                                            style: TextStyle(
-                                              color: Colors.redAccent,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
                                         SizedBox(height: 22),
                                         Row(
                                           children: [
@@ -531,7 +518,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                         ? null
                                                         : () async {
                                                           setState(() {
-                                                            errorText = null;
                                                             isUploading = true;
                                                           });
                                                           if (titleController
@@ -542,9 +528,21 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                                   .text
                                                                   .trim()
                                                                   .isEmpty) {
+                                                            Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Title and Description are required.",
+                                                              toastLength:
+                                                                  Toast
+                                                                      .LENGTH_SHORT,
+                                                              gravity:
+                                                                  ToastGravity
+                                                                      .BOTTOM,
+                                                              backgroundColor:
+                                                                  Colors.red,
+                                                              textColor:
+                                                                  Colors.white,
+                                                            );
                                                             setState(() {
-                                                              errorText =
-                                                                  "Title and Description are required.";
                                                               isUploading =
                                                                   false;
                                                             });
@@ -600,13 +598,25 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                                               fontSize: 16.0,
                                                             );
                                                           } catch (e) {
-                                                            setState(() {
-                                                              errorText = e
+                                                            Fluttertoast.showToast(
+                                                              msg: e
                                                                   .toString()
                                                                   .replaceFirst(
                                                                     'Exception: ',
                                                                     '',
-                                                                  );
+                                                                  ),
+                                                              toastLength:
+                                                                  Toast
+                                                                      .LENGTH_SHORT,
+                                                              gravity:
+                                                                  ToastGravity
+                                                                      .BOTTOM,
+                                                              backgroundColor:
+                                                                  Colors.red,
+                                                              textColor:
+                                                                  Colors.white,
+                                                            );
+                                                            setState(() {
                                                               isUploading =
                                                                   false;
                                                             });
@@ -700,19 +710,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         decoration: BoxDecoration(
           color: Color(0xff06132A),
           borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-          border: Border.all(
-            color: Color(0xFFE5A122).withAlpha(77), 
-            width: 1,
-          ),
+          border: Border.all(color: Color(0xFFE5A122).withAlpha(77), width: 1),
         ),
         child: Row(
           children: [
             Container(
               padding: EdgeInsets.all(screenWidth * 0.03),
               decoration: BoxDecoration(
-                color: Color(
-                  0xFFE5A122,
-                ).withAlpha(51),
+                color: Color(0xFFE5A122).withAlpha(51),
                 borderRadius: BorderRadius.circular(isTablet ? 12 : 8),
               ),
               child: Icon(
