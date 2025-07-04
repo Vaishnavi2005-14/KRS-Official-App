@@ -284,7 +284,7 @@ class _DetailsState extends State<Details> {
                                     hintText: "Enter your roll number",
                                     controller: _rollController,
                                     constraints: constraints,
-                                    keyboardType: TextInputType.text,
+                                    keyboardType: TextInputType.number,
                                   ),
                                   const Text(
                                     'Phone Number',
@@ -462,10 +462,11 @@ class _DetailsState extends State<Details> {
           }
 
           if (hintText.toLowerCase().contains('roll')) {
-            if (value.trim().length < 3) {
+            if (value.trim().length < 6) {
               return 'Please enter a valid roll number';
             }
           }
+          
           if (hintText.toLowerCase().contains('name')) {
             if (value.trim().length < 2) {
               return 'Name must be at least 2 characters long';
