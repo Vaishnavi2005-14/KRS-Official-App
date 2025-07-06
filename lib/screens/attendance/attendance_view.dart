@@ -22,14 +22,18 @@ class AttendanceViewPage extends StatefulWidget {
 
 class _AttendanceViewPageState extends State<AttendanceViewPage> {
   final List<String> domains = [
-    'App Development',
-    'Web Development',
-    'Machine Learning',
-    'Embedded',
-    'Content',
-    'Graphic Designing',
-    'Photography',
-    'Operations',
+    "Advanced Embedded",
+    "IoT",
+    "Robotics",
+    "App Development",
+    "Machine Learning",
+    "Web Development",
+    "Operations",
+    "Marketing",
+    "Content",
+    "Graphic Designing",
+    "Video Editing",
+    "Photography",
   ];
 
   final List<String> statuses = [

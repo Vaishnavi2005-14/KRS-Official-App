@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ProfileModel extends ChangeNotifier {
-  String name = 'Saswat Ranjan Behera';
-  String role = 'App Dev';
+  String name = 'John Doe';
+  String role = 'Operations';
   String profileImage =
       'https://www.gstatic.com/flutter-onestack-prototype/genui/example_1.jpg';
   String? domain;
