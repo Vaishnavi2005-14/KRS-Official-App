@@ -17,7 +17,7 @@ class NoticeActions extends StatelessWidget {
   });
 
   Future<void> _handleAttachment(BuildContext context) async {
-    if (attachmentUrl == null || attachmentUrl!.isEmpty) {
+    if (attachmentUrl == null || attachmentUrl!.trim().isEmpty) {
       Fluttertoast.showToast(
         msg: 'No Attachment Found !!!',
         backgroundColor: Colors.red,
@@ -44,27 +44,47 @@ class NoticeActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min, // Only take as much space as needed
       children: [
         if (attachmentUrl != null && attachmentUrl!.trim().isNotEmpty)
           TextButton.icon(
-            icon: const Icon(Icons.attach_file, color: Colors.white, size: 18),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 0),
+              minimumSize: const Size(0, 30),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            icon: const Icon(
+              Icons.attach_file,
+              color: Color(0xFFE5A122),
+              size: 14,
+            ),
             label: const Text(
               'Attachment',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(
+                color: Color(0xFFE5A122),
+                fontSize: 14,
+              ),
             ),
             onPressed: () => _handleAttachment(context),
           ),
-        const Spacer(),
-        if (showActions) ...[
+        if (attachmentUrl != null && attachmentUrl!.trim().isNotEmpty && showActions && (onEdit != null || onDelete != null))
+          const SizedBox(width: 4),
+        if (showActions && (onEdit != null || onDelete != null)) ...[
           if (onEdit != null)
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.white),
+              icon: const Icon(Icons.edit, color: Colors.white, size: 20),
               onPressed: onEdit,
+              tooltip: 'Edit',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
             ),
           if (onDelete != null)
             IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
+              icon: const Icon(Icons.delete, color: Colors.red, size: 20),
               onPressed: onDelete,
+              tooltip: 'Delete',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
             ),
         ],
       ],

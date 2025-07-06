@@ -3,6 +3,13 @@ import 'package:http/http.dart' as http;
 import 'package:krs_app/models/notice.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+bool isValidUrl(String url) {
+  final uri = Uri.tryParse(url);
+  return uri != null &&
+      (uri.isScheme('http') || uri.isScheme('https')) &&
+      uri.host.isNotEmpty;
+}
+
 class NoticePage {
   final int page;
   final int totalPages;
@@ -103,6 +110,11 @@ class NoticeApiService {
     if (description.length > 1000) {
       throw Exception('Description must be 1000 characters or fewer.');
     }
+    if (attachmentLink != null && attachmentLink.trim().isNotEmpty) {
+      if (!isValidUrl(attachmentLink.trim())) {
+        throw Exception('Attachment link must be a valid URL (http/https).');
+      }
+    }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -147,6 +159,11 @@ class NoticeApiService {
   }) async {
     if (title.trim().isEmpty || description.trim().isEmpty) {
       throw Exception('Title and description are required.');
+    }
+    if (attachmentLink != null && attachmentLink.trim().isNotEmpty) {
+      if (!isValidUrl(attachmentLink.trim())) {
+        throw Exception('Attachment link must be a valid URL (http/https).');
+      }
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();

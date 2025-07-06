@@ -8,7 +8,6 @@ class NoticeCard extends StatelessWidget {
   final String heading;
   final String body;
   final String attachmentUrl;
-  final VoidCallback? onViewAttachment;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final bool isAdmin;
@@ -20,7 +19,6 @@ class NoticeCard extends StatelessWidget {
     required this.heading,
     required this.body,
     required this.attachmentUrl,
-    this.onViewAttachment,
     this.onEdit,
     this.onDelete,
     required this.isAdmin,
@@ -69,19 +67,6 @@ class NoticeCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    if (attachmentUrl.trim().isNotEmpty &&
-                        onViewAttachment != null)
-                      TextButton.icon(
-                        onPressed: onViewAttachment,
-                        icon: const Icon(
-                          Icons.attach_file,
-                          color: Color(0xFFE5A122),
-                        ),
-                        label: const Text(
-                          "Attachment",
-                          style: TextStyle(color: Color(0xFFE5A122)),
-                        ),
-                      ),
                     NoticeActions(
                       attachmentUrl: attachmentUrl,
                       onEdit: isAdmin ? onEdit : null,

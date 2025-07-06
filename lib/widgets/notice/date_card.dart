@@ -4,17 +4,13 @@ class DateCard extends StatelessWidget {
   final String day;
   final String month;
 
-  const DateCard({
-    super.key,
-    required this.day,
-    required this.month,
-  });
+  const DateCard({super.key, required this.day, required this.month});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 65,
-      height: 80,
+      height: 100,
       decoration: BoxDecoration(
         color: const Color(0xffE5A122),
         borderRadius: BorderRadius.circular(8),

@@ -26,7 +26,6 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
     _attachmentController = TextEditingController(
       text: widget.notice.attachmentLink ?? '',
     );
-   
   }
 
   @override
@@ -48,18 +47,18 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
         id: widget.notice.id,
         title: _titleController.text,
         description: _descController.text,
-        attachmentLink:
-            _attachmentController.text.isNotEmpty
-                ? _attachmentController.text
-                : null,
+        attachmentLink: _attachmentController.text.isNotEmpty
+            ? _attachmentController.text
+            : null,
       );
       if (context.mounted) {
         Navigator.of(context).pop(updatedNotice);
         return;
       }
     } catch (e) {
+      final msg = e.toString().replaceFirst('Exception: ', '');
       Fluttertoast.showToast(
-        msg: "Error : $e",
+        msg: msg,
         backgroundColor: Colors.red,
         toastLength: Toast.LENGTH_LONG,
       );
@@ -74,7 +73,6 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
   Widget build(BuildContext context) {
     const bgColor = Color(0xff06132A);
     const goldColor = Color(0xffE5A122);
-    const whiteColor = Colors.white;
 
     return AlertDialog(
       backgroundColor: bgColor,
@@ -185,20 +183,19 @@ class _EditNoticeDialogState extends State<EditNoticeDialog> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       onPressed: _isLoading ? null : _submit,
-      child:
-          _isLoading
-              ? const SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Color(0xff06132A),
-                ),
-              )
-              : const Text(
-                'Save',
-                style: TextStyle(fontWeight: FontWeight.bold),
+      child: _isLoading
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Color(0xff06132A),
               ),
+            )
+          : const Text(
+              'Save',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
     );
   }
 }
