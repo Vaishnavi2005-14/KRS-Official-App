@@ -3,7 +3,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:krs_app/services/mom_service.dart';
 import '../../widgets/mom/edit_mom/constants_file.dart';
 import '../../widgets/mom/edit_mom/form_validator.dart';
-import '../../widgets/mom/edit_mom/form_widgets.dart';
 
 class EditMoMPage extends StatefulWidget {
   final String momId;
@@ -83,7 +82,6 @@ class _EditMoMPageState extends State<EditMoMPage> {
       AppConstants.defaultDomains,
     );
 
-    // Debug print for development
     FormDataUtils.debugPrintDomainInitialization(
       widget.initialDomains ?? AppConstants.defaultDomains,
       _selectedDomains,
@@ -91,17 +89,12 @@ class _EditMoMPageState extends State<EditMoMPage> {
     );
   }
 
-  // ============================================================================
-  // BUSINESS LOGIC
-  // ============================================================================
-
   Future<void> _saveMoM() async {
     if (!_validateForm()) return;
     await _performSave();
   }
 
   bool _validateForm() {
-    // Validate domains first
     final domainError = FormValidator.validateDomains(_selectedDomains);
     if (domainError != null) {
       Fluttertoast.showToast(
@@ -112,7 +105,6 @@ class _EditMoMPageState extends State<EditMoMPage> {
       return false;
     }
 
-    // Validate form fields
     return _formKey.currentState?.validate() ?? false;
   }
 
@@ -158,7 +150,7 @@ class _EditMoMPageState extends State<EditMoMPage> {
   void _handleSaveError(dynamic error) {
     if (mounted) {
       Fluttertoast.showToast(
-        msg: 'Failed to save MoM: ${error.toString()}',
+        msg: 'Something went wrong. Please try again.',
         backgroundColor: Colors.red,
         toastLength: Toast.LENGTH_LONG,
       );
@@ -174,10 +166,6 @@ class _EditMoMPageState extends State<EditMoMPage> {
   void _setLoadingState(bool loading) {
     setState(() => _isLoading = loading);
   }
-
-  // ============================================================================
-  // EVENT HANDLERS
-  // ============================================================================
 
   void _onDomainToggle(String domain) {
     setState(() {
@@ -200,80 +188,304 @@ class _EditMoMPageState extends State<EditMoMPage> {
     }
   }
 
-  // ============================================================================
-  // UI BUILD METHODS
-  // ============================================================================
-
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isTablet = screenWidth > 600;
+
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
-        appBar: AppBar(toolbarHeight: 0),
-        body: SafeArea(child: _buildBody()),
-      ),
-    );
-  }
-
-  Widget _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.defaultPadding,
-        vertical: 20,
-      ),
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            _buildPageTitle(),
-            Divider(color: Color(0xff855D13), thickness: 2),
-            SizedBox(height: AppDimensions.defaultPadding),
-            _buildFormFields(),
-            SizedBox(height: AppDimensions.extraLargePadding),
-            _buildSaveButton(),
-            SizedBox(height: AppDimensions.defaultPadding),
-          ],
+        appBar: AppBar(
+          title: Row(
+            children: [
+              Text(
+                'EDIT MOM',
+                style: TextStyle(
+                  color: Color(0xFFE5A122),
+                  fontSize: isTablet ? 28 : 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Spacer(),
+              Container(
+                padding: EdgeInsets.all(isTablet ? 10 : 8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(26),
+                  borderRadius: BorderRadius.circular(isTablet ? 10 : 8),
+                ),
+                child: Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                  size: isTablet ? 28 : 24,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Color(0xff040E1E),
+          elevation: 0,
+          toolbarHeight: isTablet ? 70 : 56,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: isTablet ? 28 : 24,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.04,
+              vertical: screenHeight * 0.02,
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        _buildFormFields(screenWidth, screenHeight, isTablet),
+                      ],
+                    ),
+                  ),
+                  _buildSaveButton(screenWidth, screenHeight, isTablet),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildPageTitle() {
-    final width = MediaQuery.of(context).size.width;
-    return Text(
-      'Edit MoM',
-      style: AppTextStyles.titleStyle.copyWith(
-        fontSize: width * 0.08,
-        shadows: const [Shadow(blurRadius: 10, color: AppColors.orangeColor)],
-      ),
-    );
-  }
-
-  Widget _buildFormFields() {
+  Widget _buildFormFields(
+    double screenWidth,
+    double screenHeight,
+    bool isTablet,
+  ) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FormWidgets.buildTitleField(_titleController),
-        FormWidgets.buildLinkField(_linkController),
-        SizedBox(height: AppDimensions.defaultPadding),
-        DomainSelectionWidgets.buildDomainSelection(
-          domains: AppConstants.domains,
-          selectedDomains: _selectedDomains,
-          onDomainToggle: _onDomainToggle,
-        ),
-        DropdownWidgets.buildMeetingTypeDropdown(
-          selectedType: _selectedType,
-          meetingTypes: AppConstants.meetingTypes,
-          typeDisplayNames: AppConstants.typeDisplayNames,
-          onChanged: _onMeetingTypeChanged,
-        ),
+        _buildSectionTitle('MOM TITLE', isTablet),
+        SizedBox(height: screenHeight * 0.01),
+        _buildTextField(_titleController, 'Enter title...', isTablet),
+        SizedBox(height: screenHeight * 0.02),
+
+        _buildSectionTitle('MOM LINK', isTablet),
+        SizedBox(height: screenHeight * 0.01),
+        _buildTextField(_linkController, 'Enter link...', isTablet),
+        SizedBox(height: screenHeight * 0.02),
+
+        _buildSectionTitle('DOMAINS', isTablet),
+        SizedBox(height: screenHeight * 0.01),
+        _buildDomainSelection(screenWidth, screenHeight, isTablet),
+        SizedBox(height: screenHeight * 0.02),
+
+        _buildSectionTitle('MEETING TYPE', isTablet),
+        SizedBox(height: screenHeight * 0.01),
+        _buildMeetingTypeDropdown(isTablet),
+        SizedBox(height: screenHeight * 0.03),
       ],
     );
   }
 
-  Widget _buildSaveButton() {
-    return ButtonWidgets.buildSaveButton(
-      isLoading: _isLoading,
-      onPressed: _saveMoM,
+  Widget _buildSectionTitle(String title, bool isTablet) {
+    return Text(
+      title,
+      style: TextStyle(
+        color: Color(0xFFE5A122),
+        fontSize: isTablet ? 18 : 16,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String hint,
+    bool isTablet,
+  ) {
+    return TextFormField(
+      controller: controller,
+      style: TextStyle(color: Colors.white, fontSize: isTablet ? 16 : 14),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(
+          color: Colors.grey[400],
+          fontSize: isTablet ? 16 : 14,
+        ),
+        filled: true,
+        fillColor: Color(0xff06132A),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isTablet ? 12 : 10),
+          borderSide: BorderSide(color: Colors.grey.withAlpha(128)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isTablet ? 12 : 10),
+          borderSide: BorderSide(color: Colors.grey.withAlpha(128)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isTablet ? 12 : 10),
+          borderSide: BorderSide(color: Color(0xFFE5A122), width: 2),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: isTablet ? 16 : 12,
+          vertical: isTablet ? 16 : 12,
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'This field is required';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildDomainSelection(
+    double screenWidth,
+    double screenHeight,
+    bool isTablet,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(isTablet ? 16 : 12),
+      decoration: BoxDecoration(
+        color: Color(0xff06132A),
+        borderRadius: BorderRadius.circular(isTablet ? 12 : 10),
+        border: Border.all(color: Colors.grey.withAlpha(128)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Select domains (you can select 1 or more):',
+            style: TextStyle(color: Colors.white, fontSize: isTablet ? 14 : 12),
+          ),
+          SizedBox(height: screenHeight * 0.01),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children:
+                AppConstants.domains.map((domain) {
+                  final isSelected = _selectedDomains.contains(domain);
+                  return FilterChip(
+                    label: Text(
+                      domain,
+                      style: TextStyle(
+                        color: isSelected ? Colors.black : Color(0xFFE5A122),
+                        fontWeight: FontWeight.w600,
+                        fontSize: isTablet ? 14 : 12,
+                      ),
+                    ),
+                    selected: isSelected,
+                    onSelected: (selected) => _onDomainToggle(domain),
+                    backgroundColor: Color(0xff040E1E),
+                    selectedColor: Color(0xFFE5A122),
+                    side: BorderSide(color: Color(0xFFE5A122), width: 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
+                    ),
+                  );
+                }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMeetingTypeDropdown(bool isTablet) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xff06132A),
+        borderRadius: BorderRadius.circular(isTablet ? 12 : 10),
+        border: Border.all(color: Colors.grey.withAlpha(128)),
+      ),
+      child: DropdownButtonFormField<String>(
+        value: _selectedType,
+        dropdownColor: Color(0xff040E1E),
+        style: TextStyle(color: Colors.white, fontSize: isTablet ? 16 : 14),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 16 : 12,
+            vertical: isTablet ? 16 : 12,
+          ),
+        ),
+        iconEnabledColor: Color(0xFFE5A122),
+        items:
+            AppConstants.meetingTypes.map((type) {
+              return DropdownMenuItem(
+                value: type,
+                child: Text(
+                  type,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isTablet ? 16 : 14,
+                  ),
+                ),
+              );
+            }).toList(),
+        onChanged: _onMeetingTypeChanged,
+      ),
+    );
+  }
+
+  Widget _buildSaveButton(
+    double screenWidth,
+    double screenHeight,
+    bool isTablet,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(screenWidth * 0.04),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: _isLoading ? null : _saveMoM,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFFE5A122),
+            padding: EdgeInsets.symmetric(vertical: isTablet ? 18 : 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
+            ),
+          ),
+          child:
+              _isLoading
+                  ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: isTablet ? 24 : 20,
+                        width: isTablet ? 24 : 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        'Saving...',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: isTablet ? 20 : 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  )
+                  : Text(
+                    'Save Changes',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: isTablet ? 20 : 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+        ),
+      ),
     );
   }
 }

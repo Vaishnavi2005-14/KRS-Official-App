@@ -1,34 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:krs_app/widgets/mom/edit_mom/constants_file.dart';
 
 class MoMConstants {
   static const Color primaryAccent = Color(0xFFE5A122);
-
   static const Color backgroundColor = Color(0xFF06142E);
-
   static const Color whiteText = Colors.white;
   static const Color greyText = Colors.white54;
   static const Color hintText = Colors.white60;
 
-
-  static const List<String> meetTypes = [
-    'Scrum',
-    'Inter-Domain',
-    'Leads Only',
-    'Domain-Specific',
-  ];
-
-  static const List<String> domains = [
-    'Operations',
-    'Marketing',
-    'Content',
-    'Video Editing',
-    'Graphic Designing',
-    'Photography',
-    'App Dev',
-    'Web Dev',
-    'Machine Learning',
-    'Embedded',
-  ];
+  static List<String> get meetTypes => AppConstants.meetingTypes;
+  static List<String> get domains => AppConstants.domains;
 }
 
 class MoMTextStyles {
@@ -51,18 +32,9 @@ class MoMTextStyles {
 }
 
 class MoMLayout {
-  // Calculate horizontal padding based on screen width
   static double horizontalPadding(double width) => width * 0.04;
-
-  // Calculate vertical padding based on screen height
   static double verticalPadding(double height) => height * 0.015;
-
-  // Calculate spacing between search bar and list
   static double searchSpacing(double height) => height * 0.02;
-
-  // Search bar border radius
   static const double searchBorderRadius = 25.0;
-
-  // Search bar border width
   static const double searchBorderWidth = 2.0;
 }
