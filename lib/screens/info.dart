@@ -182,8 +182,6 @@ class _InfoPageState extends State<InfoPage> {
               ),
 
               SizedBox(height: screenHeight * 0.03),
-
-              // Contact Information
               _buildInfoCard(
                 icon: Icons.email_outlined,
                 label: 'Email Us',
@@ -213,8 +211,6 @@ class _InfoPageState extends State<InfoPage> {
               ),
 
               SizedBox(height: screenHeight * 0.03),
-
-              // Social Media Section
               Container(
                 padding: EdgeInsets.all(screenWidth * 0.05),
                 decoration: BoxDecoration(
@@ -305,7 +301,6 @@ class _InfoPageState extends State<InfoPage> {
 
               SizedBox(height: screenHeight * 0.03),
 
-              // Bug Report Section
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(screenWidth * 0.05),
@@ -389,7 +384,6 @@ class _InfoPageState extends State<InfoPage> {
 
               SizedBox(height: screenHeight * 0.04),
 
-              // Footer
               Column(
                 children: [
                   Row(

@@ -587,7 +587,6 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 600;
 
-    // Get the provider reference before showing dialog
     final momProvider = Provider.of<MoMProvider>(context, listen: false);
 
     showDialog(
@@ -666,7 +665,7 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () async {
-                            // Close the dialog
+            
                             Navigator.pop(dialogContext);
 
                             try {
@@ -680,11 +679,8 @@ class _MoMDetailPageState extends State<MoMDetailPage> {
                                   backgroundColor: Colors.green,
                                   toastLength: Toast.LENGTH_LONG,
                                 );
-
-                                // Update the provider
                                 await momProvider.loadMoMs();
 
-                                // Navigate back to previous screen
                                 if (mounted) {
                                   Navigator.of(context).pop(true);
                                 }
