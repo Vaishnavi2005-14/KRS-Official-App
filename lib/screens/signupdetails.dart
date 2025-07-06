@@ -43,11 +43,9 @@ class _DetailsState extends State<Details> {
     "Nursing Sciences",
   ];
   final List<String> domain = [
-    "Advanced Embedded",
-    "IoT",
-    "Robotics",
-    "App Development",
+    "Embedded",
     "Machine Learning",
+    "App Development",
     "Web Development",
     "Operations",
     "Marketing",

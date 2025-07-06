@@ -4,14 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 const Color bgColor = Color(0xFF06142E);
 const Color orangeColor = Color(0xFFE5A122);
 
-
 class AppConstants {
   static const List<String> domains = [
-    "Advanced Embedded",
-    "IoT",
-    "Robotics",
-    "App Development",
+    "Embedded",
     "Machine Learning",
+    "App Development",
     "Web Development",
     "Operations",
     "Marketing",

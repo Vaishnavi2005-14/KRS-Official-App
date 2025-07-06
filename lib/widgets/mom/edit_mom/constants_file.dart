@@ -23,11 +23,9 @@ class AppColors {
 class AppConstants {
   // Domain options
   static const List<String> domains = [
-    "Advanced Embedded",
-    "IoT",
-    "Robotics",
-    "App Development",
+    "Embedded",
     "Machine Learning",
+    "App Development",
     "Web Development",
     "Operations",
     "Marketing",

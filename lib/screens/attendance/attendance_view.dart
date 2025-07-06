@@ -22,11 +22,9 @@ class AttendanceViewPage extends StatefulWidget {
 
 class _AttendanceViewPageState extends State<AttendanceViewPage> {
   final List<String> domains = [
-    "Advanced Embedded",
-    "IoT",
-    "Robotics",
-    "App Development",
+    "Embedded",
     "Machine Learning",
+    "App Development",
     "Web Development",
     "Operations",
     "Marketing",
