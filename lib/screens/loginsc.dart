@@ -54,9 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (status == 'active') {
         bool isAdmin = await _authService.isAdmin();
         if (isAdmin) {
-          Navigator.pushReplacementNamed(context, '/admin-main');
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/admin-main',
+            (route) => false,
+          );
         } else {
-          Navigator.pushReplacementNamed(context, '/main');
+          Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
         }
       } else {
         await Fluttertoast.showToast(
@@ -108,9 +112,13 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (status == 'active') {
         bool isAdmin = await _authService.isAdmin();
         if (isAdmin) {
-          Navigator.pushReplacementNamed(context, '/admin-main');
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/admin-main',
+            (route) => false,
+          );
         } else {
-          Navigator.pushReplacementNamed(context, '/main');
+          Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
         }
       } else {
         // yeh likh raaha hu ku ki mujhe yaadh nehi rehta haaye so yeha inactive user k code haaye

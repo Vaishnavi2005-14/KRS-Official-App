@@ -34,7 +34,6 @@ class LoaderProvider with ChangeNotifier {
                 color: Colors.black.withAlpha(180),
                 dismissible: false,
               ),
-              // Centered loader
               const Center(child: LoadingWidget()),
             ],
           ),

@@ -673,33 +673,35 @@ class _MoMViewPageState extends State<MoMViewPage> {
     double screenHeight,
     bool isTablet,
   ) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SvgPicture.asset(
-          "assets/no_internet.svg",
-          width: screenWidth * 0.5,
-          height: screenHeight * 0.3,
-        ),
-        SizedBox(height: screenHeight * 0.03),
-        Text(
-          "Not Connected to Internet",
-          style: TextStyle(
-            fontSize: isTablet ? 24 : 20,
-            color: Color(0xFFE5A122),
-            fontWeight: FontWeight.bold,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            "assets/no_internet.svg",
+            width: screenWidth * 0.5,
+            height: screenHeight * 0.3,
           ),
-        ),
-        SizedBox(height: screenHeight * 0.02),
-        Text(
-          "Please check your connection and try again",
-          style: TextStyle(
-            fontSize: isTablet ? 16 : 14,
-            color: Colors.grey[400],
+          SizedBox(height: screenHeight * 0.03),
+          Text(
+            "Not Connected to Internet",
+            style: TextStyle(
+              fontSize: isTablet ? 24 : 20,
+              color: Color(0xFFE5A122),
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          textAlign: TextAlign.center,
-        ),
-      ],
+          SizedBox(height: screenHeight * 0.02),
+          Text(
+            "Please check your connection and try again",
+            style: TextStyle(
+              fontSize: isTablet ? 16 : 14,
+              color: Colors.grey[400],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }
