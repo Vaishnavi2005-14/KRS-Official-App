@@ -1,4 +1,4 @@
-package com.example.krs_app
+package com.krs.krsapp
 
 import io.flutter.embedding.android.FlutterActivity
 

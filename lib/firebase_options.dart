@@ -41,48 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCSQNhJ67AMuBVue2IYpyFzmWZxd8_Nxls',
-    appId: '1:145579150656:web:748040343fd0cdaa01fea5',
-    messagingSenderId: '145579150656',
-    projectId: 'krs-app-notifications-1',
-    authDomain: 'krs-app-notifications-1.firebaseapp.com',
-    storageBucket: 'krs-app-notifications-1.firebasestorage.app',
-    measurementId: 'G-W65VHPXWMJ',
+    apiKey: 'AIzaSyAGMvfTcJWSZN94oNQCcYyDq46Qu8HllJ0',
+    appId: '1:1050948668120:web:0e46a399dfe03acebb65ad',
+    messagingSenderId: '1050948668120',
+    projectId: 'krs-workspace-app',
+    authDomain: 'krs-workspace-app.firebaseapp.com',
+    storageBucket: 'krs-workspace-app.firebasestorage.app',
+    measurementId: 'G-FLVC566WY6',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBeLtxEgsAwV-oZo0FTk_mZm3lGq-HsQaA',
-    appId: '1:145579150656:android:fca864647b07a4fe01fea5',
-    messagingSenderId: '145579150656',
-    projectId: 'krs-app-notifications-1',
-    storageBucket: 'krs-app-notifications-1.firebasestorage.app',
+    apiKey: 'AIzaSyCkgCKw6LX6YN0iYeCaTFMAK1E8MXqFrfI',
+    appId: '1:1050948668120:android:efdddaa008156dd4bb65ad',
+    messagingSenderId: '1050948668120',
+    projectId: 'krs-workspace-app',
+    storageBucket: 'krs-workspace-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCIqUOAbnhlwxkN8uc3mZ2HuhofRUTucvE',
-    appId: '1:145579150656:ios:13c5d6eefb37ca5e01fea5',
-    messagingSenderId: '145579150656',
-    projectId: 'krs-app-notifications-1',
-    storageBucket: 'krs-app-notifications-1.firebasestorage.app',
-    iosBundleId: 'com.example.krsApp',
+    apiKey: 'AIzaSyBUbyy0WO-MwwXLRMG-5sRnc7VkH4DKsYU',
+    appId: '1:1050948668120:ios:e19579bfb5d3d4e1bb65ad',
+    messagingSenderId: '1050948668120',
+    projectId: 'krs-workspace-app',
+    storageBucket: 'krs-workspace-app.firebasestorage.app',
+    iosBundleId: 'com.krs.krsapp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCIqUOAbnhlwxkN8uc3mZ2HuhofRUTucvE',
-    appId: '1:145579150656:ios:13c5d6eefb37ca5e01fea5',
-    messagingSenderId: '145579150656',
-    projectId: 'krs-app-notifications-1',
-    storageBucket: 'krs-app-notifications-1.firebasestorage.app',
-    iosBundleId: 'com.example.krsApp',
+    apiKey: 'AIzaSyBUbyy0WO-MwwXLRMG-5sRnc7VkH4DKsYU',
+    appId: '1:1050948668120:ios:c243e88d3af7b5eebb65ad',
+    messagingSenderId: '1050948668120',
+    projectId: 'krs-workspace-app',
+    storageBucket: 'krs-workspace-app.firebasestorage.app',
+    iosBundleId: 'com.krs.krsApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCSQNhJ67AMuBVue2IYpyFzmWZxd8_Nxls',
-    appId: '1:145579150656:web:6b25d152da27bbab01fea5',
-    messagingSenderId: '145579150656',
-    projectId: 'krs-app-notifications-1',
-    authDomain: 'krs-app-notifications-1.firebaseapp.com',
-    storageBucket: 'krs-app-notifications-1.firebasestorage.app',
-    measurementId: 'G-YQF1KRH6T9',
+    apiKey: 'AIzaSyAGMvfTcJWSZN94oNQCcYyDq46Qu8HllJ0',
+    appId: '1:1050948668120:web:68673ce9e1e49262bb65ad',
+    messagingSenderId: '1050948668120',
+    projectId: 'krs-workspace-app',
+    authDomain: 'krs-workspace-app.firebaseapp.com',
+    storageBucket: 'krs-workspace-app.firebasestorage.app',
+    measurementId: 'G-HXP92069V0',
   );
 }

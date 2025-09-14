@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.krs_app"
+    namespace = "com.krs.krsapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -21,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.krs_app"
+        applicationId = "com.krs.krsapp"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
