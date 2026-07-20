@@ -32,6 +32,9 @@ import 'package:krs_app/providers/member_management_provider.dart';
 import './firebase_options.dart';
 import 'package:flutter/services.dart';
 
+import 'package:krs_app/providers/project_provider.dart';
+import 'package:krs_app/screens/project_management/project_details_screen.dart';
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -59,6 +62,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => MemberManagementProvider()),
         ChangeNotifierProvider(create: (_) => NoticeProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => ProjectProvider()),
       ],
       child: const MyApp(),
     ),
@@ -86,7 +90,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/project-details',
       routes: {
         '/': (context) => const SplashScreen(),
         '/main': (context) => Navbar(),
@@ -101,7 +105,13 @@ class _MyAppState extends State<MyApp> {
         '/attendance-record': (context) => AttendanceRecordsPage(),
         '/attendance-gateway': (context) => AttendanceGatewayPage(),
         '/dashboard': (context) => const DashboardScreen(),
+        '/project-details': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments;
+          final projectId = (args is String) ? args : 'proj_krs_001';
+          return ProjectDetailsScreen(projectId: projectId);
+        },
       },
     );
   }
 }
+
